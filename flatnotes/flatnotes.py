@@ -7,6 +7,7 @@ from typing import List, Tuple
 import whoosh
 from whoosh import writing
 from whoosh.fields import ID, STORED, TEXT, SchemaClass
+from whoosh.index import Index
 from whoosh.qparser import MultifieldParser
 from whoosh.searching import Hit
 
@@ -19,16 +20,20 @@ class IndexSchema(SchemaClass):
 
 
 class Note:
-    def __init__(self, filepath: str) -> None:
-        self.filepath = filepath
+    def __init__(self, filepath: str, new: bool = False) -> None:
+        if new and os.path.exists(filepath):
+            raise FileExistsError
+        elif new:
+            open(filepath, "w").close()
+        self._filepath = filepath
+
+    @property
+    def filepath(self):
+        return self._filepath
 
     @property
     def dirpath(self):
-        return os.path.split(self.filepath)[0]
-
-    @property
-    def filename(self):
-        return os.path.split(self.filepath)[1]
+        return os.path.split(self._filepath)[0]
 
     @property
     def title(self):
@@ -36,12 +41,33 @@ class Note:
 
     @property
     def last_modified(self):
-        return os.path.getmtime(self.filepath)
+        return os.path.getmtime(self._filepath)
+
+    # Editable Properties
+    @property
+    def filename(self):
+        return os.path.split(self._filepath)[1]
+
+    @filename.setter
+    def filename(self, new_filename):
+        new_filepath = os.path.join(self.dirpath, new_filename)
+        os.rename(self._filepath, new_filepath)
+        self._filepath = new_filepath
 
     @property
     def content(self):
-        with open(self.filepath, "r") as f:
+        with open(self._filepath, "r") as f:
             return f.read()
+
+    @content.setter
+    def content(self, new_content):
+        if not os.path.exists(self._filepath):
+            raise FileNotFoundError
+        with open(self._filepath, "w") as f:
+            f.write(new_content)
+
+    def delete(self):
+        os.remove(self._filepath)
 
 
 class NoteHit(Note):
@@ -70,7 +96,7 @@ class Flatnotes(object):
     def index_dirpath(self):
         return os.path.join(self.notes_dirpath, ".flatnotes")
 
-    def _load_index(self) -> None:
+    def _load_index(self) -> Index:
         """Load the note index or create new if not exists."""
         if not os.path.exists(self.index_dirpath):
             os.mkdir(self.index_dirpath)

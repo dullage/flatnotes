@@ -8,34 +8,40 @@ For a long time now I've written and stored all of my personal notes in a simple
 
 Still, I was unable to find an editor that ticked all the boxes:
 
-- Support for flat folder storage
-- Cross platform (web based)
-- Mobile friendly
-- Clean, simple interface
-- Good markdown support for:
-  - Tables
-  - Code Blocks (Syntax Highlighting)
-  - Task Lists
-- Full text searching
-- Support for embedding images (and storing them)
-- Support for uploading file attachments
-- Password authentication
-- The ability to share notes as public read-only URLs
+* Support for flat folder storage
+* Cross platform (web based)
+* Mobile friendly
+* Clean, simple interface
+* Good markdown support for:
+  * Tables
+  * Code Blocks (Syntax Highlighting)
+  * Task Lists
+* Full text searching
+* Support for embedding images (and storing them)
+* Support for uploading file attachments
+* Password authentication
+* The ability to share notes as public read-only URLs
 
 This is what flatnotes aims to achieve.
 
 ## To Do
-- [X] Proof of Concept 1
-  - [X] Notes List
-  - [X] Full Text Searching
-- [ ] Proof of Concept 2
-  - [ ] View Note Content
-  - [ ] Edit Note Content
-- [ ] Proof of Concept 3
-  - [ ] Image Embedding
-  - [ ] Attachment Upload
-- [ ] Proof of Concept 5
-  - [ ] Password Authentication
-  - [ ] Public URL Sharing
-- [ ] First Release
-  - [ ] Clean & Responsive UI
+
+* [x] Proof of Concept - Stage 1
+  * [x] Notes List
+  * [x] Full Text Searching
+* [ ] Proof of Concept - Stage 2
+  * [x] View Note Content
+  * [ ] Edit Note Content
+  * [ ] Create New Note
+  * [ ] Docker Deployment
+  * [ ] Password Authentication
+* [ ] Proof of Concept - Stage 3
+  * [ ] Image Embedding
+  * [ ] Attachment Upload
+* [ ] Proof of Concept - Stage 4
+  * [ ] Public URL Sharing
+* [ ] First Release
+  * [ ] Clean & Responsive UI
+  * [ ] Ability to Delete a Note
+  * [ ] Ability to Rename a Note
+  * [ ] Error Handling
