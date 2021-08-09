@@ -3,11 +3,16 @@ import os
 from typing import Dict, List, Optional
 
 from fastapi import FastAPI
-from fastapi.responses import JSONResponse, RedirectResponse
+from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
-from flatnotes import Flatnotes, Note, NoteHit
-from helpers import CamelCaseBaseModel, is_path_safe
+from error_responses import (
+    file_exists_response,
+    file_not_found_response,
+    filename_contains_path_response,
+)
+from flatnotes import FilenameContainsPathError, Flatnotes, Note, NoteHit
+from helpers import CamelCaseBaseModel
 
 logging.basicConfig(
     format="%(asctime)s [%(levelname)s]: %(message)s",
@@ -68,48 +73,54 @@ async def get_notes(include_content: bool = False):
 @app.post("/api/notes", response_model=NoteModel)
 async def post_note(filename: str, content: str):
     """Create a new note."""
-    if not is_path_safe(filename):
-        return JSONResponse(status_code=404)  # TODO: Different code
-    note = Note(os.path.join(flatnotes.notes_dirpath, filename), new=True)
-    note.content = content
-    # TODO: Handle file exists
-    return NoteModel.dump(note, include_content=True)
+    try:
+        note = Note(flatnotes, filename, new=True)
+        note.content = content
+        return NoteModel.dump(note, include_content=True)
+    except FilenameContainsPathError:
+        return filename_contains_path_response
+    except FileExistsError:
+        return file_exists_response
 
 
 @app.get("/api/notes/{filename}", response_model=NoteModel)
 async def get_note(filename: str, include_content: bool = True):
     """Get a specific note."""
-    if not is_path_safe(filename):
-        return JSONResponse(status_code=404)
-    note = Note(os.path.join(flatnotes.notes_dirpath, filename))
     try:
+        note = Note(flatnotes, filename)
         return NoteModel.dump(note, include_content=include_content)
+    except FilenameContainsPathError:
+        return filename_contains_path_response
     except FileNotFoundError:
-        return JSONResponse(status_code=404)
+        return file_not_found_response
 
 
 @app.patch("/api/notes/{filename}", response_model=NoteModel)
 async def patch_note(
     filename: str, new_filename: str = None, new_content: str = None
 ):
-    if not is_path_safe(filename):
-            return JSONResponse(status_code=404)
-    note = Note(
-        os.path.join(flatnotes.notes_dirpath, filename)
-    )  # TODO: Stop repeating this
-    if new_filename is not None:
-        note.filename = new_filename
-    if new_content is not None:
-        note.content = new_content
-    return NoteModel.dump(note, include_content=True)
+    try:
+        note = Note(flatnotes, filename)
+        if new_filename is not None:
+            note.filename = new_filename
+        if new_content is not None:
+            note.content = new_content
+        return NoteModel.dump(note, include_content=True)
+    except FilenameContainsPathError:
+        return filename_contains_path_response
+    except FileNotFoundError:
+        return file_not_found_response
 
 
 @app.delete("/api/notes/{filename}")
 async def delete_note(filename: str):
-    if not is_path_safe(filename):
-            return JSONResponse(status_code=404)
-    note = Note(os.path.join(flatnotes.notes_dirpath, filename))
-    note.delete()
+    try:
+        note = Note(flatnotes, filename)
+        note.delete()
+    except FilenameContainsPathError:
+        return filename_contains_path_response
+    except FileNotFoundError:
+        return file_not_found_response
 
 
 @app.get("/api/search", response_model=List[NoteHitModel])
