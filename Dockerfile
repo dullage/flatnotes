@@ -27,6 +27,10 @@ USER ${UID}
 
 WORKDIR ${APP_DIR}
 
+RUN mkdir data
+
+ENV FLATNOTES_PATH=${APP_DIR}/data
+
 COPY --chown=${UID}:${GID} LICENSE Pipfile Pipfile.lock package.json package-lock.json ./
 
 RUN pipenv install --system --deploy --ignore-pipfile \
