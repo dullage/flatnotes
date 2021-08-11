@@ -1,0 +1,10 @@
+# Ignore everything
+**
+
+# Include the following
+!LICENSE
+!Pipfile
+!Pipfile.lock
+!package.json
+!package-lock.json
+!flatnotes/**

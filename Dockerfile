@@ -1,0 +1,39 @@
+FROM python:3.8-alpine3.14
+
+ARG USER=flatnotes
+ARG UID=1000
+ARG GID=1000
+ARG APP_DIR=/app
+
+RUN addgroup \
+    --gid $GID \
+    ${USER} \
+ && adduser \
+    --disabled-password \
+    --gecos "" \
+    --home ${APP_DIR} \
+    --ingroup ${USER} \
+    --uid ${UID} \
+    ${USER}
+
+RUN apk add --update-cache \
+    libc-dev \
+    gcc \
+    npm \
+ && rm -rf /var/cache/apk/* \
+ && pip install pipenv
+
+USER ${UID}
+
+WORKDIR ${APP_DIR}
+
+COPY --chown=${UID}:${GID} LICENSE Pipfile Pipfile.lock package.json package-lock.json ./
+
+RUN pipenv install --system --deploy --ignore-pipfile \
+ && npm ci
+
+COPY --chown=${UID}:${GID} flatnotes ./flatnotes
+
+RUN npm run build
+
+ENTRYPOINT [ "python", "-m", "uvicorn", "main:app", "--app-dir", "flatnotes", "--host", "0.0.0.0", "--port", "80" ]
