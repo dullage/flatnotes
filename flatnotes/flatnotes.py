@@ -66,14 +66,14 @@ class Note:
 
     @property
     def content(self):
-        with open(self.filepath, "r") as f:
+        with open(self.filepath, "r", encoding="utf-8") as f:
             return f.read()
 
     @content.setter
     def content(self, new_content):
         if not os.path.exists(self.filepath):
             raise FileNotFoundError
-        with open(self.filepath, "w") as f:
+        with open(self.filepath, "w", encoding="utf-8") as f:
             f.write(new_content)
 
     def delete(self):

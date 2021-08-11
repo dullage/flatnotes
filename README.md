@@ -31,8 +31,7 @@ This is what flatnotes aims to achieve.
   * [x] Full Text Searching
 * [ ] Proof of Concept - Stage 2
   * [x] View Note Content
-  * [ ] Edit Note Content
-  * [ ] Create New Note
+  * [x] Edit Note Content
   * [ ] Docker Deployment
   * [ ] Password Authentication
 * [ ] Proof of Concept - Stage 3
@@ -42,6 +41,7 @@ This is what flatnotes aims to achieve.
   * [ ] Public URL Sharing
 * [ ] First Release
   * [ ] Clean & Responsive UI
-  * [ ] Ability to Delete a Note
+  * [ ] Ability to Create a Note
   * [ ] Ability to Rename a Note
+  * [ ] Ability to Delete a Note
   * [ ] Error Handling

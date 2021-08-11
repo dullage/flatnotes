@@ -1,7 +1,8 @@
 class Note {
-  constructor(filename, lastModified) {
+  constructor(filename, lastModified, content) {
     this.filename = filename;
     this.lastModified = lastModified;
+    this.content = content;
   }
 
   get title() {

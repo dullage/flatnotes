@@ -1,0 +1,6 @@
+.clickable-link {
+    cursor: pointer;
+    &:hover {
+        font-weight: bold;
+    }
+}

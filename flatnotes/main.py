@@ -3,7 +3,7 @@ import os
 from typing import Dict, List, Optional
 
 from fastapi import FastAPI
-from fastapi.responses import RedirectResponse
+from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
 from error_responses import (
@@ -40,6 +40,11 @@ class NoteModel(CamelCaseBaseModel):
         }
 
 
+class NotePatchModel(CamelCaseBaseModel):
+    new_filename: Optional[str]
+    new_content: Optional[str]
+
+
 class NoteHitModel(CamelCaseBaseModel):
     filename: str
     last_modified: int
@@ -58,7 +63,9 @@ class NoteHitModel(CamelCaseBaseModel):
 
 @app.get("/")
 async def root():
-    return RedirectResponse("/index.html")
+    with open("flatnotes/dist/index.html", "r", encoding="utf-8") as f:
+        html = f.read()
+    return HTMLResponse(content=html)
 
 
 @app.get("/api/notes", response_model=List[NoteModel])
@@ -96,15 +103,13 @@ async def get_note(filename: str, include_content: bool = True):
 
 
 @app.patch("/api/notes/{filename}", response_model=NoteModel)
-async def patch_note(
-    filename: str, new_filename: str = None, new_content: str = None
-):
+async def patch_note(filename: str, new_data: NotePatchModel):
     try:
         note = Note(flatnotes, filename)
-        if new_filename is not None:
-            note.filename = new_filename
-        if new_content is not None:
-            note.content = new_content
+        if new_data.new_filename is not None:
+            note.filename = new_data.new_filename
+        if new_data.new_content is not None:
+            note.content = new_data.new_content
         return NoteModel.dump(note, include_content=True)
     except FilenameContainsPathError:
         return filename_contains_path_response
