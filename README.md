@@ -32,7 +32,7 @@ This is what flatnotes aims to achieve.
 * [ ] Proof of Concept - Stage 2
   * [x] View Note Content
   * [x] Edit Note Content
-  * [ ] Docker Deployment
+  * [x] Docker Deployment
   * [ ] Password Authentication
 * [ ] Proof of Concept - Stage 3
   * [ ] Image Embedding

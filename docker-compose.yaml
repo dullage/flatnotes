@@ -1,0 +1,12 @@
+version: "3"
+
+services:
+  flatnotes:
+    container_name: flatnotes
+    image: dullage/flatnotes:latest
+    build: .
+    volumes:
+      - "./data:/data"
+    ports:
+      - "80:80"
+    restart: unless-stopped

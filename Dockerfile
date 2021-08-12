@@ -3,7 +3,11 @@ FROM python:3.8-alpine3.14
 ARG USER=flatnotes
 ARG UID=1000
 ARG GID=1000
+
 ARG APP_DIR=/app
+
+ARG DATA_DIR=${APP_DIR}/data
+ENV FLATNOTES_PATH=${DATA_DIR}
 
 RUN addgroup \
     --gid $GID \
@@ -16,6 +20,8 @@ RUN addgroup \
     --uid ${UID} \
     ${USER}
 
+RUN mkdir ${DATA_DIR} && chown ${UID}:${GID} ${DATA_DIR}
+
 RUN apk add --update-cache \
     libc-dev \
     gcc \
@@ -24,20 +30,13 @@ RUN apk add --update-cache \
  && pip install pipenv
 
 USER ${UID}
-
 WORKDIR ${APP_DIR}
 
-RUN mkdir data
-
-ENV FLATNOTES_PATH=${APP_DIR}/data
-
 COPY --chown=${UID}:${GID} LICENSE Pipfile Pipfile.lock package.json package-lock.json ./
-
 RUN pipenv install --system --deploy --ignore-pipfile \
  && npm ci
 
 COPY --chown=${UID}:${GID} flatnotes ./flatnotes
-
 RUN npm run build
 
 ENTRYPOINT [ "python", "-m", "uvicorn", "main:app", "--app-dir", "flatnotes", "--host", "0.0.0.0", "--port", "80" ]
