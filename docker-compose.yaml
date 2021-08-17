@@ -7,6 +7,7 @@ services:
     build: .
     volumes:
       - "./data:/data"
+      # - "./index:/data/.flatnotes"  # Optional
     ports:
       - "80:80"
     restart: unless-stopped
