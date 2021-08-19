@@ -5,9 +5,14 @@ services:
     container_name: flatnotes
     image: dullage/flatnotes:latest
     build: .
+    environment:
+      FLATNOTES_USERNAME: "user"
+      FLATNOTES_PASSWORD: "changeMe!"
+      FLATNOTES_SECRET_KEY: "aLongRandomSeriesOfCharacters"
+      # FLATNOTES_SESSION_EXPIRY_DAYS: "7"                   # Optional. Defaults to 30.
     volumes:
       - "./data:/data"
-      # - "./index:/data/.flatnotes"  # Optional
+      # - "./index:/data/.flatnotes"                         # Optional.
     ports:
       - "80:80"
     restart: unless-stopped

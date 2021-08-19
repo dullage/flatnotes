@@ -1,18 +1,24 @@
 import logging
 import os
-from typing import Dict, List, Optional
+from typing import List
 
-from fastapi import FastAPI
-from fastapi.responses import HTMLResponse
-from fastapi.staticfiles import StaticFiles
-
+from auth import (
+    FLATNOTES_PASSWORD,
+    FLATNOTES_USERNAME,
+    validate_token,
+    create_access_token,
+)
 from error_responses import (
     file_exists_response,
     file_not_found_response,
     filename_contains_path_response,
 )
-from flatnotes import FilenameContainsPathError, Flatnotes, Note, NoteHit
-from helpers import CamelCaseBaseModel
+from fastapi import Depends, FastAPI, HTTPException
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from models import LoginModel, NoteHitModel, NoteModel, NotePatchModel
+
+from flatnotes import FilenameContainsPathError, Flatnotes, Note
 
 logging.basicConfig(
     format="%(asctime)s [%(levelname)s]: %(message)s",
@@ -22,43 +28,20 @@ logger = logging.getLogger()
 logger.setLevel(os.environ.get("LOGLEVEL", "INFO").upper())
 
 app = FastAPI()
-
 flatnotes = Flatnotes(os.environ["FLATNOTES_PATH"])
 
 
-class NoteModel(CamelCaseBaseModel):
-    filename: str
-    last_modified: int
-    content: Optional[str]
-
-    @classmethod
-    def dump(cls, note: Note, include_content: bool = True) -> Dict:
-        return {
-            "filename": note.filename,
-            "lastModified": note.last_modified,
-            "content": note.content if include_content else None,
-        }
-
-
-class NotePatchModel(CamelCaseBaseModel):
-    new_filename: Optional[str]
-    new_content: Optional[str]
-
-
-class NoteHitModel(CamelCaseBaseModel):
-    filename: str
-    last_modified: int
-    title_highlights: Optional[str]
-    content_highlights: Optional[str]
-
-    @classmethod
-    def dump(self, note_hit: NoteHit) -> Dict:
-        return {
-            "filename": note_hit.filename,
-            "lastModified": note_hit.last_modified,
-            "titleHighlights": note_hit.title_highlights,
-            "contentHighlights": note_hit.content_highlights,
-        }
+@app.post("/api/token")
+async def token(data: LoginModel):
+    if (
+        data.username != FLATNOTES_USERNAME
+        or data.password != FLATNOTES_PASSWORD
+    ):
+        raise HTTPException(
+            status_code=400, detail="Incorrect username or password"
+        )
+    access_token = create_access_token(data={"sub": FLATNOTES_USERNAME})
+    return {"access_token": access_token, "token_type": "bearer"}
 
 
 @app.get("/")
@@ -69,7 +52,9 @@ async def root():
 
 
 @app.get("/api/notes", response_model=List[NoteModel])
-async def get_notes(include_content: bool = False):
+async def get_notes(
+    include_content: bool = False, _: str = Depends(validate_token)
+):
     """Get all notes."""
     return [
         NoteModel.dump(note, include_content=include_content)
@@ -78,7 +63,9 @@ async def get_notes(include_content: bool = False):
 
 
 @app.post("/api/notes", response_model=NoteModel)
-async def post_note(filename: str, content: str):
+async def post_note(
+    filename: str, content: str, _: str = Depends(validate_token)
+):
     """Create a new note."""
     try:
         note = Note(flatnotes, filename, new=True)
@@ -91,7 +78,11 @@ async def post_note(filename: str, content: str):
 
 
 @app.get("/api/notes/{filename}", response_model=NoteModel)
-async def get_note(filename: str, include_content: bool = True):
+async def get_note(
+    filename: str,
+    include_content: bool = True,
+    _: str = Depends(validate_token),
+):
     """Get a specific note."""
     try:
         note = Note(flatnotes, filename)
@@ -103,7 +94,9 @@ async def get_note(filename: str, include_content: bool = True):
 
 
 @app.patch("/api/notes/{filename}", response_model=NoteModel)
-async def patch_note(filename: str, new_data: NotePatchModel):
+async def patch_note(
+    filename: str, new_data: NotePatchModel, _: str = Depends(validate_token)
+):
     try:
         note = Note(flatnotes, filename)
         if new_data.new_filename is not None:
@@ -118,7 +111,7 @@ async def patch_note(filename: str, new_data: NotePatchModel):
 
 
 @app.delete("/api/notes/{filename}")
-async def delete_note(filename: str):
+async def delete_note(filename: str, _: str = Depends(validate_token)):
     try:
         note = Note(flatnotes, filename)
         note.delete()
@@ -129,7 +122,7 @@ async def delete_note(filename: str):
 
 
 @app.get("/api/search", response_model=List[NoteHitModel])
-async def search(term: str):
+async def search(term: str, _: str = Depends(validate_token)):
     """Perform a full text search for a note."""
     return [NoteHitModel.dump(note_hit) for note_hit in flatnotes.search(term)]
 

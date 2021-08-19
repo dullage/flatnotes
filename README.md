@@ -29,16 +29,16 @@ This is what flatnotes aims to achieve.
 * [x] Proof of Concept - Stage 1
   * [x] Notes List
   * [x] Full Text Searching
-* [ ] Proof of Concept - Stage 2
+* [x] Proof of Concept - Stage 2
   * [x] View Note Content
   * [x] Edit Note Content
   * [x] Docker Deployment
-  * [ ] Password Authentication
+  * [x] Password Authentication
 * [ ] Proof of Concept - Stage 3
+  * [ ] Public URL Sharing
+* [ ] Proof of Concept - Stage 4
   * [ ] Image Embedding
   * [ ] Attachment Upload
-* [ ] Proof of Concept - Stage 4
-  * [ ] Public URL Sharing
 * [ ] First Release
   * [ ] Clean & Responsive UI
   * [ ] Ability to Create a Note

@@ -7,15 +7,22 @@
       </div>
 
       <!-- Buttons -->
-      <div
-        v-if="currentView == 2 || currentView == 3"
-        class="d-flex justify-content-center mb-4"
-      >
+      <div v-if="currentView != 4" class="d-flex justify-content-center mb-4">
+        <!-- Logout -->
+        <button
+          v-if="currentView == 0"
+          type="button"
+          class="btn btn-light mx-1"
+          @click="logout"
+        >
+          Logout
+        </button>
+
         <!-- Close -->
         <button
           v-if="currentView == 2"
           type="button"
-          class="btn btn-secondary"
+          class="btn btn-secondary mx-1"
           @click="unloadNote"
         >
           Close
@@ -25,7 +32,7 @@
         <button
           v-if="currentView == 2"
           type="button"
-          class="btn btn-warning ms-2"
+          class="btn btn-warning mx-1"
           @click="editMode = true"
         >
           Edit
@@ -35,7 +42,7 @@
         <button
           v-if="currentView == 3"
           type="button"
-          class="btn btn-secondary ms-2"
+          class="btn btn-secondary mx-1"
           @click="editMode = false"
         >
           Cancel
@@ -45,15 +52,51 @@
         <button
           v-if="currentView == 3"
           type="button"
-          class="btn btn-success ms-2"
+          class="btn btn-success mx-1"
           @click="saveNote"
         >
           Save
         </button>
       </div>
 
+      <!-- Login -->
+      <div v-if="currentView == 4" class="d-flex justify-content-center">
+        <form v-on:submit.prevent="login">
+          <div class="mb-3">
+            <label for="username" class="form-label">Username</label>
+            <input
+              type="text"
+              class="form-control"
+              id="username"
+              autocomplete="username"
+              v-model="usernameInput"
+            />
+          </div>
+          <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input
+              type="password"
+              class="form-control"
+              id="password"
+              autocomplete="current-password"
+              v-model="passwordInput"
+            />
+          </div>
+          <div class="mb-3 form-check">
+            <input
+              type="checkbox"
+              class="form-check-input"
+              id="rememberMe"
+              v-model="rememberMeInput"
+            />
+            <label class="form-check-label" for="rememberMe">Remember Me</label>
+          </div>
+          <button type="submit" class="btn btn-primary">Log In</button>
+        </form>
+      </div>
+
       <!-- Viewer -->
-      <div v-if="currentView == 2">
+      <div v-else-if="currentView == 2">
         <viewer :initialValue="currentNote.content" height="600px" />
       </div>
 
@@ -70,16 +113,17 @@
       <!-- Front Page -->
       <div v-else>
         <!-- Search Input -->
-        <div class="form-group mb-4 d-flex justify-content-center">
-          <input
-            type="text"
-            class="form-control"
-            placeholder="Search"
-            v-model="searchTerm"
-            @change="search"
-            style="max-width: 500px"
-          />
-        </div>
+        <form v-on:submit.prevent="search">
+          <div class="form-group mb-4 d-flex justify-content-center">
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Search"
+              v-model="searchTerm"
+              style="max-width: 500px"
+            />
+          </div>
+        </form>
 
         <!-- Search Results -->
         <div v-if="currentView == 1">

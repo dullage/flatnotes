@@ -2,9 +2,10 @@ import "@toast-ui/editor/dist/toastui-editor.css";
 import "@toast-ui/editor/dist/toastui-editor-viewer.css";
 import { Editor } from "@toast-ui/vue-editor";
 import { Viewer } from "@toast-ui/vue-editor";
-import axios from "axios";
 
+import api from "../api";
 import { Note, SearchResult } from "./classes";
+import EventBus from "../eventBus";
 
 export default {
   components: {
@@ -14,6 +15,10 @@ export default {
 
   data: function() {
     return {
+      loggedIn: false,
+      usernameInput: null,
+      passwordInput: null,
+      rememberMeInput: false,
       notes: [],
       searchTerm: null,
       searchTimeout: null,
@@ -25,8 +30,12 @@ export default {
 
   computed: {
     currentView: function() {
+      // 4 - Login
+      if (this.loggedIn == false) {
+        return 4;
+      }
       // 3 - Edit Note
-      if (this.currentNote && this.editMode) {
+      else if (this.currentNote && this.editMode) {
         return 3;
       }
       // 2 - View Note
@@ -62,17 +71,45 @@ export default {
   },
 
   methods: {
+    login: function() {
+      let parent = this;
+      api
+        .post("/api/token", {
+          username: this.usernameInput,
+          password: this.passwordInput,
+        })
+        .then(function(response) {
+          sessionStorage.setItem("token", response.data.access_token);
+          if (parent.rememberMeInput == true) {
+            localStorage.setItem("token", response.data.access_token);
+          }
+          parent.loggedIn = true;
+          parent.getNotes();
+        })
+        .finally(function() {
+          parent.usernameInput = null;
+          parent.passwordInput = null;
+          parent.rememberMeInput = false;
+        });
+    },
+
+    logout: function() {
+      sessionStorage.removeItem("token");
+      localStorage.removeItem("token");
+      this.loggedIn = false;
+    },
+
     getNotes: function() {
-      parent = this;
+      let parent = this;
       parent.notes = [];
-      axios.get("/api/notes").then(function(response) {
+      api.get("/api/notes").then(function(response) {
         response.data.forEach(function(note) {
           parent.notes.push(new Note(note.filename, note.lastModified));
         });
       });
     },
 
-    clearSearchTimeout: function(params) {
+    clearSearchTimeout: function() {
       if (this.searchTimeout != null) {
         clearTimeout(this.searchTimeout);
       }
@@ -84,13 +121,13 @@ export default {
     },
 
     search: function() {
-      parent = this;
+      let parent = this;
       this.clearSearchTimeout();
-      this.searchResults = [];
       if (this.searchTerm) {
-        axios
+        api
           .get("/api/search", { params: { term: this.searchTerm } })
           .then(function(response) {
+            parent.searchResults = [];
             response.data.forEach(function(result) {
               parent.searchResults.push(
                 new SearchResult(
@@ -106,8 +143,8 @@ export default {
     },
 
     loadNote: function(filename) {
-      parent = this;
-      axios.get(`/api/notes/${filename}`).then(function(response) {
+      let parent = this;
+      api.get(`/api/notes/${filename}`).then(function(response) {
         parent.currentNote = response.data;
       });
     },
@@ -118,10 +155,10 @@ export default {
     },
 
     saveNote: function() {
-      parent = this;
+      let parent = this;
       let newContent = this.$refs.toastUiEditor.invoke("getMarkdown");
       if (newContent != this.currentNote.content) {
-        axios
+        api
           .patch(`/api/notes/${this.currentNote.filename}`, {
             newContent: newContent,
           })
@@ -136,6 +173,13 @@ export default {
   },
 
   created: function() {
-    this.getNotes();
+    EventBus.$on("logout", this.logout);
+
+    let token = localStorage.getItem("token");
+    if (token != null) {
+      sessionStorage.setItem("token", token);
+      this.loggedIn = true;
+      this.getNotes();
+    }
   },
 };
