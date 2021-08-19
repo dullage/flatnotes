@@ -3,7 +3,6 @@ import logging
 import os
 from datetime import datetime
 from typing import List, Tuple
-from fastapi.params import File
 
 import whoosh
 from whoosh import writing
@@ -154,12 +153,12 @@ class Flatnotes(object):
                 # Delete missing
                 if not os.path.exists(idx_filepath):
                     writer.delete_by_term("filename", idx_filename)
-                    logging.debug(f"'{idx_filename}' removed from index")
+                    logging.info(f"'{idx_filename}' removed from index")
                 # Update modified
                 elif (
                     os.path.getmtime(idx_filepath) != idx_note["last_modified"]
                 ):
-                    logging.debug(f"'{idx_filename}' updated")
+                    logging.info(f"'{idx_filename}' updated")
                     self._add_note_to_index(writer, Note(self, idx_filename))
                     indexed.add(idx_filename)
                 # Ignore already indexed
@@ -169,7 +168,7 @@ class Flatnotes(object):
         for note in self.get_notes():
             if note.filename not in indexed:
                 self._add_note_to_index(writer, note)
-                logging.debug(f"'{note.filename}' added to index")
+                logging.info(f"'{note.filename}' added to index")
         writer.commit()
         self.last_index_update = datetime.now()
 
