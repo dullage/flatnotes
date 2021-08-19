@@ -1,4 +1,4 @@
-FROM python:3.8-alpine3.14
+FROM python:3.8-slim-bullseye
 
 ARG USER=flatnotes
 ARG UID=1000
@@ -22,11 +22,9 @@ RUN addgroup \
 
 RUN mkdir ${DATA_DIR} && chown ${UID}:${GID} ${DATA_DIR}
 
-RUN apk add --update-cache \
-    libc-dev \
-    gcc \
-    npm \
- && rm -rf /var/cache/apk/* \
+RUN apt update && apt install -y \
+      npm \
+ && rm -rf /var/lib/apt/lists/* \
  && pip install pipenv
 
 USER ${UID}
