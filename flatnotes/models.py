@@ -12,7 +12,7 @@ class LoginModel(CamelCaseBaseModel):
 
 class NoteModel(CamelCaseBaseModel):
     filename: str
-    last_modified: int
+    last_modified: Optional[int]
     content: Optional[str]
 
     @classmethod

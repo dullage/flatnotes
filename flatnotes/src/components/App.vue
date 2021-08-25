@@ -18,6 +18,16 @@
           Logout
         </button>
 
+        <!-- New -->
+        <button
+          v-if="currentView == 0"
+          type="button"
+          class="btn btn-primary mx-1"
+          @click="newNote"
+        >
+          New
+        </button>
+
         <!-- Close -->
         <button
           v-if="currentView == 2"
@@ -102,6 +112,7 @@
 
       <!-- Editor -->
       <div v-else-if="currentView == 3">
+        <input type="text" class="form-control" v-model="newFilename" />
         <editor
           :initialValue="currentNote.content"
           previewStyle="tab"

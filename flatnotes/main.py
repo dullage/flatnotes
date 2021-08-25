@@ -63,13 +63,11 @@ async def get_notes(
 
 
 @app.post("/api/notes", response_model=NoteModel)
-async def post_note(
-    filename: str, content: str, _: str = Depends(validate_token)
-):
+async def post_note(data: NoteModel, _: str = Depends(validate_token)):
     """Create a new note."""
     try:
-        note = Note(flatnotes, filename, new=True)
-        note.content = content
+        note = Note(flatnotes, data.filename, new=True)
+        note.content = data.content
         return NoteModel.dump(note, include_content=True)
     except FilenameContainsPathError:
         return filename_contains_path_response

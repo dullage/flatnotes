@@ -24,6 +24,7 @@ export default {
       searchTimeout: null,
       searchResults: null,
       currentNote: null,
+      newFilename: null,
       editMode: false,
     };
   },
@@ -146,27 +147,59 @@ export default {
       let parent = this;
       api.get(`/api/notes/${filename}`).then(function(response) {
         parent.currentNote = response.data;
+        parent.newFilename = parent.currentNote.filename;
       });
+    },
+
+    newNote: function() {
+      this.currentNote = new Note();
+      this.editMode = true;
     },
 
     unloadNote: function() {
       this.currentNote = null;
+      this.newFilename = null;
       this.editMode = false;
+      this.getNotes();
     },
 
     saveNote: function() {
       let parent = this;
       let newContent = this.$refs.toastUiEditor.invoke("getMarkdown");
-      if (newContent != this.currentNote.content) {
+
+      // New Note
+      if (this.currentNote.lastModified == null) {
+        api
+          .post(`/api/notes`, {
+            filename: this.newFilename,
+            content: newContent,
+          })
+          .then(function(response) {
+            parent.currentNote = response.data;
+            parent.newFilename = parent.currentNote.filename;
+            parent.editMode = false;
+          });
+      }
+
+      // Modified Note
+      else if (
+        newContent != this.currentNote.content ||
+        this.newFilename != this.currentNote.filename
+      ) {
         api
           .patch(`/api/notes/${this.currentNote.filename}`, {
+            newFilename: this.newFilename,
             newContent: newContent,
           })
           .then(function(response) {
             parent.currentNote = response.data;
+            parent.newFilename = parent.currentNote.filename;
             parent.editMode = false;
           });
-      } else {
+      }
+
+      // No Change
+      else {
         this.editMode = false;
       }
     },
