@@ -35,10 +35,10 @@ This is what flatnotes aims to achieve.
 * [x] Ability to Create a Note
 * [x] Ability to Rename a Note
 * [x] Routing
+* [x] e to edit
 * [ ] Loading & Not Found Indicators
 * [ ] Ability to Delete a Note
 * [ ] / to search
-* [ ] e to edit
 * [ ] CTRL-S to save
 * [ ] Drafts
 * [ ] Image Embedding

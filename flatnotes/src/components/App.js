@@ -228,10 +228,34 @@ export default {
       history.replaceState(null, "", this.currentNote.href);
       this.toggleEditMode();
     },
+
+    keyboardShortcuts: function(e) {
+      // 'e' to Edit
+      if (
+        e.key == "e" &&
+        this.currentView == this.views.note &&
+        this.editMode == false
+      ) {
+        e.preventDefault();
+        this.toggleEditMode();
+      }
+
+      // 'CTRL + s' to Save
+      // else if (
+      //   e.key == "s" &&
+      //   e.ctrlKey == true &&
+      //   this.currentView == this.views.note &&
+      //   this.editMode == true
+      // ) {
+      //   e.preventDefault();
+      //   this.saveNote();
+      // }
+    },
   },
 
   created: function() {
     EventBus.$on("logout", this.logout);
+    document.addEventListener("keydown", this.keyboardShortcuts);
 
     let token = localStorage.getItem("token");
     if (token != null) {
