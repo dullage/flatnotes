@@ -229,6 +229,18 @@ export default {
       this.toggleEditMode();
     },
 
+    deleteNote: function() {
+      if (
+        confirm(
+          `Are you sure you want to delete the note '${this.currentNote.title}'?`
+        )
+      ) {
+        api
+          .delete(`/api/notes/${this.currentNote.filename}`)
+          .then(window.open("/", "_self"));
+      }
+    },
+
     keyboardShortcuts: function(e) {
       // 'e' to Edit
       if (

@@ -36,8 +36,9 @@ This is what flatnotes aims to achieve.
 * [x] Ability to Rename a Note
 * [x] Routing
 * [x] e to edit
+* [x] Ability to Delete a Note
+* [ ] Exclude extension when renaming
 * [ ] Loading & Not Found Indicators
-* [ ] Ability to Delete a Note
 * [ ] / to search
 * [ ] CTRL-S to save
 * [ ] Drafts

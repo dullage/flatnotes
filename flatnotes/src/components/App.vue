@@ -88,6 +88,16 @@
           Edit
         </button>
 
+        <!-- Delete -->
+        <button
+          v-if="currentView == views.note && editMode == false"
+          type="button"
+          class="btn btn-danger mx-1"
+          @click="deleteNote"
+        >
+          Delete
+        </button>
+
         <!-- Cancel -->
         <button
           v-if="currentView == views.note && editMode == true"
