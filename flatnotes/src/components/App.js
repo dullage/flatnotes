@@ -32,7 +32,7 @@ export default {
       searchTimeout: null,
       searchResults: null,
       currentNote: null,
-      newFilename: null,
+      titleInput: null,
       editMode: false,
     };
   },
@@ -170,7 +170,7 @@ export default {
             response.data.lastModified,
             response.data.content
           );
-          parent.newFilename = parent.currentNote.filename;
+          parent.titleInput = parent.currentNote.title;
           parent.updateDocumentTitle();
         });
     },
@@ -192,7 +192,7 @@ export default {
       if (this.currentNote.lastModified == null) {
         api
           .post(`/api/notes`, {
-            filename: this.newFilename,
+            filename: `${this.titleInput}.${constants.markdownExt}`,
             content: newContent,
           })
           .then(this.saveNoteResponseHandler);
@@ -201,11 +201,11 @@ export default {
       // Modified Note
       else if (
         newContent != this.currentNote.content ||
-        this.newFilename != this.currentNote.filename
+        this.titleInput != this.currentNote.title
       ) {
         api
           .patch(`/api/notes/${this.currentNote.filename}`, {
-            newFilename: this.newFilename,
+            newFilename: `${this.titleInput}.${this.currentNote.ext}`,
             newContent: newContent,
           })
           .then(this.saveNoteResponseHandler);
@@ -223,7 +223,7 @@ export default {
         response.data.lastModified,
         response.data.content
       );
-      this.newFilename = this.currentNote.filename;
+      this.titleInput = this.currentNote.title;
       this.updateDocumentTitle();
       history.replaceState(null, "", this.currentNote.href);
       this.toggleEditMode();

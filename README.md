@@ -37,7 +37,7 @@ This is what flatnotes aims to achieve.
 * [x] Routing
 * [x] e to edit
 * [x] Ability to Delete a Note
-* [ ] Exclude extension when renaming
+* [x] Exclude extension when renaming
 * [ ] Loading & Not Found Indicators
 * [ ] / to search
 * [ ] CTRL-S to save

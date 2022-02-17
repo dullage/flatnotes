@@ -8,11 +8,15 @@ class Note {
   }
 
   get title() {
-    return this.filename.slice(0, -3);
+    return this.filename.substring(0, this.filename.lastIndexOf("."));
+  }
+
+  get ext() {
+    return this.filename.substring(this.filename.lastIndexOf(".") + 1);
   }
 
   get href() {
-    return `/${constants.basePaths.note}/${this.title}`
+    return `/${constants.basePaths.note}/${this.title}`;
   }
 }
 

@@ -144,7 +144,7 @@
 
         <!-- Editor -->
         <div v-else>
-          <input type="text" class="form-control" v-model="newFilename" />
+          <input type="text" class="form-control" v-model="titleInput" />
           <editor
             :initialValue="currentNote.content"
             previewStyle="tab"
