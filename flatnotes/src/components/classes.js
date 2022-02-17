@@ -1,3 +1,5 @@
+import * as constants from "../constants";
+
 class Note {
   constructor(filename, lastModified, content) {
     this.filename = filename;
@@ -7,6 +9,10 @@ class Note {
 
   get title() {
     return this.filename.slice(0, -3);
+  }
+
+  get href() {
+    return `/${constants.basePaths.note}/${this.title}`
   }
 }
 

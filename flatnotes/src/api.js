@@ -1,5 +1,5 @@
 import axios from "axios";
-import EventBus from "./eventBus.js";
+import * as constants from "./constants";
 
 const api = axios.create();
 
@@ -25,7 +25,12 @@ api.interceptors.response.use(
       typeof error.response !== "undefined" &&
       error.response.status === 401
     ) {
-      EventBus.$emit("logout");
+      window.open(
+        `/${constants.basePaths.login}?${constants.params.redirect}=${encodeURI(
+          window.location.pathname + window.location.search
+        )}`,
+        "_self"
+      );
     }
     return Promise.reject(error);
   }

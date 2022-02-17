@@ -1,6 +1,10 @@
 .clickable-link {
-    cursor: pointer;
-    &:hover {
-        font-weight: bold;
-    }
+  cursor: pointer;
+  &:hover {
+    font-weight: bold;
+  }
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
 }

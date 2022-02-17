@@ -4,8 +4,10 @@ import { Editor } from "@toast-ui/vue-editor";
 import { Viewer } from "@toast-ui/vue-editor";
 
 import api from "../api";
+import * as constants from "../constants";
 import { Note, SearchResult } from "./classes";
 import EventBus from "../eventBus";
+import * as helpers from "../helpers";
 
 export default {
   components: {
@@ -15,7 +17,13 @@ export default {
 
   data: function() {
     return {
-      loggedIn: false,
+      views: {
+        login: 0,
+        home: 1,
+        note: 2,
+        search: 3,
+      },
+      currentView: 1,
       usernameInput: null,
       passwordInput: null,
       rememberMeInput: false,
@@ -30,29 +38,6 @@ export default {
   },
 
   computed: {
-    currentView: function() {
-      // 4 - Login
-      if (this.loggedIn == false) {
-        return 4;
-      }
-      // 3 - Edit Note
-      else if (this.currentNote && this.editMode) {
-        return 3;
-      }
-      // 2 - View Note
-      else if (this.currentNote) {
-        return 2;
-      }
-      // 1 - Search Results
-      else if (this.searchResults) {
-        return 1;
-      }
-      // 0 - Notes List
-      else {
-        return 0;
-      }
-    },
-
     notesByLastModifiedDesc: function() {
       return this.notes.sort(function(a, b) {
         return b.lastModified - a.lastModified;
@@ -60,18 +45,55 @@ export default {
     },
   },
 
-  watch: {
-    searchTerm: function() {
-      this.clearSearchTimeout();
-      if (this.searchTerm) {
-        this.startSearchTimeout();
-      } else {
-        this.searchResults = null;
-      }
-    },
-  },
-
   methods: {
+    route: function() {
+      let path = window.location.pathname.split("/");
+      let basePath = path[1];
+
+      // Home Page
+      if (basePath == "") {
+        this.getNotes();
+        this.currentView = this.views.home;
+      }
+
+      // Search
+      else if (basePath == constants.basePaths.search) {
+        this.searchTerm = helpers.getSearchParam(constants.params.searchTerm);
+        this.getSearchResults();
+        this.currentView = this.views.search;
+      }
+
+      // Note
+      else if (basePath == constants.basePaths.note) {
+        let noteTitle = path[2];
+        this.loadNote(noteTitle);
+        this.currentView = this.views.note;
+      }
+
+      // Login
+      else if (basePath == constants.basePaths.login) {
+        this.currentView = this.views.login;
+      }
+
+      this.updateDocumentTitle();
+    },
+
+    updateDocumentTitle: function() {
+      let pageTitleSuffix = null;
+      if (this.currentView == this.views.login) {
+        pageTitleSuffix = "Login";
+      } else if (this.currentView == this.views.search) {
+        pageTitleSuffix = "Search";
+      } else if (
+        this.currentView == this.views.note &&
+        this.currentNote != null
+      ) {
+        pageTitleSuffix = this.currentNote.title;
+      }
+      window.document.title =
+        (pageTitleSuffix ? `${pageTitleSuffix} - ` : "") + "flatnotes";
+    },
+
     login: function() {
       let parent = this;
       api
@@ -84,8 +106,8 @@ export default {
           if (parent.rememberMeInput == true) {
             localStorage.setItem("token", response.data.access_token);
           }
-          parent.loggedIn = true;
-          parent.getNotes();
+          let redirectPath = helpers.getSearchParam(constants.params.redirect);
+          window.open(redirectPath || "/", "_self");
         })
         .finally(function() {
           parent.usernameInput = null;
@@ -97,7 +119,7 @@ export default {
     logout: function() {
       sessionStorage.removeItem("token");
       localStorage.removeItem("token");
-      this.loggedIn = false;
+      window.open(`/${constants.basePaths.login}`, "_self");
     },
 
     getNotes: function() {
@@ -110,61 +132,60 @@ export default {
       });
     },
 
-    clearSearchTimeout: function() {
-      if (this.searchTimeout != null) {
-        clearTimeout(this.searchTimeout);
-      }
-    },
-
-    startSearchTimeout: function() {
-      this.clearSearchTimeout();
-      this.searchTimeout = setTimeout(this.search, 1000);
-    },
-
     search: function() {
-      let parent = this;
-      this.clearSearchTimeout();
-      if (this.searchTerm) {
-        api
-          .get("/api/search", { params: { term: this.searchTerm } })
-          .then(function(response) {
-            parent.searchResults = [];
-            response.data.forEach(function(result) {
-              parent.searchResults.push(
-                new SearchResult(
-                  result.filename,
-                  result.lastModified,
-                  result.titleHighlights,
-                  result.contentHighlights
-                )
-              );
-            });
+      window.open(
+        `/${constants.basePaths.search}?${
+          constants.params.searchTerm
+        }=${encodeURI(this.searchTerm)}`,
+        "_self"
+      );
+    },
+
+    getSearchResults: function() {
+      var parent = this;
+      api
+        .get("/api/search", { params: { term: this.searchTerm } })
+        .then(function(response) {
+          parent.searchResults = [];
+          response.data.forEach(function(result) {
+            parent.searchResults.push(
+              new SearchResult(
+                result.filename,
+                result.lastModified,
+                result.titleHighlights,
+                result.contentHighlights
+              )
+            );
           });
-      }
+        });
     },
 
     loadNote: function(filename) {
       let parent = this;
-      api.get(`/api/notes/${filename}`).then(function(response) {
-        parent.currentNote = response.data;
-        parent.newFilename = parent.currentNote.filename;
-      });
+      api
+        .get(`/api/notes/${filename}.${constants.markdownExt}`)
+        .then(function(response) {
+          parent.currentNote = new Note(
+            response.data.filename,
+            response.data.lastModified,
+            response.data.content
+          );
+          parent.newFilename = parent.currentNote.filename;
+          parent.updateDocumentTitle();
+        });
+    },
+
+    toggleEditMode: function() {
+      this.editMode = !this.editMode;
     },
 
     newNote: function() {
       this.currentNote = new Note();
       this.editMode = true;
-    },
-
-    unloadNote: function() {
-      this.currentNote = null;
-      this.newFilename = null;
-      this.editMode = false;
-      this.getNotes();
+      this.currentView = this.views.note;
     },
 
     saveNote: function() {
-      let parent = this;
       let newContent = this.$refs.toastUiEditor.invoke("getMarkdown");
 
       // New Note
@@ -174,11 +195,7 @@ export default {
             filename: this.newFilename,
             content: newContent,
           })
-          .then(function(response) {
-            parent.currentNote = response.data;
-            parent.newFilename = parent.currentNote.filename;
-            parent.editMode = false;
-          });
+          .then(this.saveNoteResponseHandler);
       }
 
       // Modified Note
@@ -191,17 +208,25 @@ export default {
             newFilename: this.newFilename,
             newContent: newContent,
           })
-          .then(function(response) {
-            parent.currentNote = response.data;
-            parent.newFilename = parent.currentNote.filename;
-            parent.editMode = false;
-          });
+          .then(this.saveNoteResponseHandler);
       }
 
       // No Change
       else {
-        this.editMode = false;
+        this.toggleEditMode();
       }
+    },
+
+    saveNoteResponseHandler: function(response) {
+      this.currentNote = new Note(
+        response.data.filename,
+        response.data.lastModified,
+        response.data.content
+      );
+      this.newFilename = this.currentNote.filename;
+      this.updateDocumentTitle();
+      history.replaceState(null, "", this.currentNote.href);
+      this.toggleEditMode();
     },
   },
 
@@ -211,8 +236,8 @@ export default {
     let token = localStorage.getItem("token");
     if (token != null) {
       sessionStorage.setItem("token", token);
-      this.loggedIn = true;
-      this.getNotes();
     }
+
+    this.route();
   },
 };

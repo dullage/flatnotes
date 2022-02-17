@@ -34,9 +34,15 @@ This is what flatnotes aims to achieve.
 * [x] Password Authentication
 * [x] Ability to Create a Note
 * [x] Ability to Rename a Note
+* [x] Routing
+* [ ] Loading & Not Found Indicators
+* [ ] Ability to Delete a Note
+* [ ] / to search
+* [ ] e to edit
+* [ ] CTRL-S to save
+* [ ] Drafts
+* [ ] Image Embedding
+* [ ] Index Page (alphabetically sorted note list)
 * [ ] Clean & Responsive UI
 * [ ] Public URL Sharing
-* [ ] Image Embedding
 * [ ] Attachment Upload
-* [ ] Ability to Delete a Note
-* [ ] Error Handling
