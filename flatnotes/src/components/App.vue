@@ -103,7 +103,7 @@
           v-if="currentView == views.note && editMode == true"
           type="button"
           class="btn btn-secondary mx-1"
-          @click="toggleEditMode"
+          @click="cancelNote"
         >
           Cancel
         </button>
@@ -146,10 +146,11 @@
         <div v-else>
           <input type="text" class="form-control" v-model="titleInput" />
           <editor
-            :initialValue="currentNote.content"
+            :initialValue="getContentForEditor()"
             previewStyle="tab"
             height="calc(100vh - 180px)"
             ref="toastUiEditor"
+            @change="startDraftSaveTimeout"
           />
         </div>
       </div>

@@ -29,7 +29,8 @@ export default {
       rememberMeInput: false,
       notes: [],
       searchTerm: null,
-      searchTimeout: null,
+      draftSaveTimeout: null,
+      draftContent: null,
       searchResults: null,
       currentNote: null,
       titleInput: null,
@@ -160,6 +161,18 @@ export default {
         });
     },
 
+    getContentForEditor: function() {
+      let draftContent = localStorage.getItem(this.currentNote.filename);
+      if (draftContent) {
+        if (confirm("Do you want to resume the saved draft?")) {
+          return draftContent;
+        } else {
+          localStorage.removeItem(this.currentNote.filename);
+        }
+      }
+      return this.currentNote.content;
+    },
+
     loadNote: function(filename) {
       let parent = this;
       api
@@ -185,8 +198,27 @@ export default {
       this.currentView = this.views.note;
     },
 
+    getEditorContent: function() {
+      return this.$refs.toastUiEditor.invoke("getMarkdown");
+    },
+
+    clearDraftSaveTimeout: function() {
+      if (this.draftSaveTimeout != null) {
+        clearTimeout(this.draftSaveTimeout);
+      }
+    },
+
+    startDraftSaveTimeout: function() {
+      this.clearDraftSaveTimeout();
+      this.draftSaveTimeout = setTimeout(this.saveDraft, 1000);
+    },
+
+    saveDraft: function() {
+      localStorage.setItem(this.currentNote.filename, this.getEditorContent());
+    },
+
     saveNote: function() {
-      let newContent = this.$refs.toastUiEditor.invoke("getMarkdown");
+      let newContent = this.getEditorContent();
 
       // New Note
       if (this.currentNote.lastModified == null) {
@@ -218,6 +250,7 @@ export default {
     },
 
     saveNoteResponseHandler: function(response) {
+      localStorage.removeItem(this.currentNote.filename);
       this.currentNote = new Note(
         response.data.filename,
         response.data.lastModified,
@@ -226,6 +259,16 @@ export default {
       this.titleInput = this.currentNote.title;
       this.updateDocumentTitle();
       history.replaceState(null, "", this.currentNote.href);
+      this.toggleEditMode();
+    },
+
+    cancelNote: function() {
+      localStorage.removeItem(this.currentNote.filename);
+      if (this.currentNote.lastModified == null) {
+        // Cancelling a new note
+        this.currentNote = null;
+        this.currentView = this.views.home;
+      }
       this.toggleEditMode();
     },
 

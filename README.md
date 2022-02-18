@@ -38,10 +38,10 @@ This is what flatnotes aims to achieve.
 * [x] e to edit
 * [x] Ability to Delete a Note
 * [x] Exclude extension when renaming
+* [x] Drafts
 * [ ] Loading & Not Found Indicators
 * [ ] / to search
 * [ ] CTRL-S to save
-* [ ] Drafts
 * [ ] Image Embedding
 * [ ] Index Page (alphabetically sorted note list)
 * [ ] Clean & Responsive UI
