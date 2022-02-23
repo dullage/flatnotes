@@ -30,10 +30,10 @@ export default {
       notes: [],
       searchTerm: null,
       draftSaveTimeout: null,
-      draftContent: null,
       searchResults: null,
       currentNote: null,
       titleInput: null,
+      initialContent: null,
       editMode: false,
     };
   },
@@ -183,18 +183,37 @@ export default {
             response.data.lastModified,
             response.data.content
           );
-          parent.titleInput = parent.currentNote.title;
           parent.updateDocumentTitle();
         });
     },
 
     toggleEditMode: function() {
+      // To Edit Mode
+      if (this.editMode == false) {
+        this.titleInput = this.currentNote.title;
+        let draftContent = localStorage.getItem(this.currentNote.filename);
+        // Draft
+        if (draftContent && confirm("Do you want to resume the saved draft?")) {
+          this.initialContent = draftContent;
+        }
+        // Non-Draft
+        else {
+          localStorage.removeItem(this.currentNote.filename);
+          this.initialContent = this.currentNote.content;
+        }
+      }
+      // To View Mode
+      else {
+        this.titleInput = null;
+        this.initialContent = null;
+      }
+      // Always
       this.editMode = !this.editMode;
     },
 
     newNote: function() {
       this.currentNote = new Note();
-      this.editMode = true;
+      this.toggleEditMode();
       this.currentView = this.views.note;
     },
 
@@ -256,7 +275,6 @@ export default {
         response.data.lastModified,
         response.data.content
       );
-      this.titleInput = this.currentNote.title;
       this.updateDocumentTitle();
       history.replaceState(null, "", this.currentNote.href);
       this.toggleEditMode();

@@ -8,7 +8,11 @@ class Note {
   }
 
   get title() {
-    return this.filename.substring(0, this.filename.lastIndexOf("."));
+    if (this.filename) {
+      return this.filename.substring(0, this.filename.lastIndexOf("."));
+    } else {
+      return null;
+    }
   }
 
   get ext() {

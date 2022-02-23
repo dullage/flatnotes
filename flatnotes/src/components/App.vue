@@ -146,7 +146,8 @@
         <div v-else>
           <input type="text" class="form-control" v-model="titleInput" />
           <editor
-            :initialValue="getContentForEditor()"
+            :initialValue="initialContent"
+            initialEditType="wysiwyg"
             previewStyle="tab"
             height="calc(100vh - 180px)"
             ref="toastUiEditor"
