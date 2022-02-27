@@ -32,7 +32,7 @@ async def validate_token(token: str = Depends(oauth2_scheme)):
         if username is None or username.lower() != FLATNOTES_USERNAME.lower():
             raise ValueError
         return FLATNOTES_USERNAME
-    except:
+    except (JWTError, ValueError):
         raise HTTPException(
             status_code=401,
             detail="Invalid authentication credentials",
