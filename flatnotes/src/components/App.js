@@ -1,7 +1,7 @@
-import "@toast-ui/editor/dist/toastui-editor.css";
-import "@toast-ui/editor/dist/toastui-editor-viewer.css";
 import { Editor } from "@toast-ui/vue-editor";
 import { Viewer } from "@toast-ui/vue-editor";
+
+import codeSyntaxHighlight from "@toast-ui/editor-plugin-code-syntax-highlight/dist/toastui-editor-plugin-code-syntax-highlight-all.js";
 
 import api from "../api";
 import * as constants from "../constants";
@@ -35,6 +35,8 @@ export default {
       titleInput: null,
       initialContent: null,
       editMode: false,
+      viewerOptions: { plugins: [codeSyntaxHighlight] },
+      editorOptions: { plugins: [codeSyntaxHighlight] },
     };
   },
 

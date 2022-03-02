@@ -11,6 +11,7 @@
   "author": "Adam Dullage",
   "license": "MIT",
   "devDependencies": {
+    "@toast-ui/editor-plugin-code-syntax-highlight": "^3.0.0",
     "@toast-ui/vue-editor": "^3.0.2",
     "@vue/component-compiler-utils": "^3.2.2",
     "axios": "^0.21.1",

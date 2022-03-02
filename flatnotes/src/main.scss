@@ -1,3 +1,12 @@
+@import "bootstrap/dist/css/bootstrap.css";
+@import "bootstrap-vue/dist/bootstrap-vue.css";
+
+@import "@toast-ui/editor/dist/toastui-editor.css";
+@import "@toast-ui/editor/dist/toastui-editor-viewer.css";
+
+@import 'prismjs/themes/prism.css';
+@import '@toast-ui/editor-plugin-code-syntax-highlight/dist/toastui-editor-plugin-code-syntax-highlight.css';
+
 .clickable-link {
   cursor: pointer;
   &:hover {
@@ -6,5 +15,12 @@
   a {
     text-decoration: none;
     color: inherit;
+  }
+}
+
+.toastui-editor-contents {
+  h1,
+  h2 {
+    border-bottom: none;
   }
 }

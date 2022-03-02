@@ -136,10 +136,14 @@
       </form>
 
       <!-- Note -->
-      <div v-if="currentView == views.note && currentNote != null">
+      <div v-if="currentView == views.note && currentNote != null" class="mb-4">
         <!-- Viewer -->
         <div v-if="editMode == false">
-          <viewer :initialValue="currentNote.content" height="600px" />
+          <viewer
+            :initialValue="currentNote.content"
+            height="600px"
+            :options="viewerOptions"
+          />
         </div>
 
         <!-- Editor -->
@@ -147,10 +151,11 @@
           <input type="text" class="form-control" v-model="titleInput" />
           <editor
             :initialValue="initialContent"
-            initialEditType="wysiwyg"
+            initialEditType="markdown"
             previewStyle="tab"
             height="calc(100vh - 180px)"
             ref="toastUiEditor"
+            :options="editorOptions"
             @change="startDraftSaveTimeout"
           />
         </div>
