@@ -5,11 +5,11 @@ file_exists_response = JSONResponse(
     status_code=409,
 )
 
-filename_contains_path_response = JSONResponse(
+invalid_filename_response = JSONResponse(
     content={
-        "message": "The specified filename contains path information which is forbidden."
+        "message": "The specified filename contains invalid characters."
     },
-    status_code=403,
+    status_code=400,
 )
 
 file_not_found_response = JSONResponse(

@@ -12,8 +12,8 @@ from whoosh.qparser import MultifieldParser
 from whoosh.searching import Hit
 
 
-class FilenameContainsPathError(Exception):
-    def __init__(self, message="Specified filename contains path information"):
+class InvalidFilenameError(Exception):
+    def __init__(self, message="The specified filename is invalid"):
         self.message = message
         super().__init__(self.message)
 
@@ -29,8 +29,8 @@ class Note:
     def __init__(
         self, flatnotes: "Flatnotes", filename: str, new: bool = False
     ) -> None:
-        if not self._is_path_safe(filename):
-            raise FilenameContainsPathError
+        if not self._is_valid_filename(filename):
+            raise InvalidFilenameError
         self._flatnotes = flatnotes
         self._filename = filename
         if new and os.path.exists(self.filepath):
@@ -57,8 +57,8 @@ class Note:
 
     @filename.setter
     def filename(self, new_filename):
-        if not self._is_path_safe(new_filename):
-            raise FilenameContainsPathError
+        if not self._is_valid_filename(new_filename):
+            raise InvalidFilenameError
         new_filepath = os.path.join(self._flatnotes.dir, new_filename)
         os.rename(self.filepath, new_filepath)
         self._filename = new_filename
@@ -79,10 +79,13 @@ class Note:
         os.remove(self.filepath)
 
     # Functions
-    def _is_path_safe(self, filename: str) -> bool:
-        """Return False if the declared filename contains path
-        information e.g. '../note.md' or 'folder/note.md'."""
-        return os.path.split(filename)[0] == ""
+    def _is_valid_filename(self, filename: str) -> bool:
+        r"""Return False if the declared filename contains any of the following
+        characters: <>:"/\|?*"""
+        invalid_chars = r'<>:"/\|?*'
+        return not any(
+            invalid_char in filename for invalid_char in invalid_chars
+        )
 
 
 class NoteHit(Note):

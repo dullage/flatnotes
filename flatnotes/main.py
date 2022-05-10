@@ -11,14 +11,14 @@ from auth import (
 from error_responses import (
     file_exists_response,
     file_not_found_response,
-    filename_contains_path_response,
+    invalid_filename_response,
 )
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from models import LoginModel, NoteHitModel, NoteModel, NotePatchModel
 
-from flatnotes import FilenameContainsPathError, Flatnotes, Note
+from flatnotes import InvalidFilenameError, Flatnotes, Note
 
 logging.basicConfig(
     format="%(asctime)s [%(levelname)s]: %(message)s",
@@ -72,8 +72,8 @@ async def post_note(data: NoteModel, _: str = Depends(validate_token)):
         note = Note(flatnotes, data.filename, new=True)
         note.content = data.content
         return NoteModel.dump(note, include_content=True)
-    except FilenameContainsPathError:
-        return filename_contains_path_response
+    except InvalidFilenameError:
+        return invalid_filename_response
     except FileExistsError:
         return file_exists_response
 
@@ -88,8 +88,8 @@ async def get_note(
     try:
         note = Note(flatnotes, filename)
         return NoteModel.dump(note, include_content=include_content)
-    except FilenameContainsPathError:
-        return filename_contains_path_response
+    except InvalidFilenameError:
+        return invalid_filename_response
     except FileNotFoundError:
         return file_not_found_response
 
@@ -105,8 +105,8 @@ async def patch_note(
         if new_data.new_content is not None:
             note.content = new_data.new_content
         return NoteModel.dump(note, include_content=True)
-    except FilenameContainsPathError:
-        return filename_contains_path_response
+    except InvalidFilenameError:
+        return invalid_filename_response
     except FileNotFoundError:
         return file_not_found_response
 
@@ -116,8 +116,8 @@ async def delete_note(filename: str, _: str = Depends(validate_token)):
     try:
         note = Note(flatnotes, filename)
         note.delete()
-    except FilenameContainsPathError:
-        return filename_contains_path_response
+    except InvalidFilenameError:
+        return invalid_filename_response
     except FileNotFoundError:
         return file_not_found_response
 
