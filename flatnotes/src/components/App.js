@@ -27,7 +27,7 @@ export default {
       usernameInput: null,
       passwordInput: null,
       rememberMeInput: false,
-      notes: [],
+      notes: null,
       searchTerm: null,
       draftSaveTimeout: null,
       searchResults: null,
@@ -42,9 +42,13 @@ export default {
 
   computed: {
     notesByLastModifiedDesc: function() {
-      return this.notes.sort(function(a, b) {
-        return b.lastModified - a.lastModified;
-      });
+      if (this.notes == null) {
+        return null;
+      } else {
+        return this.notes.sort(function(a, b) {
+          return b.lastModified - a.lastModified;
+        });
+      }
     },
   },
 
@@ -127,8 +131,8 @@ export default {
 
     getNotes: function() {
       let parent = this;
-      parent.notes = [];
       api.get("/api/notes").then(function(response) {
+        parent.notes = [];
         response.data.forEach(function(note) {
           parent.notes.push(new Note(note.filename, note.lastModified));
         });

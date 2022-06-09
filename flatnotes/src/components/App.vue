@@ -136,35 +136,53 @@
       </form>
 
       <!-- Note -->
-      <div v-if="currentView == views.note && currentNote != null" class="mb-4">
-        <!-- Viewer -->
-        <div v-if="editMode == false">
-          <viewer
-            :initialValue="currentNote.content"
-            height="600px"
-            :options="viewerOptions"
-          />
+      <div v-if="currentView == views.note">
+        <!-- Loading -->
+        <div v-if="currentNote == null">
+          <p class="text-center">Loading...</p>
         </div>
 
-        <!-- Editor -->
-        <div v-else>
-          <input type="text" class="form-control" v-model="titleInput" />
-          <editor
-            :initialValue="initialContent"
-            initialEditType="markdown"
-            previewStyle="tab"
-            height="calc(100vh - 180px)"
-            ref="toastUiEditor"
-            :options="editorOptions"
-            @change="startDraftSaveTimeout"
-          />
+        <!-- Note Loaded -->
+        <div v-else class="mb-4">
+          <!-- Viewer -->
+          <div v-if="editMode == false">
+            <viewer
+              :initialValue="currentNote.content"
+              height="600px"
+              :options="viewerOptions"
+            />
+          </div>
+
+          <!-- Editor -->
+          <div v-else>
+            <input type="text" class="form-control" v-model="titleInput" />
+            <editor
+              :initialValue="initialContent"
+              initialEditType="markdown"
+              previewStyle="tab"
+              height="calc(100vh - 180px)"
+              ref="toastUiEditor"
+              :options="editorOptions"
+              @change="startDraftSaveTimeout"
+            />
+          </div>
         </div>
       </div>
 
       <!-- Search -->
       <div v-if="currentView == views.search">
-        <!-- Search Results -->
-        <div v-if="searchResults">
+        <!-- Searching -->
+        <div v-if="searchResults == null">
+          <p class="text-center">Searching...</p>
+        </div>
+
+        <!-- No Results -->
+        <div v-else-if="searchResults.length == 0">
+          <p class="text-center">No Results</p>
+        </div>
+
+        <!-- Search Results Loaded -->
+        <div v-else>
           <div
             v-for="result in searchResults"
             :key="result.filename"
@@ -183,13 +201,26 @@
 
       <!-- Home -->
       <div v-if="currentView == views.home">
-        <p
-          v-for="note in notesByLastModifiedDesc"
-          class="text-center clickable-link mb-2"
-          :key="note.filename"
-        >
-          <a :href="note.href">{{ note.title }}</a>
-        </p>
+        <!-- Loading -->
+        <div v-if="notes == null">
+          <p class="text-center">Loading...</p>
+        </div>
+
+        <!-- No Notes -->
+        <div v-else-if="notes.length == 0">
+          <p class="text-center">No Notes</p>
+        </div>
+
+        <!-- Notes Loaded -->
+        <div v-else>
+          <p
+            v-for="note in notesByLastModifiedDesc"
+            class="text-center clickable-link mb-2"
+            :key="note.filename"
+          >
+            <a :href="note.href">{{ note.title }}</a>
+          </p>
+        </div>
       </div>
     </div>
   </div>
