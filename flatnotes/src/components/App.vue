@@ -51,7 +51,7 @@
         <button
           v-if="currentView == views.home"
           type="button"
-          class="btn btn-light mx-1"
+          class="btn btn-sm btn-outline-dark mx-1"
           @click="logout"
         >
           Logout
@@ -61,7 +61,7 @@
         <button
           v-if="currentView == views.home"
           type="button"
-          class="btn btn-primary mx-1"
+          class="btn btn-sm btn-outline-primary mx-1"
           @click="newNote"
         >
           New
@@ -72,7 +72,7 @@
           <button
             v-if="currentView == 2 && editMode == false"
             type="button"
-            class="btn btn-secondary mx-1"
+            class="btn btn-sm btn-outline-secondary mx-1"
           >
             Close
           </button>
@@ -82,7 +82,7 @@
         <button
           v-if="currentView == views.note && editMode == false"
           type="button"
-          class="btn btn-warning mx-1"
+          class="btn btn-sm btn-outline-warning mx-1"
           @click="toggleEditMode"
         >
           Edit
@@ -92,7 +92,7 @@
         <button
           v-if="currentView == views.note && editMode == false"
           type="button"
-          class="btn btn-danger mx-1"
+          class="btn btn-sm btn-outline-danger mx-1"
           @click="deleteNote"
         >
           Delete
@@ -102,7 +102,7 @@
         <button
           v-if="currentView == views.note && editMode == true"
           type="button"
-          class="btn btn-secondary mx-1"
+          class="btn btn-sm btn-outline-secondary mx-1"
           @click="cancelNote"
         >
           Cancel
@@ -112,7 +112,7 @@
         <button
           v-if="currentView == views.note && editMode == true"
           type="button"
-          class="btn btn-success mx-1"
+          class="btn btn-sm btn-outline-success mx-1"
           @click="saveNote"
         >
           Save
@@ -143,28 +143,32 @@
         </div>
 
         <!-- Note Loaded -->
-        <div v-else class="mb-4">
-          <!-- Viewer -->
-          <div v-if="editMode == false">
-            <viewer
-              :initialValue="currentNote.content"
-              height="600px"
-              :options="viewerOptions"
-            />
-          </div>
+        <div v-else>
+          <h2 v-if="editMode == false" class="mb-4">{{currentNote.title}}</h2>
+          <input v-else type="text" class="h2 title-input" v-model="titleInput" />
 
-          <!-- Editor -->
-          <div v-else>
-            <input type="text" class="form-control" v-model="titleInput" />
-            <editor
-              :initialValue="initialContent"
-              initialEditType="markdown"
-              previewStyle="tab"
-              height="calc(100vh - 180px)"
-              ref="toastUiEditor"
-              :options="editorOptions"
-              @change="startDraftSaveTimeout"
-            />
+          <!-- Viewer -->
+          <div class="mb-4 note">
+            <div v-if="editMode == false" class="note-viewer">
+              <viewer
+                :initialValue="currentNote.content"
+                height="600px"
+                :options="viewerOptions"
+              />
+            </div>
+
+            <!-- Editor -->
+            <div v-else>
+              <editor
+                :initialValue="initialContent"
+                initialEditType="markdown"
+                previewStyle="tab"
+                height="calc(100vh - 230px)"
+                ref="toastUiEditor"
+                :options="editorOptions"
+                @change="startDraftSaveTimeout"
+              />
+            </div>
           </div>
         </div>
       </div>
