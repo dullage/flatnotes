@@ -5,8 +5,8 @@ from typing import List, Literal
 from auth import (
     FLATNOTES_PASSWORD,
     FLATNOTES_USERNAME,
-    validate_token,
     create_access_token,
+    validate_token,
 )
 from error_responses import (
     file_exists_response,
@@ -18,7 +18,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from models import LoginModel, NoteHitModel, NoteModel, NotePatchModel
 
-from flatnotes import InvalidFilenameError, Flatnotes, Note
+from flatnotes import Flatnotes, InvalidFilenameError, Note
 
 logging.basicConfig(
     format="%(asctime)s [%(levelname)s]: %(message)s",
