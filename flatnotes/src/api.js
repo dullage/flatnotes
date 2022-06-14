@@ -1,5 +1,7 @@
 import axios from "axios";
+
 import * as constants from "./constants";
+import EventBus from "./eventBus";
 
 const api = axios.create();
 
@@ -25,11 +27,11 @@ api.interceptors.response.use(
       typeof error.response !== "undefined" &&
       error.response.status === 401
     ) {
-      window.open(
+      EventBus.$emit(
+        "navigate",
         `/${constants.basePaths.login}?${constants.params.redirect}=${encodeURI(
           window.location.pathname + window.location.search
-        )}`,
-        "_self"
+        )}`
       );
     }
     return Promise.reject(error);

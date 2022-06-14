@@ -1,8 +1,6 @@
 import { Editor } from "@toast-ui/vue-editor";
 import { Viewer } from "@toast-ui/vue-editor";
 
-import codeSyntaxHighlight from "@toast-ui/editor-plugin-code-syntax-highlight/dist/toastui-editor-plugin-code-syntax-highlight-all.js";
-
 import api from "../api";
 import * as constants from "../constants";
 import { Note, SearchResult } from "./classes";
@@ -16,28 +14,7 @@ export default {
   },
 
   data: function() {
-    return {
-      views: {
-        login: 0,
-        home: 1,
-        note: 2,
-        search: 3,
-      },
-      currentView: 1,
-      usernameInput: null,
-      passwordInput: null,
-      rememberMeInput: false,
-      notes: null,
-      searchTerm: null,
-      draftSaveTimeout: null,
-      searchResults: null,
-      currentNote: null,
-      titleInput: null,
-      initialContent: null,
-      editMode: false,
-      viewerOptions: { plugins: [codeSyntaxHighlight] },
-      editorOptions: { plugins: [codeSyntaxHighlight] },
-    };
+    return constants.dataDefaults();
   },
 
   computed: {
@@ -85,6 +62,20 @@ export default {
       this.updateDocumentTitle();
     },
 
+    navigate: function(href, e) {
+      if (e != undefined && e.ctrlKey == true) {
+        window.open(href);
+      } else {
+        history.pushState(null, "", href);
+        this.resetData();
+        this.route();
+      }
+    },
+
+    resetData: function() {
+      Object.assign(this.$data, constants.dataDefaults());
+    },
+
     updateDocumentTitle: function() {
       let pageTitleSuffix = null;
       if (this.currentView == this.views.login) {
@@ -114,7 +105,7 @@ export default {
             localStorage.setItem("token", response.data.access_token);
           }
           let redirectPath = helpers.getSearchParam(constants.params.redirect);
-          window.open(redirectPath || "/", "_self");
+          parent.navigate(redirectPath || "/");
         })
         .finally(function() {
           parent.usernameInput = null;
@@ -126,7 +117,7 @@ export default {
     logout: function() {
       sessionStorage.removeItem("token");
       localStorage.removeItem("token");
-      window.open(`/${constants.basePaths.login}`, "_self");
+      this.navigate(`/${constants.basePaths.login}`);
     },
 
     getNotes: function() {
@@ -140,11 +131,10 @@ export default {
     },
 
     search: function() {
-      window.open(
+      this.navigate(
         `/${constants.basePaths.search}?${
           constants.params.searchTerm
-        }=${encodeURI(this.searchTerm)}`,
-        "_self"
+        }=${encodeURI(this.searchTerm)}`
       );
     },
 
@@ -196,7 +186,7 @@ export default {
     toggleEditMode: function() {
       // To Edit Mode
       if (this.editMode == false) {
-        this.titleInput = this.currentNote.title;
+        this.titleInput = this.currentNote.title || "New Note";
         let draftContent = localStorage.getItem(this.currentNote.filename);
         // Draft
         if (draftContent && confirm("Do you want to resume the saved draft?")) {
@@ -304,7 +294,7 @@ export default {
       ) {
         api
           .delete(`/api/notes/${this.currentNote.filename}`)
-          .then(window.open("/", "_self"));
+          .then(this.navigate("/"));
       }
     },
 
@@ -333,7 +323,7 @@ export default {
   },
 
   created: function() {
-    EventBus.$on("logout", this.logout);
+    EventBus.$on("navigate", this.navigate);
     document.addEventListener("keydown", this.keyboardShortcuts);
 
     let token = localStorage.getItem("token");
@@ -342,5 +332,9 @@ export default {
     }
 
     this.route();
+  },
+
+  mounted: function() {
+    window.addEventListener("popstate", this.route);
   },
 };

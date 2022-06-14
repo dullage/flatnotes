@@ -3,7 +3,9 @@
     <div>
       <!-- Header -->
       <div class="mt-4 mb-4">
-        <h1 class="h1 clickable-link text-center"><a href="/">flatnotes</a></h1>
+        <h1 class="h1 clickable-link text-center">
+          <a href="/" @click.prevent="navigate('/', $event)">flatnotes</a>
+        </h1>
       </div>
 
       <!-- Login -->
@@ -68,7 +70,7 @@
         </button>
 
         <!-- Close -->
-        <a href="/">
+        <a href="/" @click.prevent="navigate('/')">
           <button
             v-if="currentView == 2 && editMode == false"
             type="button"
@@ -144,8 +146,13 @@
 
         <!-- Note Loaded -->
         <div v-else>
-          <h2 v-if="editMode == false" class="mb-4">{{currentNote.title}}</h2>
-          <input v-else type="text" class="h2 title-input" v-model="titleInput" />
+          <h2 v-if="editMode == false" class="mb-4">{{ currentNote.title }}</h2>
+          <input
+            v-else
+            type="text"
+            class="h2 title-input"
+            v-model="titleInput"
+          />
 
           <!-- Viewer -->
           <div class="mb-4 note">
@@ -193,7 +200,11 @@
             class="mb-5"
           >
             <p class="h5 text-center clickable-link">
-              <a v-html="result.titleHighlightsOrTitle" :href="result.href"></a>
+              <a
+                v-html="result.titleHighlightsOrTitle"
+                :href="result.href"
+                @click.prevent="navigate(result.href, $event)"
+              ></a>
             </p>
             <p
               class="text-center text-muted"
@@ -222,7 +233,9 @@
             class="text-center clickable-link mb-2"
             :key="note.filename"
           >
-            <a :href="note.href">{{ note.title }}</a>
+            <a :href="note.href" @click.prevent="navigate(note.href, $event)">{{
+              note.title
+            }}</a>
           </p>
         </div>
       </div>
