@@ -186,7 +186,7 @@ export default {
     toggleEditMode: function() {
       // To Edit Mode
       if (this.editMode == false) {
-        this.titleInput = this.currentNote.title || "New Note";
+        this.titleInput = this.currentNote.title;
         let draftContent = localStorage.getItem(this.currentNote.filename);
         // Draft
         if (draftContent && confirm("Do you want to resume the saved draft?")) {

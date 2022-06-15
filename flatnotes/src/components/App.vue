@@ -152,6 +152,7 @@
             type="text"
             class="h2 title-input"
             v-model="titleInput"
+            placeholder="Title"
           />
 
           <!-- Viewer -->
