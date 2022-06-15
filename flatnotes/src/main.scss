@@ -11,21 +11,18 @@
 @import "prismjs/themes/prism.css";
 @import "@toast-ui/editor-plugin-code-syntax-highlight/dist/toastui-editor-plugin-code-syntax-highlight.css";
 
-
 // Variables
 $off-white: #f8f9fd70;
-
 
 // Mixins
 @mixin note-content {
   padding: min(2vw, 30px) min(3vw, 40px);
 }
 
-
 // Elements & Classes
 body {
   background-color: $off-white;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .clickable-link {
@@ -50,7 +47,7 @@ body {
 
 .title-input {
   border: none;
-  
+
   // Override user agent styling
   background-color: $off-white;
   color: #212529;
@@ -61,14 +58,18 @@ body {
   outline: none;
 }
 
-
 // Toast UI Overrides
 .toastui-editor-contents {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   h1,
   h2 {
     border-bottom: none;
   }
+}
+
+.toastui-editor-contents pre,
+.toastui-editor-md-code-block-line-background {
+  background-color: darken($off-white, 3%);
 }
 
 .toastui-editor-defaultUI {
