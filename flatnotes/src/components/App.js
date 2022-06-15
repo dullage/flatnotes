@@ -17,18 +17,6 @@ export default {
     return constants.dataDefaults();
   },
 
-  computed: {
-    notesByLastModifiedDesc: function() {
-      if (this.notes == null) {
-        return null;
-      } else {
-        return this.notes.sort(function(a, b) {
-          return b.lastModified - a.lastModified;
-        });
-      }
-    },
-  },
-
   methods: {
     route: function() {
       let path = window.location.pathname.split("/");
@@ -36,7 +24,7 @@ export default {
 
       // Home Page
       if (basePath == "") {
-        this.getNotes();
+        this.getNotes(5, "lastModified", "desc");
         this.currentView = this.views.home;
       }
 
@@ -120,14 +108,18 @@ export default {
       this.navigate(`/${constants.basePaths.login}`);
     },
 
-    getNotes: function() {
+    getNotes: function(limit = null, sort = "filename", order = "asc") {
       let parent = this;
-      api.get("/api/notes").then(function(response) {
-        parent.notes = [];
-        response.data.forEach(function(note) {
-          parent.notes.push(new Note(note.filename, note.lastModified));
+      api
+        .get("/api/notes", {
+          params: { limit: limit, sort: sort, order: order },
+        })
+        .then(function(response) {
+          parent.notes = [];
+          response.data.forEach(function(note) {
+            parent.notes.push(new Note(note.filename, note.lastModified));
+          });
         });
-      });
     },
 
     search: function() {
