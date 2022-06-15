@@ -230,7 +230,7 @@
         <!-- Notes Loaded -->
         <div v-else>
           <p
-            v-for="note in notesByLastModifiedDesc"
+            v-for="note in notes"
             class="text-center clickable-link mb-2"
             :key="note.filename"
           >
