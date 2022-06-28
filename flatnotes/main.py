@@ -119,6 +119,8 @@ async def patch_note(
         return NoteModel.dump(note, include_content=True)
     except InvalidFilenameError:
         return invalid_filename_response
+    except FileExistsError:
+        return file_exists_response
     except FileNotFoundError:
         return file_not_found_response
 

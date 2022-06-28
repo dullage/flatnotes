@@ -232,7 +232,19 @@ export default {
       localStorage.setItem(this.currentNote.filename, this.getEditorContent());
     },
 
+    existingFilenameToast: function() {
+      this.$bvToast.toast(
+        "A note with this title already exists. Please try again with a new title.",
+        {
+          title: "Duplicate ✘",
+          variant: "danger",
+          noCloseButton: true,
+        }
+      );
+    },
+
     saveNote: function() {
+      let parent = this;
       let newContent = this.getEditorContent();
 
       // New Note
@@ -242,7 +254,12 @@ export default {
             filename: `${this.titleInput}.${constants.markdownExt}`,
             content: newContent,
           })
-          .then(this.saveNoteResponseHandler);
+          .then(this.saveNoteResponseHandler)
+          .catch(function(error) {
+            if (error.response.status == 409) {
+              parent.existingFilenameToast();
+            }
+          });
       }
 
       // Modified Note
@@ -255,7 +272,12 @@ export default {
             newFilename: `${this.titleInput}.${this.currentNote.ext}`,
             newContent: newContent,
           })
-          .then(this.saveNoteResponseHandler);
+          .then(this.saveNoteResponseHandler)
+          .catch(function(error) {
+            if (error.response.status == 409) {
+              parent.existingFilenameToast();
+            }
+          });
       }
 
       // No Change
