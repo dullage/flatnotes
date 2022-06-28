@@ -15,7 +15,7 @@
     "@toast-ui/vue-editor": "^3.0.2",
     "@vue/component-compiler-utils": "^3.2.2",
     "axios": "^0.21.1",
-    "bootstrap": "^5.0.2",
+    "bootstrap": "4.6",
     "bootstrap-vue": "^2.21.2",
     "parcel-bundler": "^1.12.5",
     "sass": "^1.37.5",
