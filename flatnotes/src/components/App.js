@@ -95,6 +95,14 @@ export default {
           let redirectPath = helpers.getSearchParam(constants.params.redirect);
           parent.navigate(redirectPath || "/");
         })
+        .catch(function(error) {
+          if ([400, 422].includes(error.response.status)) {
+            parent.$bvToast.toast("Incorrect Username or Password ✘", {
+              variant: "danger",
+              noCloseButton: true,
+            });
+          }
+        })
         .finally(function() {
           parent.usernameInput = null;
           parent.passwordInput = null;
