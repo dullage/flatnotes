@@ -131,7 +131,7 @@ export default {
     },
 
     getSearchResults: function() {
-      var parent = this;
+      let parent = this;
       api
         .get("/api/search", { params: { term: this.searchTerm } })
         .then(function(response) {
@@ -279,14 +279,19 @@ export default {
     },
 
     deleteNote: function() {
+      let parent = this;
       if (
         confirm(
           `Are you sure you want to delete the note '${this.currentNote.title}'?`
         )
       ) {
-        api
-          .delete(`/api/notes/${this.currentNote.filename}`)
-          .then(this.navigate("/"));
+        api.delete(`/api/notes/${this.currentNote.filename}`).then(function() {
+          parent.navigate("/");
+          parent.$bvToast.toast("Note Deleted ✓", {
+            variant: "success",
+            noCloseButton: true,
+          });
+        });
       }
     },
 
