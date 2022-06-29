@@ -5,7 +5,7 @@ import RecentlyModified from "./RecentlyModified";
 
 import api from "../api";
 import * as constants from "../constants";
-import { Note, SearchResult } from "./classes";
+import { Note, SearchResult } from "../classes";
 import EventBus from "../eventBus";
 import * as helpers from "../helpers";
 

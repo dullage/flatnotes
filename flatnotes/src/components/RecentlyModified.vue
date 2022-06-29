@@ -29,7 +29,7 @@
 
 <script>
 import api from "../api";
-import { Note } from "./classes";
+import { Note } from "../classes";
 import EventBus from "../eventBus";
 
 export default {
