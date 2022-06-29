@@ -271,6 +271,7 @@ export default {
       // No Change
       else {
         this.toggleEditMode();
+        this.saveNoteToast();
       }
     },
 
@@ -284,6 +285,14 @@ export default {
       this.updateDocumentTitle();
       history.replaceState(null, "", this.currentNote.href);
       this.toggleEditMode();
+      this.saveNoteToast();
+    },
+
+    saveNoteToast: function() {
+      this.$bvToast.toast("Note Saved ✓", {
+        variant: "success",
+        noCloseButton: true,
+      });
     },
 
     cancelNote: function() {
