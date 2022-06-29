@@ -1,6 +1,8 @@
 import { Editor } from "@toast-ui/vue-editor";
 import { Viewer } from "@toast-ui/vue-editor";
 
+import RecentlyModified from "./RecentlyModified";
+
 import api from "../api";
 import * as constants from "../constants";
 import { Note, SearchResult } from "./classes";
@@ -11,6 +13,7 @@ export default {
   components: {
     Viewer,
     Editor,
+    RecentlyModified,
   },
 
   data: function() {
@@ -24,7 +27,6 @@ export default {
 
       // Home Page
       if (basePath == "") {
-        this.getNotes(5, "lastModified", "desc");
         this.currentView = this.views.home;
       }
 
@@ -114,20 +116,6 @@ export default {
       sessionStorage.removeItem("token");
       localStorage.removeItem("token");
       this.navigate(`/${constants.basePaths.login}`);
-    },
-
-    getNotes: function(limit = null, sort = "filename", order = "asc") {
-      let parent = this;
-      api
-        .get("/api/notes", {
-          params: { limit: limit, sort: sort, order: order },
-        })
-        .then(function(response) {
-          parent.notes = [];
-          response.data.forEach(function(note) {
-            parent.notes.push(new Note(note.filename, note.lastModified));
-          });
-        });
     },
 
     search: function() {

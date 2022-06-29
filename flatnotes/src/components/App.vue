@@ -216,30 +216,7 @@
       </div>
 
       <!-- Home -->
-      <div v-if="currentView == views.home">
-        <!-- Loading -->
-        <div v-if="notes == null">
-          <p class="text-center">Loading...</p>
-        </div>
-
-        <!-- No Notes -->
-        <div v-else-if="notes.length == 0">
-          <p class="text-center">No Notes</p>
-        </div>
-
-        <!-- Notes Loaded -->
-        <div v-else>
-          <p
-            v-for="note in notes"
-            class="text-center clickable-link mb-2"
-            :key="note.filename"
-          >
-            <a :href="note.href" @click.prevent="navigate(note.href, $event)">{{
-              note.title
-            }}</a>
-          </p>
-        </div>
-      </div>
+      <RecentlyModified v-if="currentView == views.home"/>
     </div>
   </div>
 </template>

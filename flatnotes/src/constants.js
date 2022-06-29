@@ -30,7 +30,6 @@ export const dataDefaults = function() {
     rememberMeInput: false,
 
     // Note Data
-    notes: null,
     searchTerm: null,
     searchResults: null,
     currentNote: null,
