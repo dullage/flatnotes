@@ -22,6 +22,7 @@
               id="username"
               autocomplete="username"
               v-model="usernameInput"
+              required
             />
           </div>
           <div class="mb-3">
@@ -32,6 +33,7 @@
               id="password"
               autocomplete="current-password"
               v-model="passwordInput"
+              required
             />
           </div>
           <div class="mb-3 form-check">
