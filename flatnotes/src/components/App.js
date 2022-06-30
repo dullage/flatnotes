@@ -234,6 +234,18 @@ export default {
     saveNote: function() {
       let parent = this;
       let newContent = this.getEditorContent();
+    
+      // Title Validation
+      if (typeof this.titleInput == 'string') {
+        this.titleInput = this.titleInput.trim()
+      }
+      if (!this.titleInput) {
+        this.$bvToast.toast("Cannot save note without a title ✘", {
+          variant: "danger",
+          noCloseButton: true,
+        });
+        return
+      }
 
       // New Note
       if (this.currentNote.lastModified == null) {
@@ -289,7 +301,7 @@ export default {
     },
 
     saveNoteToast: function() {
-      this.$bvToast.toast("Note Saved ✓", {
+      this.$bvToast.toast("Note saved ✓", {
         variant: "success",
         noCloseButton: true,
       });
@@ -314,7 +326,7 @@ export default {
       ) {
         api.delete(`/api/notes/${this.currentNote.filename}`).then(function() {
           parent.navigate("/");
-          parent.$bvToast.toast("Note Deleted ✓", {
+          parent.$bvToast.toast("Note deleted ✓", {
             variant: "success",
             noCloseButton: true,
           });
