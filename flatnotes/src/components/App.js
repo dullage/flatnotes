@@ -172,27 +172,45 @@ export default {
     },
 
     toggleEditMode: function() {
+      let parent = this;
+
       // To Edit Mode
       if (this.editMode == false) {
         this.titleInput = this.currentNote.title;
         let draftContent = localStorage.getItem(this.currentNote.filename);
-        // Draft
-        if (draftContent && confirm("Do you want to resume the saved draft?")) {
-          this.initialContent = draftContent;
-        }
-        // Non-Draft
-        else {
-          localStorage.removeItem(this.currentNote.filename);
+
+        if (draftContent) {
+          this.$bvModal
+            .msgBoxConfirm(
+              "There is an unsaved draft of this note stored in this browser. Do you want to resume the draft version or delete it?",
+              {
+                centered: true,
+                title: "Resume Draft?",
+                okTitle: "Resume Draft",
+                cancelTitle: "Delete Draft",
+                cancelVariant: "danger",
+              }
+            )
+            .then(function(response) {
+              if (response == true) {
+                parent.initialContent = draftContent;
+              } else {
+                parent.initialContent = parent.currentNote.content;
+                localStorage.removeItem(parent.currentNote.filename);
+              }
+              parent.editMode = !parent.editMode;
+            });
+        } else {
           this.initialContent = this.currentNote.content;
+          this.editMode = !this.editMode;
         }
       }
       // To View Mode
       else {
         this.titleInput = null;
         this.initialContent = null;
+        this.editMode = !this.editMode;
       }
-      // Always
-      this.editMode = !this.editMode;
     },
 
     newNote: function() {
