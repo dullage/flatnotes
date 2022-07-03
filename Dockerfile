@@ -1,4 +1,4 @@
-FROM python:3.8-slim-bullseye
+FROM python:3.10-slim-bullseye
 
 ARG USER=flatnotes
 ARG UID=1000
