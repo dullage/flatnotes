@@ -234,17 +234,17 @@ export default {
     saveNote: function() {
       let parent = this;
       let newContent = this.getEditorContent();
-    
+
       // Title Validation
-      if (typeof this.titleInput == 'string') {
-        this.titleInput = this.titleInput.trim()
+      if (typeof this.titleInput == "string") {
+        this.titleInput = this.titleInput.trim();
       }
       if (!this.titleInput) {
         this.$bvToast.toast("Cannot save note without a title ✘", {
           variant: "danger",
           noCloseButton: true,
         });
-        return
+        return;
       }
 
       // New Note
@@ -319,19 +319,29 @@ export default {
 
     deleteNote: function() {
       let parent = this;
-      if (
-        confirm(
-          `Are you sure you want to delete the note '${this.currentNote.title}'?`
+      this.$bvModal
+        .msgBoxConfirm(
+          `Are you sure you want to delete the note '${this.currentNote.title}'?`,
+          {
+            centered: true,
+            title: "Confirm Deletion",
+            okTitle: "Delete",
+            okVariant: "danger",
+          }
         )
-      ) {
-        api.delete(`/api/notes/${this.currentNote.filename}`).then(function() {
-          parent.navigate("/");
-          parent.$bvToast.toast("Note deleted ✓", {
-            variant: "success",
-            noCloseButton: true,
-          });
+        .then(function(response) {
+          if (response == true) {
+            api
+              .delete(`/api/notes/${parent.currentNote.filename}`)
+              .then(function() {
+                parent.navigate("/");
+                parent.$bvToast.toast("Note deleted ✓", {
+                  variant: "success",
+                  noCloseButton: true,
+                });
+              });
+          }
         });
-      }
     },
 
     keyboardShortcuts: function(e) {
