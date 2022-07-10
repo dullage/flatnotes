@@ -12,7 +12,7 @@ services:
       # FLATNOTES_SESSION_EXPIRY_DAYS: "7"                   # Optional. Defaults to 30.
     volumes:
       - "./data:/data"
-      # - "./index:/data/.flatnotes"                         # Optional.
+      # - "./index:/data/.flatnotes"                         # Optional. Saves rebuilding the search index the next time the container is re-created. 
     ports:
       - "80:80"
     restart: unless-stopped
