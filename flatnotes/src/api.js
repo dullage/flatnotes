@@ -33,6 +33,7 @@ api.interceptors.response.use(
           window.location.pathname + window.location.search
         )}`
       );
+      error.handled = true;
     }
     return Promise.reject(error);
   }

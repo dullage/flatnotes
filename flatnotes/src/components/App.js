@@ -98,11 +98,15 @@ export default {
           parent.navigate(redirectPath || "/");
         })
         .catch(function(error) {
-          if ([400, 422].includes(error.response.status)) {
+          if (error.handled) {
+            return;
+          } else if ([400, 422].includes(error.response.status)) {
             parent.$bvToast.toast("Incorrect Username or Password ✘", {
               variant: "danger",
               noCloseButton: true,
             });
+          } else {
+            parent.unhandledServerErrorToast();
           }
         })
         .finally(function() {
@@ -142,6 +146,11 @@ export default {
               )
             );
           });
+        })
+        .catch(function(error) {
+          if (!error.handled) {
+            parent.unhandledServerErrorToast();
+          }
         });
     },
 
@@ -168,6 +177,11 @@ export default {
             response.data.content
           );
           parent.updateDocumentTitle();
+        })
+        .catch(function(error) {
+          if (!error.handled) {
+            parent.unhandledServerErrorToast();
+          }
         });
     },
 
@@ -274,8 +288,12 @@ export default {
           })
           .then(this.saveNoteResponseHandler)
           .catch(function(error) {
-            if (error.response.status == 409) {
+            if (error.handled) {
+              return;
+            } else if (error.response.status == 409) {
               parent.existingFilenameToast();
+            } else {
+              parent.unhandledServerErrorToast();
             }
           });
       }
@@ -292,8 +310,12 @@ export default {
           })
           .then(this.saveNoteResponseHandler)
           .catch(function(error) {
-            if (error.response.status == 409) {
+            if (error.handled) {
+              return;
+            } else if (error.response.status == 409) {
               parent.existingFilenameToast();
+            } else {
+              parent.unhandledServerErrorToast();
             }
           });
       }
@@ -357,6 +379,11 @@ export default {
                   variant: "success",
                   noCloseButton: true,
                 });
+              })
+              .catch(function(error) {
+                if (!error.handled) {
+                  parent.unhandledServerErrorToast();
+                }
               });
           }
         });
@@ -384,10 +411,22 @@ export default {
       //   this.saveNote();
       // }
     },
+
+    unhandledServerErrorToast: function() {
+      this.$bvToast.toast(
+        "Unknown error communicating with the server. Please try again.",
+        {
+          title: "Unknown Error",
+          variant: "danger",
+          noCloseButton: true,
+        }
+      );
+    },
   },
 
   created: function() {
     EventBus.$on("navigate", this.navigate);
+    EventBus.$on("unhandledServerError", this.unhandledServerErrorToast);
     document.addEventListener("keydown", this.keyboardShortcuts);
 
     let token = localStorage.getItem("token");

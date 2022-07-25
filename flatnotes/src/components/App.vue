@@ -218,7 +218,7 @@
       </div>
 
       <!-- Home -->
-      <RecentlyModified v-if="currentView == views.home"/>
+      <RecentlyModified v-if="currentView == views.home" />
     </div>
   </div>
 </template>

@@ -51,6 +51,11 @@ export default {
           response.data.forEach(function (note) {
             parent.notes.push(new Note(note.filename, note.lastModified));
           });
+        })
+        .catch(function (error) {
+          if (!error.handled) {
+            EventBus.$emit("unhandledServerError");
+          }
         });
     },
 
