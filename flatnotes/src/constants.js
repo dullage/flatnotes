@@ -29,12 +29,17 @@ export const dataDefaults = function() {
     passwordInput: null,
     rememberMeInput: false,
 
+    // Search Data
+    searchFailed: false,
+
     // Note Data
     searchTerm: null,
     searchResults: null,
     currentNote: null,
     titleInput: null,
     initialContent: null,
+    noteLoadFailed: false,
+    noteLoadFailedMessage: "Loading failed 😞",
 
     // Toast UI Plugins
     viewerOptions: { plugins: [codeSyntaxHighlight] },

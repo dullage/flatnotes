@@ -4,7 +4,7 @@
 
     <!-- Loading -->
     <div v-if="notes == null">
-      <p class="text-center">Loading...</p>
+      <loading-indicator :failed="loadingFailed"/>
     </div>
 
     <!-- No Notes -->
@@ -31,11 +31,17 @@
 import api from "../api";
 import { Note } from "../classes";
 import EventBus from "../eventBus";
+import LoadingIndicator from "./LoadingIndicator.vue";
 
 export default {
+  components: {
+    LoadingIndicator,
+  },
+
   data: function () {
     return {
       notes: null,
+      loadingFailed: false,
     };
   },
 
@@ -53,6 +59,7 @@ export default {
           });
         })
         .catch(function (error) {
+          parent.loadingFailed = true;
           if (!error.handled) {
             EventBus.$emit("unhandledServerError");
           }

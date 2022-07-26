@@ -143,7 +143,10 @@
       <div v-if="currentView == views.note">
         <!-- Loading -->
         <div v-if="currentNote == null">
-          <p class="text-center">Loading...</p>
+          <loading-indicator
+            :failure-message="noteLoadFailedMessage"
+            :failed="noteLoadFailed"
+          />
         </div>
 
         <!-- Note Loaded -->
@@ -187,7 +190,11 @@
       <div v-if="currentView == views.search">
         <!-- Searching -->
         <div v-if="searchResults == null">
-          <p class="text-center">Searching...</p>
+          <loading-indicator
+            loading-message="Searching..."
+            failure-message="Search failed 😞"
+            :failed="searchFailed"
+          />
         </div>
 
         <!-- No Results -->

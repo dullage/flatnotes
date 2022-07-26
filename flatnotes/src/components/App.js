@@ -2,6 +2,7 @@ import { Editor } from "@toast-ui/vue-editor";
 import { Viewer } from "@toast-ui/vue-editor";
 
 import RecentlyModified from "./RecentlyModified";
+import LoadingIndicator from "./LoadingIndicator.vue";
 
 import api from "../api";
 import * as constants from "../constants";
@@ -14,6 +15,7 @@ export default {
     Viewer,
     Editor,
     RecentlyModified,
+    LoadingIndicator,
   },
 
   data: function() {
@@ -100,7 +102,10 @@ export default {
         .catch(function(error) {
           if (error.handled) {
             return;
-          } else if ([400, 422].includes(error.response.status)) {
+          } else if (
+            typeof error.response !== "undefined" &&
+            [400, 422].includes(error.response.status)
+          ) {
             parent.$bvToast.toast("Incorrect Username or Password ✘", {
               variant: "danger",
               noCloseButton: true,
@@ -132,6 +137,7 @@ export default {
 
     getSearchResults: function() {
       let parent = this;
+      this.searchFailed = false;
       api
         .get("/api/search", { params: { term: this.searchTerm } })
         .then(function(response) {
@@ -149,6 +155,7 @@ export default {
         })
         .catch(function(error) {
           if (!error.handled) {
+            parent.searchFailed = true;
             parent.unhandledServerErrorToast();
           }
         });
@@ -168,6 +175,7 @@ export default {
 
     loadNote: function(filename) {
       let parent = this;
+      this.noteLoadFailed = false;
       api
         .get(`/api/notes/${filename}.${constants.markdownExt}`)
         .then(function(response) {
@@ -179,8 +187,17 @@ export default {
           parent.updateDocumentTitle();
         })
         .catch(function(error) {
-          if (!error.handled) {
+          if (error.handled) {
+            return;
+          } else if (
+            typeof error.response !== "undefined" &&
+            error.response.status == 404
+          ) {
+            parent.noteLoadFailedMessage = "Note not found 😞";
+            parent.noteLoadFailed = true;
+          } else {
             parent.unhandledServerErrorToast();
+            parent.noteLoadFailed = true;
           }
         });
     },
@@ -290,7 +307,10 @@ export default {
           .catch(function(error) {
             if (error.handled) {
               return;
-            } else if (error.response.status == 409) {
+            } else if (
+              typeof error.response !== "undefined" &&
+              error.response.status == 409
+            ) {
               parent.existingFilenameToast();
             } else {
               parent.unhandledServerErrorToast();
@@ -312,7 +332,10 @@ export default {
           .catch(function(error) {
             if (error.handled) {
               return;
-            } else if (error.response.status == 409) {
+            } else if (
+              typeof error.response !== "undefined" &&
+              error.response.status == 409
+            ) {
               parent.existingFilenameToast();
             } else {
               parent.unhandledServerErrorToast();
