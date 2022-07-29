@@ -84,7 +84,11 @@
 
         <!-- Edit -->
         <button
-          v-if="currentView == views.note && editMode == false"
+          v-if="
+            currentView == views.note &&
+            editMode == false &&
+            noteLoadFailed == false
+          "
           type="button"
           class="btn btn-sm btn-outline-warning mx-1"
           @click="toggleEditMode"
@@ -94,7 +98,11 @@
 
         <!-- Delete -->
         <button
-          v-if="currentView == views.note && editMode == false"
+          v-if="
+            currentView == views.note &&
+            editMode == false &&
+            noteLoadFailed == false
+          "
           type="button"
           class="btn btn-sm btn-outline-danger mx-1"
           @click="deleteNote"
