@@ -4,7 +4,7 @@
 
     <!-- Loading -->
     <div v-if="notes == null">
-      <loading-indicator :failed="loadingFailed"/>
+      <loading-indicator :failed="loadingFailed" />
     </div>
 
     <!-- No Notes -->
@@ -17,7 +17,7 @@
       <p
         v-for="note in notes"
         class="text-center clickable-link mb-2"
-        :key="note.filename"
+        :key="note.title"
       >
         <a :href="note.href" @click.prevent="openNote(note.href, $event)">{{
           note.title
@@ -46,7 +46,7 @@ export default {
   },
 
   methods: {
-    getNotes: function (limit = null, sort = "filename", order = "asc") {
+    getNotes: function (limit = null, sort = "title", order = "asc") {
       let parent = this;
       api
         .get("/api/notes", {
@@ -55,7 +55,7 @@ export default {
         .then(function (response) {
           parent.notes = [];
           response.data.forEach(function (note) {
-            parent.notes.push(new Note(note.filename, note.lastModified));
+            parent.notes.push(new Note(note.title, note.lastModified));
           });
         })
         .catch(function (error) {

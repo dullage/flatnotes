@@ -11,26 +11,26 @@ class LoginModel(CamelCaseBaseModel):
 
 
 class NoteModel(CamelCaseBaseModel):
-    filename: str
+    title: str
     last_modified: Optional[int]
     content: Optional[str]
 
     @classmethod
     def dump(cls, note: Note, include_content: bool = True) -> Dict:
         return {
-            "filename": note.filename,
+            "title": note.title,
             "lastModified": note.last_modified,
             "content": note.content if include_content else None,
         }
 
 
 class NotePatchModel(CamelCaseBaseModel):
-    new_filename: Optional[str]
+    new_title: Optional[str]
     new_content: Optional[str]
 
 
 class NoteHitModel(CamelCaseBaseModel):
-    filename: str
+    title: str
     last_modified: int
     title_highlights: Optional[str]
     content_highlights: Optional[str]
@@ -38,7 +38,7 @@ class NoteHitModel(CamelCaseBaseModel):
     @classmethod
     def dump(self, note_hit: NoteHit) -> Dict:
         return {
-            "filename": note_hit.filename,
+            "title": note_hit.title,
             "lastModified": note_hit.last_modified,
             "titleHighlights": note_hit.title_highlights,
             "contentHighlights": note_hit.content_highlights,

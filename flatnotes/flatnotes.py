@@ -11,9 +11,13 @@ from whoosh.index import Index
 from whoosh.qparser import MultifieldParser
 from whoosh.searching import Hit
 
+from helpers import strip_ext
 
-class InvalidFilenameError(Exception):
-    def __init__(self, message="The specified filename is invalid"):
+MARKDOWN_EXT = ".md"
+
+
+class InvalidTitleError(Exception):
+    def __init__(self, message="The specified title is invalid"):
         self.message = message
         super().__init__(self.message)
 
@@ -27,12 +31,12 @@ class IndexSchema(SchemaClass):
 
 class Note:
     def __init__(
-        self, flatnotes: "Flatnotes", filename: str, new: bool = False
+        self, flatnotes: "Flatnotes", title: str, new: bool = False
     ) -> None:
-        if not self._is_valid_filename(filename):
-            raise InvalidFilenameError
         self._flatnotes = flatnotes
-        self._filename = filename
+        self._title = title.strip()
+        if not self._is_valid_title(self._title):
+            raise InvalidTitleError
         if new and os.path.exists(self.filepath):
             raise FileExistsError
         elif new:
@@ -40,11 +44,11 @@ class Note:
 
     @property
     def filepath(self):
-        return os.path.join(self._flatnotes.dir, self._filename)
+        return os.path.join(self._flatnotes.dir, self.filename)
 
     @property
-    def title(self):
-        return os.path.splitext(self._filename)[0]
+    def filename(self):
+        return self._title + MARKDOWN_EXT
 
     @property
     def last_modified(self):
@@ -52,16 +56,18 @@ class Note:
 
     # Editable Properties
     @property
-    def filename(self):
-        return self._filename
+    def title(self):
+        return self._title
 
-    @filename.setter
-    def filename(self, new_filename):
-        if not self._is_valid_filename(new_filename):
-            raise InvalidFilenameError
-        new_filepath = os.path.join(self._flatnotes.dir, new_filename)
+    @title.setter
+    def title(self, new_title):
+        if not self._is_valid_title(new_title):
+            raise InvalidTitleError
+        new_filepath = os.path.join(
+            self._flatnotes.dir, new_title + MARKDOWN_EXT
+        )
         os.rename(self.filepath, new_filepath)
-        self._filename = new_filename
+        self._title = new_title
 
     @property
     def content(self):
@@ -79,18 +85,16 @@ class Note:
         os.remove(self.filepath)
 
     # Functions
-    def _is_valid_filename(self, filename: str) -> bool:
-        r"""Return False if the declared filename contains any of the following
+    def _is_valid_title(self, title: str) -> bool:
+        r"""Return False if the declared title contains any of the following
         characters: <>:"/\|?*"""
         invalid_chars = r'<>:"/\|?*'
-        return not any(
-            invalid_char in filename for invalid_char in invalid_chars
-        )
+        return not any(invalid_char in title for invalid_char in invalid_chars)
 
 
 class NoteHit(Note):
     def __init__(self, flatnotes: "Flatnotes", hit: Hit) -> None:
-        super().__init__(flatnotes, hit["filename"])
+        super().__init__(flatnotes, strip_ext(hit["filename"]))
         self.title_highlights = hit.highlights("title", text=self.title)
         self.content_highlights = hit.highlights(
             "content",
@@ -127,7 +131,8 @@ class Flatnotes(object):
         self, writer: writing.IndexWriter, note: Note
     ) -> None:
         """Add a Note object to the index using the given writer. If the
-        filepath already exists in the index an update will be performed instead."""
+        filename already exists in the index an update will be performed
+        instead."""
         writer.update_document(
             filename=note.filename,
             last_modified=note.last_modified,
@@ -136,10 +141,13 @@ class Flatnotes(object):
         )
 
     def get_notes(self) -> List[Note]:
-        """Return a list containing a Note object for every file in the notes directory."""
+        """Return a list containing a Note object for every file in the notes
+        directory."""
         return [
-            Note(self, os.path.split(filepath)[1])
-            for filepath in glob.glob(os.path.join(self.dir, "*.md"))
+            Note(self, strip_ext(os.path.split(filepath)[1]))
+            for filepath in glob.glob(
+                os.path.join(self.dir, "*" + MARKDOWN_EXT)
+            )
         ]
 
     def update_index(self, clean: bool = False) -> None:
@@ -162,7 +170,9 @@ class Flatnotes(object):
                     os.path.getmtime(idx_filepath) != idx_note["last_modified"]
                 ):
                     logging.info(f"'{idx_filename}' updated")
-                    self._add_note_to_index(writer, Note(self, idx_filename))
+                    self._add_note_to_index(
+                        writer, Note(self, strip_ext(idx_filename))
+                    )
                     indexed.add(idx_filename)
                 # Ignore already indexed
                 else:
@@ -176,7 +186,8 @@ class Flatnotes(object):
         self.last_index_update = datetime.now()
 
     def update_index_debounced(self, clean: bool = False) -> None:
-        """Run update_index() but only if it hasn't been run in the last 10 seconds."""
+        """Run update_index() but only if it hasn't been run in the last 10
+        seconds."""
         if (
             self.last_index_update is None
             or (datetime.now() - self.last_index_update).seconds > 10

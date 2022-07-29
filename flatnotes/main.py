@@ -9,16 +9,16 @@ from auth import (
     validate_token,
 )
 from error_responses import (
-    file_exists_response,
-    file_not_found_response,
-    invalid_filename_response,
+    title_exists_response,
+    note_not_found_response,
+    invalid_title_response,
 )
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from models import LoginModel, NoteHitModel, NoteModel, NotePatchModel
 
-from flatnotes import Flatnotes, InvalidFilenameError, Note
+from flatnotes import Flatnotes, InvalidTitleError, Note
 
 logging.basicConfig(
     format="%(asctime)s [%(levelname)s]: %(message)s",
@@ -47,8 +47,8 @@ async def token(data: LoginModel):
 @app.get("/")
 @app.get("/login")
 @app.get("/search")
-@app.get("/note/{filename}")
-async def root(filename: str = ""):
+@app.get("/note/{title}")
+async def root(title: str = ""):
     with open("flatnotes/dist/index.html", "r", encoding="utf-8") as f:
         html = f.read()
     return HTMLResponse(content=html)
@@ -58,7 +58,7 @@ async def root(filename: str = ""):
 async def get_notes(
     start: int = 0,
     limit: int = None,
-    sort: Literal["filename", "lastModified"] = "filename",
+    sort: Literal["title", "lastModified"] = "title",
     order: Literal["asc", "desc"] = "asc",
     include_content: bool = False,
     _: str = Depends(validate_token),
@@ -68,7 +68,7 @@ async def get_notes(
     notes.sort(
         key=lambda note: note.last_modified
         if sort == "lastModified"
-        else note.filename,
+        else note.title,
         reverse=order == "desc",
     )
     return [
@@ -81,59 +81,59 @@ async def get_notes(
 async def post_note(data: NoteModel, _: str = Depends(validate_token)):
     """Create a new note."""
     try:
-        note = Note(flatnotes, data.filename, new=True)
+        note = Note(flatnotes, data.title, new=True)
         note.content = data.content
         return NoteModel.dump(note, include_content=True)
-    except InvalidFilenameError:
-        return invalid_filename_response
+    except InvalidTitleError:
+        return invalid_title_response
     except FileExistsError:
-        return file_exists_response
+        return title_exists_response
 
 
-@app.get("/api/notes/{filename}", response_model=NoteModel)
+@app.get("/api/notes/{title}", response_model=NoteModel)
 async def get_note(
-    filename: str,
+    title: str,
     include_content: bool = True,
     _: str = Depends(validate_token),
 ):
     """Get a specific note."""
     try:
-        note = Note(flatnotes, filename)
+        note = Note(flatnotes, title)
         return NoteModel.dump(note, include_content=include_content)
-    except InvalidFilenameError:
-        return invalid_filename_response
+    except InvalidTitleError:
+        return invalid_title_response
     except FileNotFoundError:
-        return file_not_found_response
+        return note_not_found_response
 
 
-@app.patch("/api/notes/{filename}", response_model=NoteModel)
+@app.patch("/api/notes/{title}", response_model=NoteModel)
 async def patch_note(
-    filename: str, new_data: NotePatchModel, _: str = Depends(validate_token)
+    title: str, new_data: NotePatchModel, _: str = Depends(validate_token)
 ):
     try:
-        note = Note(flatnotes, filename)
-        if new_data.new_filename is not None:
-            note.filename = new_data.new_filename
+        note = Note(flatnotes, title)
+        if new_data.new_title is not None:
+            note.title = new_data.new_title
         if new_data.new_content is not None:
             note.content = new_data.new_content
         return NoteModel.dump(note, include_content=True)
-    except InvalidFilenameError:
-        return invalid_filename_response
+    except InvalidTitleError:
+        return invalid_title_response
     except FileExistsError:
-        return file_exists_response
+        return title_exists_response
     except FileNotFoundError:
-        return file_not_found_response
+        return note_not_found_response
 
 
-@app.delete("/api/notes/{filename}")
-async def delete_note(filename: str, _: str = Depends(validate_token)):
+@app.delete("/api/notes/{title}")
+async def delete_note(title: str, _: str = Depends(validate_token)):
     try:
-        note = Note(flatnotes, filename)
+        note = Note(flatnotes, title)
         note.delete()
-    except InvalidFilenameError:
-        return invalid_filename_response
+    except InvalidTitleError:
+        return invalid_title_response
     except FileNotFoundError:
-        return file_not_found_response
+        return note_not_found_response
 
 
 @app.get("/api/search", response_model=List[NoteHitModel])

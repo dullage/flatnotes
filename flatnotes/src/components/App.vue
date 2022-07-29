@@ -204,11 +204,7 @@
 
         <!-- Search Results Loaded -->
         <div v-else>
-          <div
-            v-for="result in searchResults"
-            :key="result.filename"
-            class="mb-5"
-          >
+          <div v-for="result in searchResults" :key="result.title" class="mb-5">
             <p class="h5 text-center clickable-link">
               <a
                 v-html="result.titleHighlightsOrTitle"

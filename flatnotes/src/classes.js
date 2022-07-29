@@ -1,22 +1,10 @@
 import * as constants from "./constants";
 
 class Note {
-  constructor(filename, lastModified, content) {
-    this.filename = filename;
+  constructor(title, lastModified, content) {
+    this.title = title;
     this.lastModified = lastModified;
     this.content = content;
-  }
-
-  get title() {
-    if (this.filename) {
-      return this.filename.substring(0, this.filename.lastIndexOf("."));
-    } else {
-      return null;
-    }
-  }
-
-  get ext() {
-    return this.filename.substring(this.filename.lastIndexOf(".") + 1);
   }
 
   get href() {
@@ -25,8 +13,8 @@ class Note {
 }
 
 class SearchResult extends Note {
-  constructor(filename, lastModified, titleHighlights, contentHighlights) {
-    super(filename, lastModified);
+  constructor(title, lastModified, titleHighlights, contentHighlights) {
+    super(title, lastModified);
     this.titleHighlights = titleHighlights;
     this.contentHighlights = contentHighlights;
   }

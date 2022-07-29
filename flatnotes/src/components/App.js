@@ -145,7 +145,7 @@ export default {
           response.data.forEach(function(result) {
             parent.searchResults.push(
               new SearchResult(
-                result.filename,
+                result.title,
                 result.lastModified,
                 result.titleHighlights,
                 result.contentHighlights
@@ -162,25 +162,25 @@ export default {
     },
 
     getContentForEditor: function() {
-      let draftContent = localStorage.getItem(this.currentNote.filename);
+      let draftContent = localStorage.getItem(this.currentNote.title);
       if (draftContent) {
         if (confirm("Do you want to resume the saved draft?")) {
           return draftContent;
         } else {
-          localStorage.removeItem(this.currentNote.filename);
+          localStorage.removeItem(this.currentNote.title);
         }
       }
       return this.currentNote.content;
     },
 
-    loadNote: function(filename) {
+    loadNote: function(title) {
       let parent = this;
       this.noteLoadFailed = false;
       api
-        .get(`/api/notes/${filename}.${constants.markdownExt}`)
+        .get(`/api/notes/${title}`)
         .then(function(response) {
           parent.currentNote = new Note(
-            response.data.filename,
+            response.data.title,
             response.data.lastModified,
             response.data.content
           );
@@ -208,7 +208,7 @@ export default {
       // To Edit Mode
       if (this.editMode == false) {
         this.titleInput = this.currentNote.title;
-        let draftContent = localStorage.getItem(this.currentNote.filename);
+        let draftContent = localStorage.getItem(this.currentNote.title);
 
         if (draftContent) {
           this.$bvModal
@@ -227,7 +227,7 @@ export default {
                 parent.initialContent = draftContent;
               } else {
                 parent.initialContent = parent.currentNote.content;
-                localStorage.removeItem(parent.currentNote.filename);
+                localStorage.removeItem(parent.currentNote.title);
               }
               parent.editMode = !parent.editMode;
             });
@@ -266,10 +266,10 @@ export default {
     },
 
     saveDraft: function() {
-      localStorage.setItem(this.currentNote.filename, this.getEditorContent());
+      localStorage.setItem(this.currentNote.title, this.getEditorContent());
     },
 
-    existingFilenameToast: function() {
+    existingTitleToast: function() {
       this.$bvToast.toast(
         "A note with this title already exists. Please try again with a new title.",
         {
@@ -300,7 +300,7 @@ export default {
       if (this.currentNote.lastModified == null) {
         api
           .post(`/api/notes`, {
-            filename: `${this.titleInput}.${constants.markdownExt}`,
+            title: this.titleInput,
             content: newContent,
           })
           .then(this.saveNoteResponseHandler)
@@ -311,7 +311,7 @@ export default {
               typeof error.response !== "undefined" &&
               error.response.status == 409
             ) {
-              parent.existingFilenameToast();
+              parent.existingTitleToast();
             } else {
               parent.unhandledServerErrorToast();
             }
@@ -324,8 +324,8 @@ export default {
         this.titleInput != this.currentNote.title
       ) {
         api
-          .patch(`/api/notes/${this.currentNote.filename}`, {
-            newFilename: `${this.titleInput}.${this.currentNote.ext}`,
+          .patch(`/api/notes/${this.currentNote.title}`, {
+            newTitle: this.titleInput,
             newContent: newContent,
           })
           .then(this.saveNoteResponseHandler)
@@ -336,7 +336,7 @@ export default {
               typeof error.response !== "undefined" &&
               error.response.status == 409
             ) {
-              parent.existingFilenameToast();
+              parent.existingTitleToast();
             } else {
               parent.unhandledServerErrorToast();
             }
@@ -351,9 +351,9 @@ export default {
     },
 
     saveNoteResponseHandler: function(response) {
-      localStorage.removeItem(this.currentNote.filename);
+      localStorage.removeItem(this.currentNote.title);
       this.currentNote = new Note(
-        response.data.filename,
+        response.data.title,
         response.data.lastModified,
         response.data.content
       );
@@ -371,7 +371,7 @@ export default {
     },
 
     cancelNote: function() {
-      localStorage.removeItem(this.currentNote.filename);
+      localStorage.removeItem(this.currentNote.title);
       if (this.currentNote.lastModified == null) {
         // Cancelling a new note
         this.currentNote = null;
@@ -395,7 +395,7 @@ export default {
         .then(function(response) {
           if (response == true) {
             api
-              .delete(`/api/notes/${parent.currentNote.filename}`)
+              .delete(`/api/notes/${parent.currentNote.title}`)
               .then(function() {
                 parent.navigate("/");
                 parent.$bvToast.toast("Note deleted ✓", {

@@ -1,7 +1,5 @@
 import codeSyntaxHighlight from "@toast-ui/editor-plugin-code-syntax-highlight/dist/toastui-editor-plugin-code-syntax-highlight-all.js";
 
-export const markdownExt = "md";
-
 // Base Paths
 export const basePaths = { login: "login", note: "note", search: "search" };
 

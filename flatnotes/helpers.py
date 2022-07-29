@@ -1,4 +1,10 @@
+import os
+
 from pydantic import BaseModel
+
+
+def strip_ext(filename):
+    return os.path.splitext(filename)[0]
 
 
 def camel_case(snake_case_str: str) -> str:
