@@ -4,7 +4,9 @@
       <!-- Header -->
       <div class="mt-4 mb-4">
         <h1 class="h1 clickable-link text-center">
-          <a href="/" @click.prevent="navigate('/', $event)">flatnotes</a>
+          <a href="/" @click.prevent="navigate('/', $event)"
+            ><img src="../assets/logo.svg"
+          /></a>
         </h1>
       </div>
 

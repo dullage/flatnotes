@@ -2,7 +2,7 @@ import { Editor } from "@toast-ui/vue-editor";
 import { Viewer } from "@toast-ui/vue-editor";
 
 import RecentlyModified from "./RecentlyModified";
-import LoadingIndicator from "./LoadingIndicator.vue";
+import LoadingIndicator from "./LoadingIndicator";
 
 import api from "../api";
 import * as constants from "../constants";
