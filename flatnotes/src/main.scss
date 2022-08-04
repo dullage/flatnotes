@@ -28,6 +28,10 @@ body {
   font-family: "Inter", sans-serif;
 }
 
+.cursor-pointer {
+  cursor: pointer;
+}
+
 .clickable-link {
   cursor: pointer;
   &:hover {
@@ -59,6 +63,14 @@ body {
 
 .title-input:focus {
   outline: none;
+}
+
+.home-view {
+  max-width: 500px;
+}
+
+.search-input {
+  box-shadow: 0 0 20px #0000000a;
 }
 
 // Toast UI Overrides

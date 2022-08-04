@@ -4,6 +4,7 @@ import { Viewer } from "@toast-ui/vue-editor";
 import RecentlyModified from "./RecentlyModified";
 import LoadingIndicator from "./LoadingIndicator";
 import Login from "./Login";
+import NavBar from "./NavBar";
 
 import api from "../api";
 import * as constants from "../constants";
@@ -12,12 +13,15 @@ import EventBus from "../eventBus";
 import * as helpers from "../helpers";
 
 export default {
+  name: "App",
+
   components: {
     Viewer,
     Editor,
     RecentlyModified,
     LoadingIndicator,
     Login,
+    NavBar,
   },
 
   data: function() {

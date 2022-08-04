@@ -1,40 +1,20 @@
 <template>
-  <div class="container h-100">
-    <!-- Header -->
-    <div v-if="currentView != views.login" class="mt-4 mb-4">
-      <a
-        href="/"
-        @click.prevent="navigate('/', $event)"
-        class="h1 clickable-link text-center"
-        ><img src="../assets/logo.svg"
-      /></a>
-    </div>
+  <div class="container d-flex flex-column align-items-center h-100">
+    <!-- Nav Bar -->
+    <NavBar
+      v-if="currentView != views.login"
+      class="mt-2 w-100"
+      :show-logo="currentView != views.home"
+      @navigate-home="navigate('/')"
+      @new-note="newNote()"
+      @logout="logout()"
+    ></NavBar>
 
     <!-- Login -->
     <Login v-if="currentView == views.login"></Login>
 
     <!-- Buttons -->
     <div class="d-flex justify-content-center mb-4">
-      <!-- Logout -->
-      <button
-        v-if="currentView == views.home"
-        type="button"
-        class="btn btn-sm btn-outline-dark mx-1"
-        @click="logout"
-      >
-        Logout
-      </button>
-
-      <!-- New -->
-      <button
-        v-if="currentView == views.home"
-        type="button"
-        class="btn btn-sm btn-outline-primary mx-1"
-        @click="newNote"
-      >
-        New
-      </button>
-
       <!-- Edit -->
       <button
         v-if="
@@ -84,25 +64,32 @@
       </button>
     </div>
 
-    <!-- Search Input -->
-    <form
-      v-if="[views.search, views.home].includes(currentView)"
+    <!-- Home -->
+    <div
+      v-if="currentView == views.home"
       v-on:submit.prevent="search"
+      class="home-view d-flex flex-column justify-content-center align-items-center flex-grow-1 w-100"
     >
-      <div class="form-group mb-4 d-flex justify-content-center">
-        <input
-          type="text"
-          class="form-control"
-          placeholder="Search"
-          v-model="searchTerm"
-          style="max-width: 500px"
-          autofocus
-        />
+      <div class="mb-3">
+        <img src="../assets/logo.svg" />
       </div>
-    </form>
+      <form v-on:submit.prevent="search" class="w-100">
+        <div class="form-group mb-4 w-100">
+          <input
+            type="text"
+            class="form-control search-input"
+            placeholder="Search"
+            v-model="searchTerm"
+            autofocus
+          />
+          <!-- TODO: Search Button -->
+        </div>
+      </form>
+      <RecentlyModified />
+    </div>
 
     <!-- Note -->
-    <div v-if="currentView == views.note">
+    <div v-if="currentView == views.note" class="w-100">
       <!-- Loading -->
       <div v-if="currentNote == null">
         <loading-indicator
@@ -149,7 +136,21 @@
     </div>
 
     <!-- Search -->
-    <div v-if="currentView == views.search">
+    <div v-if="currentView == views.search" class="w-100">
+      <!-- Search Input -->
+      <form v-on:submit.prevent="search">
+        <div class="form-group mb-4 d-flex justify-content-center">
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Search"
+            v-model="searchTerm"
+            style="max-width: 500px"
+            autofocus
+          />
+        </div>
+      </form>
+
       <!-- Searching -->
       <div v-if="searchResults == null">
         <loading-indicator
@@ -181,9 +182,6 @@
         </div>
       </div>
     </div>
-
-    <!-- Home -->
-    <RecentlyModified v-if="currentView == views.home" />
   </div>
 </template>
 

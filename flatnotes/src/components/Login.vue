@@ -1,6 +1,6 @@
 <template>
   <div
-    class="d-flex flex-column justify-content-center align-items-center h-100"
+    class="d-flex flex-column justify-content-center align-items-center flex-grow-1"
   >
     <!-- Logo -->
     <div class="mb-3">
