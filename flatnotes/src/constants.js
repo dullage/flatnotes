@@ -22,11 +22,6 @@ export const dataDefaults = function() {
     editMode: false,
     draftSaveTimeout: null,
 
-    // Login Data
-    usernameInput: null,
-    passwordInput: null,
-    rememberMeInput: false,
-
     // Search Data
     searchFailed: false,
 

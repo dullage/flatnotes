@@ -3,6 +3,7 @@ import { Viewer } from "@toast-ui/vue-editor";
 
 import RecentlyModified from "./RecentlyModified";
 import LoadingIndicator from "./LoadingIndicator";
+import Login from "./Login";
 
 import api from "../api";
 import * as constants from "../constants";
@@ -16,6 +17,7 @@ export default {
     Editor,
     RecentlyModified,
     LoadingIndicator,
+    Login,
   },
 
   data: function() {
@@ -82,43 +84,6 @@ export default {
       }
       window.document.title =
         (pageTitleSuffix ? `${pageTitleSuffix} - ` : "") + "flatnotes";
-    },
-
-    login: function() {
-      let parent = this;
-      api
-        .post("/api/token", {
-          username: this.usernameInput,
-          password: this.passwordInput,
-        })
-        .then(function(response) {
-          sessionStorage.setItem("token", response.data.access_token);
-          if (parent.rememberMeInput == true) {
-            localStorage.setItem("token", response.data.access_token);
-          }
-          let redirectPath = helpers.getSearchParam(constants.params.redirect);
-          parent.navigate(redirectPath || "/");
-        })
-        .catch(function(error) {
-          if (error.handled) {
-            return;
-          } else if (
-            typeof error.response !== "undefined" &&
-            [400, 422].includes(error.response.status)
-          ) {
-            parent.$bvToast.toast("Incorrect Username or Password ✘", {
-              variant: "danger",
-              noCloseButton: true,
-            });
-          } else {
-            parent.unhandledServerErrorToast();
-          }
-        })
-        .finally(function() {
-          parent.usernameInput = null;
-          parent.passwordInput = null;
-          parent.rememberMeInput = false;
-        });
     },
 
     logout: function() {
