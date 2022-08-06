@@ -36,6 +36,10 @@
 .invisible {
   visibility: hidden;
 }
+
+.cursor-pointer {
+  cursor: pointer;
+}
 </style>
 
 <script>

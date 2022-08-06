@@ -5,6 +5,7 @@ import RecentlyModified from "./RecentlyModified";
 import LoadingIndicator from "./LoadingIndicator";
 import Login from "./Login";
 import NavBar from "./NavBar";
+import SearchInput from "./SearchInput";
 
 import api from "../api";
 import * as constants from "../constants";
@@ -22,6 +23,7 @@ export default {
     LoadingIndicator,
     Login,
     NavBar,
+    SearchInput,
   },
 
   data: function() {
@@ -94,14 +96,6 @@ export default {
       sessionStorage.removeItem("token");
       localStorage.removeItem("token");
       this.navigate(`/${constants.basePaths.login}`);
-    },
-
-    search: function() {
-      this.navigate(
-        `/${constants.basePaths.search}?${
-          constants.params.searchTerm
-        }=${encodeURI(this.searchTerm)}`
-      );
     },
 
     getSearchResults: function() {

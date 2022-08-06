@@ -24,10 +24,10 @@ export const dataDefaults = function() {
 
     // Search Data
     searchFailed: false,
-
-    // Note Data
     searchTerm: null,
     searchResults: null,
+
+    // Note Data
     currentNote: null,
     titleInput: null,
     initialContent: null,

@@ -28,10 +28,6 @@ body {
   font-family: "Inter", sans-serif;
 }
 
-.cursor-pointer {
-  cursor: pointer;
-}
-
 .clickable-link {
   cursor: pointer;
   &:hover {
@@ -61,8 +57,9 @@ body {
   padding: 0;
 }
 
-.title-input:focus {
-  outline: none;
+.form-control:focus {
+  box-shadow: none;
+  border-color: #ced4da;
 }
 
 .home-view {

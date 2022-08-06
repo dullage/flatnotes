@@ -68,24 +68,21 @@
     <div
       v-if="currentView == views.home"
       v-on:submit.prevent="search"
-      class="home-view d-flex flex-column justify-content-center align-items-center flex-grow-1 w-100"
+      class="
+        home-view
+        d-flex
+        flex-column
+        justify-content-center
+        align-items-center
+        flex-grow-1
+        w-100
+      "
     >
       <div class="mb-3">
         <img src="../assets/logo.svg" />
       </div>
-      <form v-on:submit.prevent="search" class="w-100">
-        <div class="form-group mb-4 w-100">
-          <input
-            type="text"
-            class="form-control search-input"
-            placeholder="Search"
-            v-model="searchTerm"
-            autofocus
-          />
-          <!-- TODO: Search Button -->
-        </div>
-      </form>
-      <RecentlyModified />
+      <SearchInput class="search-input mb-4"></SearchInput>
+      <RecentlyModified></RecentlyModified>
     </div>
 
     <!-- Note -->
@@ -137,20 +134,6 @@
 
     <!-- Search -->
     <div v-if="currentView == views.search" class="w-100">
-      <!-- Search Input -->
-      <form v-on:submit.prevent="search">
-        <div class="form-group mb-4 d-flex justify-content-center">
-          <input
-            type="text"
-            class="form-control"
-            placeholder="Search"
-            v-model="searchTerm"
-            style="max-width: 500px"
-            autofocus
-          />
-        </div>
-      </form>
-
       <!-- Searching -->
       <div v-if="searchResults == null">
         <loading-indicator
