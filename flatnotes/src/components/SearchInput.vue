@@ -44,12 +44,22 @@ export default {
 
   methods: {
     search: function () {
-      EventBus.$emit(
-        "navigate",
-        `/${constants.basePaths.search}?${
-          constants.params.searchTerm
-        }=${encodeURI(this.searchTermInput)}`
-      );
+      if (this.searchTermInput) {
+        this.searchTermInput = this.searchTermInput.trim();
+      }
+      if (this.searchTermInput) {
+        EventBus.$emit(
+          "navigate",
+          `/${constants.basePaths.search}?${
+            constants.params.searchTerm
+          }=${encodeURI(this.searchTermInput)}`
+        );
+      } else {
+        this.$bvToast.toast("Please enter a search term ✘", {
+          variant: "danger",
+          noCloseButton: true,
+        });
+      }
     },
   },
 };
