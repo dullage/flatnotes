@@ -70,6 +70,11 @@ body {
   box-shadow: 0 0 20px #0000000a;
 }
 
+.recently-modified {
+  // Prevent UI from moving during load
+  min-height: 190px;
+}
+
 // Toast UI Overrides
 .toastui-editor-contents {
   font-family: "Inter", sans-serif;

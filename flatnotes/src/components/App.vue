@@ -82,7 +82,7 @@
         <img src="../assets/logo.svg" />
       </div>
       <SearchInput class="search-input mb-4"></SearchInput>
-      <RecentlyModified></RecentlyModified>
+      <RecentlyModified class="recently-modified"></RecentlyModified>
     </div>
 
     <!-- Note -->
