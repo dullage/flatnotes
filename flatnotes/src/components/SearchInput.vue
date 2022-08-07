@@ -21,7 +21,7 @@
 <style lang="scss" scoped>
 @keyframes highlight {
   from {
-    background-color: #ffa76c5d;
+    background-color: #bbcdff;
   }
   to {
     background-color: white;
