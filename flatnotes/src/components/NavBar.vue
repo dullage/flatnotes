@@ -23,7 +23,7 @@
       <button
         type="button"
         class="btn btn-sm btn-outline-dark mx-1"
-        @click="this.$emit('logout')"
+        @click="$emit('logout')"
       >
         Log Out
       </button>
