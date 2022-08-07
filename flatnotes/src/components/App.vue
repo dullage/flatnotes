@@ -1,5 +1,10 @@
 <template>
   <div class="container d-flex flex-column align-items-center h-100">
+    <!-- Search Modal -->
+    <b-modal id="search-modal" centered hide-footer hide-header>
+      <SearchInput></SearchInput>
+    </b-modal>
+
     <!-- Nav Bar -->
     <NavBar
       v-if="currentView != views.login"
@@ -8,6 +13,7 @@
       @navigate-home="navigate('/')"
       @new-note="newNote()"
       @logout="logout()"
+      @search="openSearch()"
     ></NavBar>
 
     <!-- Login -->

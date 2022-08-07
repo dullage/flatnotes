@@ -35,9 +35,14 @@ export default {
       let path = window.location.pathname.split("/");
       let basePath = path[1];
 
+      this.$bvModal.hide("search-modal");
+
       // Home Page
       if (basePath == "") {
         this.currentView = this.views.home;
+        this.$nextTick(function() {
+          this.focusSearchInput();
+        });
       }
 
       // Search
@@ -375,7 +380,29 @@ export default {
         });
     },
 
+    focusSearchInput: function() {
+      document.getElementById("search-input").focus();
+    },
+
+    openSearch: function() {
+      if (this.currentView == this.views.home) {
+        this.focusSearchInput();
+        EventBus.$emit("highlight-search-input");
+      } else if (this.currentView != this.views.login) {
+        this.$bvModal.show("search-modal");
+      }
+    },
+
     keyboardShortcuts: function(e) {
+      // If the user is focused on a text input or is editing a note, ignore.
+      if (
+        !["e", "/"].includes(e.key) ||
+        document.activeElement.type == "text" ||
+        (this.currentView == this.views.note && this.editMode == true)
+      ) {
+        return;
+      }
+
       // 'e' to Edit
       if (
         e.key == "e" &&
@@ -384,6 +411,12 @@ export default {
       ) {
         e.preventDefault();
         this.toggleEditMode();
+      }
+
+      // '/' to Search
+      if (e.key == "/") {
+        e.preventDefault();
+        this.openSearch();
       }
 
       // 'CTRL + s' to Save
@@ -424,6 +457,14 @@ export default {
   },
 
   mounted: function() {
+    let parent = this;
+
     window.addEventListener("popstate", this.route);
+
+    this.$root.$on("bv::modal::shown", function(_, modalId) {
+      if (modalId == "search-modal") {
+        parent.focusSearchInput();
+      }
+    });
   },
 };

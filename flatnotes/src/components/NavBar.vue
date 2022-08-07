@@ -6,7 +6,7 @@
         src="../assets/logo.svg"
         class="cursor-pointer"
         :class="{ invisible: !showLogo }"
-        @click="navigateHome"
+        @click="$emit('navigate-home')"
       />
     </div>
     <div>
@@ -14,7 +14,7 @@
       <button
         type="button"
         class="btn btn-sm btn-outline-primary mx-1"
-        @click="newNote"
+        @click="$emit('new-note')"
       >
         New Note
       </button>
@@ -23,9 +23,21 @@
       <button
         type="button"
         class="btn btn-sm btn-outline-dark mx-1"
-        @click="logout"
+        @click="this.$emit('logout')"
       >
         Log Out
+      </button>
+
+      <!-- Search -->
+      <button
+        type="button"
+        id="search-button"
+        class="btn btn-sm btn-outline-dark mx-1"
+        @click="$emit('search')"
+        v-b-tooltip.hover
+        title="Keyboard Shortcut: /"
+      >
+        <BIconSearch />
       </button>
     </div>
   </div>
@@ -43,25 +55,17 @@
 </style>
 
 <script>
+import { BIconSearch } from "bootstrap-vue";
+
 export default {
+  components: {
+    BIconSearch,
+  },
+
   props: {
     showLogo: {
       type: Boolean,
       default: true,
-    },
-  },
-
-  methods: {
-    navigateHome: function () {
-      this.$emit("navigate-home");
-    },
-
-    newNote: function () {
-      this.$emit("new-note");
-    },
-
-    logout: function () {
-      this.$emit("logout");
     },
   },
 };

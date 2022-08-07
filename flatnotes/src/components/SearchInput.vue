@@ -2,11 +2,12 @@
   <form v-on:submit.prevent="search" class="w-100">
     <div class="input-group w-100">
       <input
+        id="search-input"
         type="text"
         class="form-control"
+        :class="{ highlight: includeHighlightClass }"
         placeholder="Search"
         v-model="searchTermInput"
-        autofocus
       />
       <div class="input-group-append">
         <button class="btn" type="submit">
@@ -18,6 +19,20 @@
 </template>
 
 <style lang="scss" scoped>
+@keyframes highlight {
+  from {
+    background-color: #ffa76c5d;
+  }
+  to {
+    background-color: white;
+  }
+}
+
+.highlight {
+  animation-name: highlight;
+  animation-duration: 1.5s;
+}
+
 .btn {
   border: 1px solid #cfd4da;
   svg {
@@ -32,13 +47,14 @@ import * as constants from "../constants";
 import { BIconSearch } from "bootstrap-vue";
 
 export default {
-  comments: {
+  components: {
     BIconSearch,
   },
 
   data: function () {
     return {
       searchTermInput: null,
+      includeHighlightClass: false,
     };
   },
 
@@ -61,6 +77,18 @@ export default {
         });
       }
     },
+
+    highlightSearchInput: function () {
+      let parent = this;
+      this.includeHighlightClass = true;
+      setTimeout(function () {
+        parent.includeHighlightClass = false;
+      }, 1500);
+    },
+  },
+
+  created: function () {
+    EventBus.$on("highlight-search-input", this.highlightSearchInput);
   },
 };
 </script>
