@@ -11,7 +11,7 @@
       />
       <div class="input-group-append">
         <button class="btn" type="submit">
-          <BIconSearch />
+          <b-icon icon="search"></b-icon>
         </button>
       </div>
     </div>
@@ -44,13 +44,8 @@
 <script>
 import EventBus from "../eventBus";
 import * as constants from "../constants";
-import { BIconSearch } from "bootstrap-vue";
 
 export default {
-  components: {
-    BIconSearch,
-  },
-
   data: function () {
     return {
       searchTermInput: null,

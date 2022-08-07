@@ -1,6 +1,12 @@
 <template>
   <div
-    class="d-flex flex-column justify-content-center align-items-center flex-grow-1"
+    class="
+      d-flex
+      flex-column
+      justify-content-center
+      align-items-center
+      flex-grow-1
+    "
   >
     <!-- Logo -->
     <div class="mb-3">
@@ -50,7 +56,9 @@
       </div>
 
       <!-- Button -->
-      <button type="submit" class="btn btn-primary">Log In</button>
+      <button type="submit" class="bttn">
+        <b-icon icon="box-arrow-in-right"></b-icon> Log In
+      </button>
     </form>
   </div>
 </template>

@@ -11,33 +11,25 @@
     </div>
     <div>
       <!-- New Note -->
-      <button
-        type="button"
-        class="btn btn-sm btn-outline-primary mx-1"
-        @click="$emit('new-note')"
-      >
-        New Note
+      <button type="button" class="bttn" @click="$emit('new-note')">
+        <b-icon icon="plus-circle"></b-icon> New Note
       </button>
 
       <!-- Log Out -->
-      <button
-        type="button"
-        class="btn btn-sm btn-outline-dark mx-1"
-        @click="$emit('logout')"
-      >
-        Log Out
+      <button type="button" class="bttn" @click="$emit('logout')">
+        <b-icon icon="box-arrow-right"></b-icon> Log Out
       </button>
 
       <!-- Search -->
       <button
         type="button"
         id="search-button"
-        class="btn btn-sm btn-outline-dark mx-1"
+        class="bttn"
         @click="$emit('search')"
         v-b-tooltip.hover
         title="Keyboard Shortcut: /"
       >
-        <BIconSearch />
+        <b-icon icon="search"></b-icon>
       </button>
     </div>
   </div>
@@ -55,13 +47,7 @@
 </style>
 
 <script>
-import { BIconSearch } from "bootstrap-vue";
-
 export default {
-  components: {
-    BIconSearch,
-  },
-
   props: {
     showLogo: {
       type: Boolean,

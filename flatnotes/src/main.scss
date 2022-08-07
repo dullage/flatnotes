@@ -75,6 +75,21 @@ body {
   min-height: 190px;
 }
 
+.bttn {
+  border: 0;
+  background-color: transparent;
+  border-radius: 4px;
+  padding: 4px 10px;
+  color: #6c757d;
+
+  svg {
+    margin-right: 4px;;
+  }
+}
+.bttn:hover {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
 // Toast UI Overrides
 .toastui-editor-contents {
   font-family: "Inter", sans-serif;

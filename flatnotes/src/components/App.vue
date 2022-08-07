@@ -29,10 +29,10 @@
           noteLoadFailed == false
         "
         type="button"
-        class="btn btn-sm btn-outline-warning mx-1"
+        class="bttn"
         @click="toggleEditMode"
       >
-        Edit
+        <b-icon icon="pencil-square"></b-icon> Edit
       </button>
 
       <!-- Delete -->
@@ -43,30 +43,30 @@
           noteLoadFailed == false
         "
         type="button"
-        class="btn btn-sm btn-outline-danger mx-1"
+        class="bttn"
         @click="deleteNote"
       >
-        Delete
+        <b-icon icon="trash"></b-icon> Delete
       </button>
 
       <!-- Cancel -->
       <button
         v-if="currentView == views.note && editMode == true"
         type="button"
-        class="btn btn-sm btn-outline-secondary mx-1"
+        class="bttn"
         @click="cancelNote"
       >
-        Cancel
+        <b-icon icon="arrow-return-left"></b-icon> Cancel
       </button>
 
       <!-- Save -->
       <button
         v-if="currentView == views.note && editMode == true"
         type="button"
-        class="btn btn-sm btn-outline-success mx-1"
+        class="bttn"
         @click="saveNote"
       >
-        Save
+        <b-icon icon="check-square"></b-icon> Save
       </button>
     </div>
 
