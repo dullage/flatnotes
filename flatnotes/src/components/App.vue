@@ -11,7 +11,7 @@
     <!-- Nav Bar -->
     <NavBar
       v-if="currentView != views.login"
-      class="mt-2 w-100"
+      class="mt-3 w-100"
       :show-logo="currentView != views.home"
       @navigate-home="navigate('/')"
       @new-note="newNote()"
@@ -23,7 +23,7 @@
     <Login v-if="currentView == views.login"></Login>
 
     <!-- Buttons -->
-    <div class="d-flex justify-content-center mb-4">
+    <div class="d-flex justify-content-center mt-4">
       <!-- Edit -->
       <button
         v-if="
