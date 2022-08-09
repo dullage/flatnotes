@@ -69,6 +69,7 @@ export default {
         this.$bvToast.toast("Please enter a search term ✘", {
           variant: "danger",
           noCloseButton: true,
+          toaster: "b-toaster-bottom-right",
         });
       }
     },

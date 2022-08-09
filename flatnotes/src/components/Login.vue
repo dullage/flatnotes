@@ -107,6 +107,7 @@ export default {
             parent.$bvToast.toast("Incorrect Username or Password ✘", {
               variant: "danger",
               noCloseButton: true,
+              toaster: "b-toaster-bottom-right",
             });
           } else {
             EventBus.$emit("unhandledServerError");

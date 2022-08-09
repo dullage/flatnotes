@@ -246,6 +246,7 @@ export default {
           title: "Duplicate ✘",
           variant: "danger",
           noCloseButton: true,
+          toaster: "b-toaster-bottom-right",
         }
       );
     },
@@ -262,6 +263,7 @@ export default {
         this.$bvToast.toast("Cannot save note without a title ✘", {
           variant: "danger",
           noCloseButton: true,
+          toaster: "b-toaster-bottom-right",
         });
         return;
       }
@@ -337,6 +339,7 @@ export default {
       this.$bvToast.toast("Note saved ✓", {
         variant: "success",
         noCloseButton: true,
+        toaster: "b-toaster-bottom-right",
       });
     },
 
@@ -371,6 +374,7 @@ export default {
                 parent.$bvToast.toast("Note deleted ✓", {
                   variant: "success",
                   noCloseButton: true,
+                  toaster: "b-toaster-bottom-right",
                 });
               })
               .catch(function(error) {
@@ -440,6 +444,7 @@ export default {
           title: "Unknown Error",
           variant: "danger",
           noCloseButton: true,
+          toaster: "b-toaster-bottom-right",
         }
       );
     },
