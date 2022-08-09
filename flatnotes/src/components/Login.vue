@@ -9,9 +9,7 @@
     "
   >
     <!-- Logo -->
-    <div class="mb-3">
-      <img src="../assets/logo.svg" />
-    </div>
+    <Logo class="mb-3"></Logo>
 
     <form
       class="d-flex flex-column align-items-center"
@@ -68,8 +66,13 @@ import api from "../api";
 import * as helpers from "../helpers";
 import * as constants from "../constants";
 import EventBus from "../eventBus";
+import Logo from "./Logo";
 
 export default {
+  components: {
+    Logo,
+  },
+
   data: function () {
     return {
       usernameInput: null,

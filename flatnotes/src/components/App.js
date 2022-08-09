@@ -6,6 +6,7 @@ import LoadingIndicator from "./LoadingIndicator";
 import Login from "./Login";
 import NavBar from "./NavBar";
 import SearchInput from "./SearchInput";
+import Logo from "./Logo"
 
 import api from "../api";
 import * as constants from "../constants";
@@ -24,6 +25,7 @@ export default {
     Login,
     NavBar,
     SearchInput,
+    Logo,
   },
 
   data: function() {

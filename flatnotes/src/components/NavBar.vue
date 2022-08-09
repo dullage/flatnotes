@@ -1,14 +1,12 @@
 <template>
   <div class="d-flex justify-content-between align-items-center">
     <!-- Logo -->
-    <div>
-      <img
-        src="../assets/logo.svg"
-        class="cursor-pointer"
-        :class="{ invisible: !showLogo }"
-        @click="$emit('navigate-home')"
-      />
-    </div>
+    <Logo
+      class="cursor-pointer"
+      :class="{ invisible: !showLogo }"
+      @click.native="$emit('navigate-home')"
+      responsive
+    ></Logo>
     <div>
       <!-- New Note -->
       <button type="button" class="bttn" @click="$emit('new-note')">
@@ -47,7 +45,13 @@
 </style>
 
 <script>
+import Logo from "./Logo";
+
 export default {
+  components: {
+    Logo,
+  },
+
   props: {
     showLogo: {
       type: Boolean,

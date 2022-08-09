@@ -84,9 +84,7 @@
         w-100
       "
     >
-      <div class="mb-3">
-        <img src="../assets/logo.svg" />
-      </div>
+      <Logo class="mb-3"></Logo>
       <SearchInput class="search-input mb-4"></SearchInput>
       <RecentlyModified class="recently-modified"></RecentlyModified>
     </div>
