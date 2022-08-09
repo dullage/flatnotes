@@ -2,7 +2,10 @@
   <div class="container d-flex flex-column align-items-center h-100">
     <!-- Search Modal -->
     <b-modal id="search-modal" centered hide-footer hide-header>
-      <SearchInput></SearchInput>
+      <div class="d-flex flex-column align-items-center">
+        <Logo class="mb-4"></Logo>
+        <SearchInput></SearchInput>
+      </div>
     </b-modal>
 
     <!-- Nav Bar -->
