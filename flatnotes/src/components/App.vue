@@ -34,6 +34,8 @@
         type="button"
         class="bttn"
         @click="toggleEditMode"
+        v-b-tooltip.hover
+        title="Keyboard Shortcut: e"
       >
         <b-icon icon="pencil-square"></b-icon> Edit
       </button>
