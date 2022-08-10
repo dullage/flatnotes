@@ -22,63 +22,9 @@
     <!-- Login -->
     <Login v-if="currentView == views.login"></Login>
 
-    <!-- Buttons -->
-    <div class="d-flex justify-content-center mt-4">
-      <!-- Edit -->
-      <button
-        v-if="
-          currentView == views.note &&
-          editMode == false &&
-          noteLoadFailed == false
-        "
-        type="button"
-        class="bttn"
-        @click="toggleEditMode"
-        v-b-tooltip.hover
-        title="Keyboard Shortcut: e"
-      >
-        <b-icon icon="pencil-square"></b-icon> Edit
-      </button>
-
-      <!-- Delete -->
-      <button
-        v-if="
-          currentView == views.note &&
-          editMode == false &&
-          noteLoadFailed == false
-        "
-        type="button"
-        class="bttn"
-        @click="deleteNote"
-      >
-        <b-icon icon="trash"></b-icon> Delete
-      </button>
-
-      <!-- Cancel -->
-      <button
-        v-if="currentView == views.note && editMode == true"
-        type="button"
-        class="bttn"
-        @click="cancelNote"
-      >
-        <b-icon icon="arrow-return-left"></b-icon> Cancel
-      </button>
-
-      <!-- Save -->
-      <button
-        v-if="currentView == views.note && editMode == true"
-        type="button"
-        class="bttn"
-        @click="saveNote"
-      >
-        <b-icon icon="check-square"></b-icon> Save
-      </button>
-    </div>
-
     <!-- Home -->
     <div
       v-if="currentView == views.home"
-      v-on:submit.prevent="search"
       class="
         home-view
         d-flex
@@ -94,55 +40,8 @@
       <RecentlyModified class="recently-modified"></RecentlyModified>
     </div>
 
-    <!-- Note -->
-    <div v-if="currentView == views.note" class="w-100">
-      <!-- Loading -->
-      <div v-if="currentNote == null">
-        <loading-indicator
-          :failure-message="noteLoadFailedMessage"
-          :failed="noteLoadFailed"
-        />
-      </div>
-
-      <!-- Note Loaded -->
-      <div v-else>
-        <h2 v-if="editMode == false" class="mb-4">{{ currentNote.title }}</h2>
-        <input
-          v-else
-          type="text"
-          class="h2 title-input"
-          v-model="titleInput"
-          placeholder="Title"
-        />
-
-        <!-- Viewer -->
-        <div class="mb-4 note">
-          <div v-if="editMode == false" class="note-viewer">
-            <viewer
-              :initialValue="currentNote.content"
-              height="600px"
-              :options="viewerOptions"
-            />
-          </div>
-
-          <!-- Editor -->
-          <div v-else>
-            <editor
-              :initialValue="initialContent"
-              initialEditType="markdown"
-              previewStyle="tab"
-              height="calc(100vh - 230px)"
-              ref="toastUiEditor"
-              :options="editorOptions"
-              @change="startDraftSaveTimeout"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Search -->
-    <div v-if="currentView == views.search" class="w-100">
+    <!-- Search Results -->
+    <div v-if="currentView == views.search" class="w-100 pt-5">
       <!-- Searching -->
       <div v-if="searchResults == null">
         <loading-indicator
@@ -174,6 +73,14 @@
         </div>
       </div>
     </div>
+
+    <!-- Note -->
+    <NoteViewerEditor
+      v-if="currentView == this.views.note"
+      class="mt-5 flex-grow-1"
+      :titleToLoad="noteTitle"
+      @note-deleted="noteDeletedToast"
+    ></NoteViewerEditor>
   </div>
 </template>
 

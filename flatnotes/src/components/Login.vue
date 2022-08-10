@@ -62,11 +62,12 @@
 </template>
 
 <script>
-import api from "../api";
-import * as helpers from "../helpers";
 import * as constants from "../constants";
+import * as helpers from "../helpers";
+
 import EventBus from "../eventBus";
 import Logo from "./Logo";
+import api from "../api";
 
 export default {
   components: {

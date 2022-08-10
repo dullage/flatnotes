@@ -19,9 +19,11 @@
 </template>
 
 <style lang="scss" scoped>
+@import "../colours";
+
 @keyframes highlight {
   from {
-    background-color: #bbcdff;
+    background-color: $input-highlight;
   }
   to {
     background-color: white;
@@ -34,16 +36,17 @@
 }
 
 .btn {
-  border: 1px solid #cfd4da;
+  border: 1px solid $form-control-border;
   svg {
-    color: #a7abb1;
+    color: $muted-text;
   }
 }
 </style>
 
 <script>
-import EventBus from "../eventBus";
 import * as constants from "../constants";
+
+import EventBus from "../eventBus";
 
 export default {
   data: function () {

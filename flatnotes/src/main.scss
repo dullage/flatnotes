@@ -5,22 +5,11 @@
 @import "node_modules/bootstrap/scss/variables";
 @import "node_modules/bootstrap/scss/mixins";
 
-// Toast UI Markdown Editor
-@import "@toast-ui/editor/dist/toastui-editor.css";
-@import "@toast-ui/editor/dist/toastui-editor-viewer.css";
-@import "prismjs/themes/prism.css";
-@import "@toast-ui/editor-plugin-code-syntax-highlight/dist/toastui-editor-plugin-code-syntax-highlight.css";
-
 // Google Font
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@100&display=swap");
 
-// Variables
-$off-white: #f8f9fd70;
-
-// Mixins
-@mixin note-content {
-  padding: min(2vw, 30px) min(3vw, 40px);
-}
+// Colours
+@import "./colours";
 
 // Elements & Classes
 body {
@@ -39,27 +28,9 @@ body {
   }
 }
 
-.note {
-  background-color: white;
-  box-shadow: 0 0 10px #0000000a;
-}
-
-.note-viewer {
-  @include note-content;
-}
-
-.title-input {
-  border: none;
-
-  // Override user agent styling
-  background-color: $off-white;
-  color: #212529;
-  padding: 0;
-}
-
 .form-control:focus {
   box-shadow: none;
-  border-color: #ced4da;
+  border-color: $form-control-border;
 }
 
 .home-view {
@@ -67,7 +38,7 @@ body {
 }
 
 .search-input {
-  box-shadow: 0 0 20px #0000000a;
+  box-shadow: 0 0 20px $drop-shadow;
 }
 
 .recently-modified {
@@ -80,38 +51,12 @@ body {
   background-color: transparent;
   border-radius: 4px;
   padding: 4px 10px;
-  color: #6c757d;
+  color: $muted-text;
 
   svg {
-    margin-right: 4px;;
+    margin-right: 2px;
   }
 }
 .bttn:hover {
-  background-color: rgba(0, 0, 0, 0.03);
-}
-
-// Toast UI Overrides
-.toastui-editor-contents {
-  font-family: "Inter", sans-serif;
-  h1,
-  h2 {
-    border-bottom: none;
-  }
-}
-
-.toastui-editor-contents pre,
-.toastui-editor-md-code-block-line-background {
-  background-color: darken($off-white, 3%);
-}
-
-.toastui-editor-defaultUI {
-  border: none;
-}
-
-.ProseMirror {
-  font-family: "Inter", sans-serif;
-}
-
-.toastui-editor-defaultUI .ProseMirror {
-  @include note-content;
+  background-color: $button-background
 }

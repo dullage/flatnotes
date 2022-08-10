@@ -22,10 +22,10 @@
 </template>
 
 <script>
-import api from "../api";
-import { Note } from "../classes";
 import EventBus from "../eventBus";
 import LoadingIndicator from "./LoadingIndicator.vue";
+import { Note } from "../classes";
+import api from "../api";
 
 export default {
   components: {

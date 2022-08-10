@@ -18,6 +18,7 @@
     "axios": "^0.21.1",
     "bootstrap": "4.6",
     "bootstrap-vue": "^2.21.2",
+    "mousetrap": "^1.6.5",
     "parcel-bundler": "^1.12.5",
     "portal-vue": "^2.1.7",
     "sass": "^1.37.5",

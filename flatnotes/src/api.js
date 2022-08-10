@@ -1,7 +1,7 @@
-import axios from "axios";
-
 import * as constants from "./constants";
+
 import EventBus from "./eventBus";
+import axios from "axios";
 
 const api = axios.create();
 
