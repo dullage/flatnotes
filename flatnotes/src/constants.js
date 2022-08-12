@@ -28,6 +28,8 @@ export const dataDefaults = function() {
 
     // Search Result Data
     searchFailed: false,
+    searchFailedMessage: "Failed to load Search Results",
+    searchFailedIcon: null,
     searchTerm: null,
     searchResults: null,
   };

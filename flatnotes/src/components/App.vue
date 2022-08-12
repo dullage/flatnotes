@@ -1,5 +1,5 @@
 <template>
-  <div class="container d-flex flex-column align-items-center h-100">
+  <div class="container d-flex flex-column h-100">
     <!-- Search Modal -->
     <b-modal id="search-modal" centered hide-footer hide-header>
       <div class="d-flex flex-column align-items-center">
@@ -20,13 +20,14 @@
     ></NavBar>
 
     <!-- Login -->
-    <Login v-if="currentView == views.login"></Login>
+    <Login v-if="currentView == views.login" class="flex-grow-1"></Login>
 
     <!-- Home -->
     <div
       v-if="currentView == views.home"
       class="
         home-view
+        align-self-center
         d-flex
         flex-column
         justify-content-center
@@ -41,19 +42,17 @@
     </div>
 
     <!-- Search Results -->
-    <div v-if="currentView == views.search" class="w-100 pt-5">
+    <div v-if="currentView == views.search" class="w-100 pt-5 flex-grow-1">
       <!-- Searching -->
-      <div v-if="searchResults == null">
-        <loading-indicator
-          loading-message="Searching..."
-          failure-message="Search failed 😞"
+      <div
+        v-if="searchResults == null || searchResults.length == 0"
+        class="h-100 d-flex flex-column justify-content-center"
+      >
+        <LoadingIndicator
           :failed="searchFailed"
+          :failedBootstrapIcon="searchFailedIcon"
+          :failedMessage="searchFailedMessage"
         />
-      </div>
-
-      <!-- No Results -->
-      <div v-else-if="searchResults.length == 0">
-        <p class="text-center">No Results</p>
       </div>
 
       <!-- Search Results Loaded -->

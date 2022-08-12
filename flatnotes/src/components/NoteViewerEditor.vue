@@ -1,12 +1,15 @@
 <template>
   <!-- Note -->
-  <div class="w-100">
+  <div class="w-100 h-100">
     <!-- Loading -->
-    <div v-if="currentNote == null">
-      <loading-indicator
-        v-if="currentNote == null"
-        :failure-message="noteLoadFailedMessage"
+    <div
+      v-if="currentNote == null"
+      class="h-100 d-flex flex-column justify-content-center"
+    >
+      <LoadingIndicator
         :failed="noteLoadFailed"
+        :failedBootstrapIcon="noteLoadFailedIcon"
+        :failedMessage="noteLoadFailedMessage"
       />
     </div>
 
@@ -192,7 +195,8 @@ export default {
       titleInput: null,
       initialContent: null,
       noteLoadFailed: false,
-      noteLoadFailedMessage: "Loading failed 😞",
+      noteLoadFailedIcon: null,
+      noteLoadFailedMessage: "Failed to load Note",
       viewerOptions: { plugins: [codeSyntaxHighlight] },
       editorOptions: { plugins: [codeSyntaxHighlight] },
     };
@@ -225,7 +229,8 @@ export default {
             typeof error.response !== "undefined" &&
             error.response.status == 404
           ) {
-            parent.noteLoadFailedMessage = "Note not found 😞";
+            parent.noteLoadFailedIcon = "file-earmark-x";
+            parent.noteLoadFailedMessage = "Note not found";
             parent.noteLoadFailed = true;
           } else {
             EventBus.$emit("unhandledServerError");

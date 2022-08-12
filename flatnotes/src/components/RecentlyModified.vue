@@ -1,8 +1,12 @@
 <template>
   <div>
     <!-- Loading -->
-    <div v-if="notes == null">
-      <LoadingIndicator loadingMessage="" :failed="loadingFailed" />
+    <div v-if="notes == null" class="h-100 d-flex flex-column justify-content-center">
+      <LoadingIndicator
+        :showLoader="false"
+        :failed="loadingFailed"
+        failedMessage="Failed to load Recently Modified"
+      />
     </div>
 
     <!-- Notes Loaded -->

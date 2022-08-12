@@ -105,16 +105,22 @@ export default {
         .get("/api/search", { params: { term: this.searchTerm } })
         .then(function(response) {
           parent.searchResults = [];
-          response.data.forEach(function(result) {
-            parent.searchResults.push(
-              new SearchResult(
-                result.title,
-                result.lastModified,
-                result.titleHighlights,
-                result.contentHighlights
-              )
-            );
-          });
+          if (response.data.length == 0) {
+            parent.searchFailedIcon = "search";
+            parent.searchFailedMessage = "No Results";
+            parent.searchFailed = true;
+          } else {
+            response.data.forEach(function(result) {
+              parent.searchResults.push(
+                new SearchResult(
+                  result.title,
+                  result.lastModified,
+                  result.titleHighlights,
+                  result.contentHighlights
+                )
+              );
+            });
+          }
         })
         .catch(function(error) {
           if (!error.handled) {
