@@ -1,7 +1,10 @@
-import codeSyntaxHighlight from "@toast-ui/editor-plugin-code-syntax-highlight/dist/toastui-editor-plugin-code-syntax-highlight-all.js";
-
 // Base Paths
-export const basePaths = { login: "login", note: "note", search: "search" };
+export const basePaths = {
+  login: "login",
+  note: "note",
+  search: "search",
+  new: "new",
+};
 
 // Params
 export const params = { searchTerm: "term", redirect: "redirect" };
@@ -19,28 +22,15 @@ export const dataDefaults = function() {
 
     // State
     currentView: 1,
-    editMode: false,
-    draftSaveTimeout: null,
-
-    // Login Data
-    usernameInput: null,
-    passwordInput: null,
-    rememberMeInput: false,
-
-    // Search Data
-    searchFailed: false,
 
     // Note Data
+    noteTitle: null,
+
+    // Search Result Data
+    searchFailed: false,
+    searchFailedMessage: "Failed to load Search Results",
+    searchFailedIcon: null,
     searchTerm: null,
     searchResults: null,
-    currentNote: null,
-    titleInput: null,
-    initialContent: null,
-    noteLoadFailed: false,
-    noteLoadFailedMessage: "Loading failed 😞",
-
-    // Toast UI Plugins
-    viewerOptions: { plugins: [codeSyntaxHighlight] },
-    editorOptions: { plugins: [codeSyntaxHighlight] },
   };
 };

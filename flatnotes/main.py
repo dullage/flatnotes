@@ -47,6 +47,7 @@ async def token(data: LoginModel):
 @app.get("/")
 @app.get("/login")
 @app.get("/search")
+@app.get("/new")
 @app.get("/note/{title}")
 async def root(title: str = ""):
     with open("flatnotes/dist/index.html", "r", encoding="utf-8") as f:

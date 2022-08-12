@@ -5,24 +5,16 @@
 @import "node_modules/bootstrap/scss/variables";
 @import "node_modules/bootstrap/scss/mixins";
 
-// Toast UI Markdown Editor
-@import "@toast-ui/editor/dist/toastui-editor.css";
-@import "@toast-ui/editor/dist/toastui-editor-viewer.css";
-@import "prismjs/themes/prism.css";
-@import "@toast-ui/editor-plugin-code-syntax-highlight/dist/toastui-editor-plugin-code-syntax-highlight.css";
+// Google Font
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100&display=swap");
 
-// Variables
-$off-white: #f8f9fd70;
-
-// Mixins
-@mixin note-content {
-  padding: min(2vw, 30px) min(3vw, 40px);
-}
+// Colours
+@import "./colours";
 
 // Elements & Classes
 body {
   background-color: $off-white;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Inter", sans-serif;
 }
 
 .clickable-link {
@@ -36,46 +28,35 @@ body {
   }
 }
 
-.note {
-  background-color: white;
-  box-shadow: 0 0 10px #0000000a;
+.form-control:focus {
+  box-shadow: none;
+  border-color: $form-control-border;
 }
 
-.note-viewer {
-  @include note-content;
+.home-view {
+  max-width: 500px;
 }
 
-.title-input {
-  border: none;
-
-  // Override user agent styling
-  background-color: $off-white;
-  color: #212529;
-  padding: 0;
+.search-input {
+  box-shadow: 0 0 20px $drop-shadow;
 }
 
-.title-input:focus {
-  outline: none;
+.recently-modified {
+  // Prevent UI from moving during load
+  min-height: 190px;
 }
 
-// Toast UI Overrides
-.toastui-editor-contents {
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  h1,
-  h2 {
-    border-bottom: none;
+.bttn {
+  border: 0;
+  background-color: transparent;
+  border-radius: 4px;
+  padding: 4px 10px;
+  color: $muted-text;
+
+  svg {
+    margin-right: 2px;
   }
 }
-
-.toastui-editor-contents pre,
-.toastui-editor-md-code-block-line-background {
-  background-color: darken($off-white, 3%);
-}
-
-.toastui-editor-defaultUI {
-  border: none;
-}
-
-.toastui-editor-defaultUI .ProseMirror {
-  @include note-content;
+.bttn:hover {
+  background-color: $button-background
 }

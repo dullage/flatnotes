@@ -1,19 +1,17 @@
 <template>
   <div>
-    <h6 class="text-center text-muted text-bold">Recently Modified</h6>
-
     <!-- Loading -->
-    <div v-if="notes == null">
-      <loading-indicator :failed="loadingFailed" />
-    </div>
-
-    <!-- No Notes -->
-    <div v-else-if="notes.length == 0">
-      <p class="text-center">No Notes</p>
+    <div v-if="notes == null" class="h-100 d-flex flex-column justify-content-center">
+      <LoadingIndicator
+        :showLoader="false"
+        :failed="loadingFailed"
+        failedMessage="Failed to load Recently Modified"
+      />
     </div>
 
     <!-- Notes Loaded -->
-    <div v-else>
+    <div v-else-if="notes.length > 0">
+      <h6 class="text-center text-muted text-bold">Recently Modified</h6>
       <p
         v-for="note in notes"
         class="text-center clickable-link mb-2"
@@ -28,10 +26,10 @@
 </template>
 
 <script>
-import api from "../api";
-import { Note } from "../classes";
 import EventBus from "../eventBus";
 import LoadingIndicator from "./LoadingIndicator.vue";
+import { Note } from "../classes";
+import api from "../api";
 
 export default {
   components: {
