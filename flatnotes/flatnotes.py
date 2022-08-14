@@ -6,27 +6,32 @@ from typing import List, Tuple
 
 import whoosh
 from whoosh import writing
+from whoosh.analysis import CharsetFilter, StemmingAnalyzer
 from whoosh.fields import ID, STORED, TEXT, SchemaClass
 from whoosh.index import Index
 from whoosh.qparser import MultifieldParser
 from whoosh.searching import Hit
+from whoosh.support.charset import accent_map
 
-from helpers import strip_ext
+from helpers import empty_dir, strip_ext
 
 MARKDOWN_EXT = ".md"
+INDEX_SCHEMA_VERSION = "2"
+
+StemmingFoldingAnalyzer = StemmingAnalyzer() | CharsetFilter(accent_map)
+
+
+class IndexSchema(SchemaClass):
+    filename = ID(unique=True, stored=True)
+    last_modified = STORED()
+    title = TEXT(field_boost=2, analyzer=StemmingFoldingAnalyzer)
+    content = TEXT(analyzer=StemmingFoldingAnalyzer)
 
 
 class InvalidTitleError(Exception):
     def __init__(self, message="The specified title is invalid"):
         self.message = message
         super().__init__(self.message)
-
-
-class IndexSchema(SchemaClass):
-    filename = ID(unique=True, stored=True)
-    last_modified = STORED()
-    title = TEXT(field_boost=2)
-    content = TEXT()
 
 
 class Note:
@@ -118,14 +123,24 @@ class Flatnotes(object):
 
     def _load_index(self) -> Index:
         """Load the note index or create new if not exists."""
-        if not os.path.exists(self.index_dir):
-            os.mkdir(self.index_dir)
-        if whoosh.index.exists_in(self.index_dir):
-            logging.info("Existing index loaded")
-            return whoosh.index.open_dir(self.index_dir)
+        index_dir_exists = os.path.exists(self.index_dir)
+        if index_dir_exists and whoosh.index.exists_in(
+            self.index_dir, indexname=INDEX_SCHEMA_VERSION
+        ):
+            logging.info("Loading existing index")
+            return whoosh.index.open_dir(
+                self.index_dir, indexname=INDEX_SCHEMA_VERSION
+            )
         else:
-            logging.info("New index created")
-            return whoosh.index.create_in(self.index_dir, IndexSchema)
+            if index_dir_exists:
+                logging.info("Deleting outdated index")
+                empty_dir(self.index_dir)
+            else:
+                os.mkdir(self.index_dir)
+            logging.info("Creating new index")
+            return whoosh.index.create_in(
+                self.index_dir, IndexSchema, indexname=INDEX_SCHEMA_VERSION
+            )
 
     def _add_note_to_index(
         self, writer: writing.IndexWriter, note: Note
