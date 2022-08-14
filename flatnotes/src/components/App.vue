@@ -76,7 +76,7 @@
     <!-- Note -->
     <NoteViewerEditor
       v-if="currentView == this.views.note"
-      class="mt-5 flex-grow-1"
+      class="flex-grow-1"
       :titleToLoad="noteTitle"
       @note-deleted="noteDeletedToast"
     ></NoteViewerEditor>

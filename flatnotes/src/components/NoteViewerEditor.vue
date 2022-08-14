@@ -1,6 +1,6 @@
 <template>
   <!-- Note -->
-  <div class="w-100 h-100">
+  <div class="pt-5 pb-4">
     <!-- Loading -->
     <div
       v-if="currentNote == null"
@@ -15,9 +15,8 @@
 
     <!-- Loaded -->
     <div v-else class="d-flex flex-column h-100">
-      <div
-        class="d-flex justify-content-between flex-wrap align-items-end mb-3"
-      >
+      <!-- Buttons -->
+      <div class="d-flex justify-content-between flex-wrap align-items-end mb-3">
         <!-- Title -->
         <h2 v-if="editMode == false" class="title" :title="currentNote.title">
           {{ currentNote.title }}
@@ -77,12 +76,12 @@
       </div>
 
       <!-- Viewer -->
-      <div v-if="editMode == false" class="mb-4 note note-viewer">
+      <div v-if="editMode == false" class="note note-viewer">
         <viewer :initialValue="currentNote.content" :options="viewerOptions" />
       </div>
 
       <!-- Editor -->
-      <div v-else class="mb-4 note flex-grow-1">
+      <div v-else class="note flex-grow-1">
         <editor
           :initialValue="initialContent"
           initialEditType="markdown"
