@@ -1,6 +1,6 @@
 <template>
   <!-- Note -->
-  <div class="pt-5 pb-4">
+  <div class="pb-4">
     <!-- Loading -->
     <div
       v-if="currentNote == null"

@@ -11,7 +11,7 @@
     <!-- Nav Bar -->
     <NavBar
       v-if="currentView != views.login"
-      class="mt-3 w-100"
+      class="w-100 mb-5"
       :show-logo="currentView != views.home"
       @navigate-home="navigate('/')"
       @new-note="newNote()"
@@ -37,40 +37,23 @@
       "
     >
       <Logo class="mb-3"></Logo>
-      <SearchInput class="search-input mb-4"></SearchInput>
+      <SearchInput
+        :initial-value="searchTerm"
+        class="search-input mb-4"
+      ></SearchInput>
       <RecentlyModified class="recently-modified"></RecentlyModified>
     </div>
 
     <!-- Search Results -->
-    <div v-if="currentView == views.search" class="w-100 pt-5 flex-grow-1">
-      <!-- Searching -->
-      <div
-        v-if="searchResults == null || searchResults.length == 0"
-        class="h-100 d-flex flex-column justify-content-center"
-      >
-        <LoadingIndicator
-          :failed="searchFailed"
-          :failedBootstrapIcon="searchFailedIcon"
-          :failedMessage="searchFailedMessage"
-        />
-      </div>
-
-      <!-- Search Results Loaded -->
-      <div v-else>
-        <div v-for="result in searchResults" :key="result.title" class="mb-5">
-          <p class="h5 text-center clickable-link">
-            <a
-              v-html="result.titleHighlightsOrTitle"
-              :href="result.href"
-              @click.prevent="navigate(result.href, $event)"
-            ></a>
-          </p>
-          <p
-            class="text-center text-muted"
-            v-html="result.contentHighlights"
-          ></p>
-        </div>
-      </div>
+    <div
+      v-if="currentView == views.search"
+      class="flex-grow-1 search-results-view"
+    >
+      <SearchInput
+        :initial-value="searchTerm"
+        class="search-input mb-4"
+      ></SearchInput>
+      <SearchResults :search-term="searchTerm" class="h-100"></SearchResults>
     </div>
 
     <!-- Note -->

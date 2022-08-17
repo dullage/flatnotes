@@ -10,8 +10,7 @@ import NavBar from "./NavBar";
 import NoteViewerEditor from "./NoteViewerEditor";
 import RecentlyModified from "./RecentlyModified";
 import SearchInput from "./SearchInput";
-import { SearchResult } from "../classes";
-import api from "../api";
+import SearchResults from "./SearchResults";
 
 export default {
   name: "App",
@@ -24,10 +23,22 @@ export default {
     SearchInput,
     Logo,
     NoteViewerEditor,
+    SearchResults,
   },
 
   data: function() {
-    return constants.dataDefaults();
+    return {
+      views: {
+        login: 0,
+        home: 1,
+        note: 2,
+        search: 3,
+      },
+      currentView: 1,
+
+      noteTitle: null,
+      searchTerm: null,
+    };
   },
 
   methods: {
@@ -50,7 +61,6 @@ export default {
       else if (basePath == constants.basePaths.search) {
         this.updateDocumentTitle("Search");
         this.searchTerm = helpers.getSearchParam(constants.params.searchTerm);
-        this.getSearchResults();
         this.currentView = this.views.search;
       }
 
@@ -79,13 +89,10 @@ export default {
         window.open(href);
       } else {
         history.pushState(null, "", href);
-        this.resetData();
+        this.noteTitle = null;
+        this.searchTerm = null;
         this.route();
       }
-    },
-
-    resetData: function() {
-      Object.assign(this.$data, constants.dataDefaults());
     },
 
     updateDocumentTitle: function(suffix) {
@@ -96,38 +103,6 @@ export default {
       sessionStorage.removeItem("token");
       localStorage.removeItem("token");
       this.navigate(`/${constants.basePaths.login}`);
-    },
-
-    getSearchResults: function() {
-      let parent = this;
-      this.searchFailed = false;
-      api
-        .get("/api/search", { params: { term: this.searchTerm } })
-        .then(function(response) {
-          parent.searchResults = [];
-          if (response.data.length == 0) {
-            parent.searchFailedIcon = "search";
-            parent.searchFailedMessage = "No Results";
-            parent.searchFailed = true;
-          } else {
-            response.data.forEach(function(result) {
-              parent.searchResults.push(
-                new SearchResult(
-                  result.title,
-                  result.lastModified,
-                  result.titleHighlights,
-                  result.contentHighlights
-                )
-              );
-            });
-          }
-        })
-        .catch(function(error) {
-          if (!error.handled) {
-            parent.searchFailed = true;
-            parent.unhandledServerErrorToast();
-          }
-        });
     },
 
     newNote: function() {
@@ -143,11 +118,13 @@ export default {
     },
 
     focusSearchInput: function() {
-      document.getElementById("search-input").focus();
+      let input = document.getElementById("search-input");
+      input.focus();
+      input.select();
     },
 
     openSearch: function() {
-      if (this.currentView == this.views.home) {
+      if ([this.views.home, this.views.search].includes(this.currentView)) {
         this.focusSearchInput();
         EventBus.$emit("highlight-search-input");
       } else if (this.currentView != this.views.login) {

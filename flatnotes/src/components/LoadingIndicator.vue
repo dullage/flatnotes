@@ -2,7 +2,10 @@
   <div>
     <div v-if="showLoader && !failed" class="loader"></div>
     <div v-else-if="failed" class="d-flex flex-column align-items-center">
-      <b-icon class="failed-icon mb-3" :icon="failedBootstrapIcon"></b-icon>
+      <b-icon
+        class="failed-icon mb-3"
+        :icon="failedBootstrapIcon || 'cloud-slash'"
+      ></b-icon>
       <p>{{ failedMessage }}</p>
     </div>
   </div>
@@ -10,6 +13,10 @@
 
 <style lang="scss" scoped>
 @import "../colours";
+
+p {
+  color: $muted-text;
+}
 
 .failed-icon {
   color: $logo-key-colour;
@@ -82,7 +89,7 @@ export default {
   props: {
     showLoader: { type: Boolean, default: true },
     failed: { type: Boolean },
-    failedBootstrapIcon: { type: String, default: "cloud-slash" },
+    failedBootstrapIcon: { type: String },
     failedMessage: { type: String, default: "Loading Failed" },
   },
 };

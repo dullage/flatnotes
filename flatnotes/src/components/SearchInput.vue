@@ -49,11 +49,19 @@ import * as constants from "../constants";
 import EventBus from "../eventBus";
 
 export default {
+  props: { initialValue: { type: String } },
+
   data: function () {
     return {
       searchTermInput: null,
       includeHighlightClass: false,
     };
+  },
+
+  watch: {
+    initialValue: function () {
+      this.init();
+    },
   },
 
   methods: {
@@ -84,10 +92,15 @@ export default {
         parent.includeHighlightClass = false;
       }, 1500);
     },
+
+    init: function () {
+      this.searchTermInput = this.initialValue;
+    },
   },
 
   created: function () {
     EventBus.$on("highlight-search-input", this.highlightSearchInput);
+    this.init();
   },
 };
 </script>
