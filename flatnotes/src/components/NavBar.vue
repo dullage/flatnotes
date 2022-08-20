@@ -7,16 +7,21 @@
       @click.native="$emit('navigate-home')"
       responsive
     ></Logo>
+
+    <!-- Buttons -->
     <div>
       <!-- New Note -->
       <button type="button" class="bttn" @click="$emit('new-note')">
-        <b-icon icon="plus-circle"></b-icon> New Note
+        <b-icon icon="plus-circle"></b-icon> New
       </button>
 
       <!-- Log Out -->
       <button type="button" class="bttn" @click="$emit('logout')">
         <b-icon icon="box-arrow-right"></b-icon> Log Out
       </button>
+
+      <!-- A-Z -->
+      <button type="button" class="bttn" @click="$emit('a-z')">A-Z</button>
 
       <!-- Search -->
       <button

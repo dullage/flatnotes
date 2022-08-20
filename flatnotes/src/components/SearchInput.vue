@@ -72,7 +72,7 @@ export default {
       if (this.searchTermInput) {
         EventBus.$emit(
           "navigate",
-          `/${constants.basePaths.search}?${
+          `${constants.basePaths.search}?${
             constants.params.searchTerm
           }=${encodeURI(this.searchTermInput)}`
         );

@@ -1,10 +1,13 @@
 <template>
-  <div>
+  <div class="d-flex justify-content-center">
     <div v-if="showLoader && !failed" class="loader"></div>
-    <div v-else-if="failed" class="d-flex flex-column align-items-center">
+    <div
+      v-else-if="failed"
+      class="d-flex flex-column align-items-center failure-message"
+    >
       <b-icon
         class="failed-icon mb-3"
-        :icon="failedBootstrapIcon || 'cloud-slash'"
+        :icon="failedBootstrapIcon || 'cone-striped'"
       ></b-icon>
       <p>{{ failedMessage }}</p>
     </div>
@@ -21,6 +24,11 @@ p {
 .failed-icon {
   color: $logo-key-colour;
   font-size: 60px;
+}
+
+.failure-message {
+  max-width: 300px;
+  text-align: center;
 }
 
 .loader,

@@ -21,30 +21,13 @@ a {
   color: inherit;
   &:hover {
     text-decoration: none;
-    filter: opacity(70%);
+    color: inherit;
   }
 }
 
 .form-control:focus {
   box-shadow: none;
   border-color: $form-control-border;
-}
-
-.home-view {
-  max-width: 500px;
-}
-
-.search-results-view {
-  max-width: 700px;
-}
-
-.search-input {
-  box-shadow: 0 0 20px $drop-shadow;
-}
-
-.recently-modified {
-  // Prevent UI from moving during load
-  min-height: 190px;
 }
 
 .bttn {

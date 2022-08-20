@@ -7,8 +7,8 @@ import Login from "./Login";
 import Logo from "./Logo";
 import Mousetrap from "mousetrap";
 import NavBar from "./NavBar";
+import NoteList from "./NoteList";
 import NoteViewerEditor from "./NoteViewerEditor";
-import RecentlyModified from "./RecentlyModified";
 import SearchInput from "./SearchInput";
 import SearchResults from "./SearchResults";
 
@@ -16,7 +16,7 @@ export default {
   name: "App",
 
   components: {
-    RecentlyModified,
+    NoteList,
     LoadingIndicator,
     Login,
     NavBar,
@@ -33,6 +33,7 @@ export default {
         home: 1,
         note: 2,
         search: 3,
+        notes: 4,
       },
       currentView: 1,
 
@@ -44,12 +45,12 @@ export default {
   methods: {
     route: function() {
       let path = window.location.pathname.split("/");
-      let basePath = path[1];
+      let basePath = `/${path[1]}`;
 
       this.$bvModal.hide("search-modal");
 
       // Home Page
-      if (basePath == "") {
+      if (basePath == constants.basePaths.home) {
         this.updateDocumentTitle();
         this.currentView = this.views.home;
         this.$nextTick(function() {
@@ -77,6 +78,12 @@ export default {
         this.currentView = this.views.note;
       }
 
+      // Notes
+      else if (basePath == constants.basePaths.notes) {
+        this.updateDocumentTitle();
+        this.currentView = this.views.notes;
+      }
+
       // Login
       else if (basePath == constants.basePaths.login) {
         this.updateDocumentTitle("Log In");
@@ -102,11 +109,11 @@ export default {
     logout: function() {
       sessionStorage.removeItem("token");
       localStorage.removeItem("token");
-      this.navigate(`/${constants.basePaths.login}`);
+      this.navigate(constants.basePaths.login);
     },
 
     newNote: function() {
-      this.navigate(`/${constants.basePaths.new}`);
+      this.navigate(constants.basePaths.new);
     },
 
     noteDeletedToast: function() {
@@ -147,6 +154,8 @@ export default {
 
   created: function() {
     let parent = this;
+
+    this.constants = constants;
 
     EventBus.$on("navigate", this.navigate);
     EventBus.$on("unhandledServerError", this.unhandledServerErrorToast);

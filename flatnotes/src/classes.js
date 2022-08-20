@@ -8,7 +8,15 @@ class Note {
   }
 
   get href() {
-    return `/${constants.basePaths.note}/${this.title}`;
+    return `${constants.basePaths.note}/${this.title}`;
+  }
+
+  get lastModifiedAsDate() {
+    return new Date(this.lastModified * 1000);
+  }
+
+  get lastModifiedAsString() {
+    return this.lastModifiedAsDate.toLocaleString();
   }
 }
 

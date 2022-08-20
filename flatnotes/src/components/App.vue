@@ -13,8 +13,9 @@
       v-if="currentView != views.login"
       class="w-100 mb-5"
       :show-logo="currentView != views.home"
-      @navigate-home="navigate('/')"
+      @navigate-home="navigate(constants.basePaths.home)"
       @new-note="newNote()"
+      @a-z="navigate(constants.basePaths.notes)"
       @logout="logout()"
       @search="openSearch()"
     ></NavBar>
@@ -41,20 +42,37 @@
         :initial-value="searchTerm"
         class="search-input mb-4"
       ></SearchInput>
-      <RecentlyModified class="recently-modified"></RecentlyModified>
+      <NoteList
+        class="recently-modified"
+        mini-header="Recently Modified"
+        :num-recently-modified="5"
+        :show-loader="false"
+        centered
+      ></NoteList>
     </div>
 
     <!-- Search Results -->
     <div
       v-if="currentView == views.search"
-      class="flex-grow-1 search-results-view"
+      class="flex-grow-1 search-results-view d-flex flex-column"
     >
       <SearchInput
         :initial-value="searchTerm"
         class="search-input mb-4"
       ></SearchInput>
-      <SearchResults :search-term="searchTerm" class="h-100"></SearchResults>
+      <SearchResults
+        :search-term="searchTerm"
+        class="flex-grow-1"
+      ></SearchResults>
     </div>
+
+    <!-- Notes -->
+    <NoteList
+      v-if="currentView == views.notes"
+      class="flex-grow-1"
+      grouped
+      show-last-modified
+    ></NoteList>
 
     <!-- Note -->
     <NoteViewerEditor
@@ -65,6 +83,27 @@
     ></NoteViewerEditor>
   </div>
 </template>
+
+<style lang="scss" scoped>
+@import "../colours";
+
+.home-view {
+  max-width: 500px;
+}
+
+.search-results-view {
+  max-width: 700px;
+}
+
+.search-input {
+  box-shadow: 0 0 20px $drop-shadow;
+}
+
+.recently-modified {
+  // Prevent UI from moving during load
+  min-height: 180px;
+}
+</style>
 
 <script>
 export { default } from "./App.js";

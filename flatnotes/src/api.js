@@ -29,7 +29,7 @@ api.interceptors.response.use(
     ) {
       EventBus.$emit(
         "navigate",
-        `/${constants.basePaths.login}?${constants.params.redirect}=${encodeURI(
+        `${constants.basePaths.login}?${constants.params.redirect}=${encodeURI(
           window.location.pathname + window.location.search
         )}`
       );

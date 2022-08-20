@@ -28,12 +28,23 @@
   </div>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import "../colours";
+
+a {
+  &:hover {
+    filter: opacity(70%);
+  }
+}
 
 .result-contents {
   color: $muted-text;
 }
+</style>
+
+<style lang="scss">
+@import "../colours";
+
 .match {
   font-weight: bold;
   color: $logo-key-colour;
