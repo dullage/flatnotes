@@ -14,15 +14,18 @@
 
     <!-- Search Results Loaded -->
     <div v-else>
-      <div v-for="result in searchResults" :key="result.title" class="mb-4">
-        <p class="font-weight-bold mb-0">
-          <a
+      <div
+        v-for="result in searchResults"
+        :key="result.title"
+        class="bttn result mb-3"
+      >
+        <a :href="result.href" @click.prevent="openNote(result.href)">
+          <p
+            class="font-weight-bold mb-0"
             v-html="result.titleHighlightsOrTitle"
-            :href="result.href"
-            @click.prevent="openNote(result.href)"
-          ></a>
-        </p>
-        <p class="result-contents" v-html="result.contentHighlights"></p>
+          ></p>
+          <p class="result-contents" v-html="result.contentHighlights"></p>
+        </a>
       </div>
     </div>
   </div>
@@ -31,10 +34,8 @@
 <style lang="scss" scoped>
 @import "../colours";
 
-a {
-  &:hover {
-    filter: opacity(70%);
-  }
+.result p {
+  margin: 0;
 }
 
 .result-contents {
