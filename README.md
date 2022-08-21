@@ -33,6 +33,9 @@ Yes! See the [Advanced Searching](https://github.com/Dullage/flatnotes/wiki/Adva
 ### How do I get my notes out of flatnotes?
 They're just markdown files. There's no database, proprietary formatting, complicated folder structures or anything like that so you're free to just move the files elsewhere and use another markdown editor.
 
+### Is there an API?
+Yes. The docs are available at the `/docs` endpoint. See [demo.flatnotes.io/docs](https://demo.flatnotes.io/docs) as an example.
+
 
 ## Roadmap
 I want to keep flatnotes as simple and distraction free as possible which means limiting new features. This said, I welcome feedback and suggestions.
