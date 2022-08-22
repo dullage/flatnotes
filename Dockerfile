@@ -17,7 +17,6 @@ RUN addgroup \
 RUN adduser \
     --disabled-password \
     --gecos "" \
-    --no-create-home \
     --ingroup ${USER} \
     --uid ${UID} \
     ${USER} \
@@ -29,15 +28,14 @@ RUN apt update && apt install -y \
  && pip install pipenv
 
 RUN mkdir -p ${DATA_DIR}
-WORKDIR ${APP_DIR}
-
-COPY LICENSE Pipfile Pipfile.lock package.json package-lock.json ./
-RUN pipenv install --system --deploy --ignore-pipfile && npm ci
-
-COPY flatnotes ./flatnotes
-RUN npm run build
-
 RUN chown -R ${UID}:${GID} ${APP_DIR}
+WORKDIR ${APP_DIR}
 USER ${UID}
 
-ENTRYPOINT [ "python", "-m", "uvicorn", "main:app", "--app-dir", "flatnotes", "--host", "0.0.0.0", "--port", "80" ]
+COPY --chown=${UID}:${GID} LICENSE Pipfile Pipfile.lock package.json package-lock.json ./
+RUN pipenv install --deploy --ignore-pipfile && npm ci
+
+COPY --chown=${UID}:${GID} flatnotes ./flatnotes
+RUN npm run build
+
+ENTRYPOINT [ "pipenv", "run", "python", "-m", "uvicorn", "main:app", "--app-dir", "flatnotes", "--host", "0.0.0.0", "--port", "80" ]
