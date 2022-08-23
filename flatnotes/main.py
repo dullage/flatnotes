@@ -34,7 +34,7 @@ flatnotes = Flatnotes(os.environ["FLATNOTES_PATH"])
 @app.post("/api/token")
 async def token(data: LoginModel):
     if (
-        data.username != FLATNOTES_USERNAME
+        data.username.lower() != FLATNOTES_USERNAME.lower()
         or data.password != FLATNOTES_PASSWORD
     ):
         raise HTTPException(
