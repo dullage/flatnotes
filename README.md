@@ -29,6 +29,7 @@ docker run -d \
   -e "FLATNOTES_USERNAME=user" \
   -e "FLATNOTES_PASSWORD=changeMe!" \
   -e "FLATNOTES_SECRET_KEY=aLongRandomSeriesOfCharacters" \
+  -v "$(pwd)/data:/app/data" \
   -p "80:80" \
   dullage/flatnotes:latest
 ```
@@ -48,8 +49,8 @@ services:
       # FLATNOTES_SESSION_EXPIRY_DAYS: "7"
       # Optional. Defaults to 30.
     volumes:
-      - "./data:/data"
-      # - "./index:/data/.flatnotes"
+      - "./data:/app/data"
+      # - "./index:/app/data/.flatnotes"
       # Optional. Allows you to save the search index in a different location. 
     ports:
       - "80:80"
