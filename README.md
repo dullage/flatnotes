@@ -58,6 +58,7 @@ services:
 
 
 ## Q&A
+
 ### Where is the database?
 There is no database, only a single folder of markdown files (and the .flatnotes sub-folder).
 
@@ -81,10 +82,17 @@ Yes. The docs are available at the `/docs` endpoint. See [demo.flatnotes.io/docs
 
 
 ## Roadmap
+
 I want to keep flatnotes as simple and distraction free as possible which means limiting new features. This said, I welcome feedback and suggestions.
 
 One feature I do plan to implement is the ability to *share* a note. In the spirit of simple and database-less, the current plan is to generate temporary pre-signed URLs but this needs to be explored.
 
+
+## Support
+
+If you find this project useful, please consider buying me a coffee. It would make my day.
+
+[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/dullage)
 
 ## Thanks
 
