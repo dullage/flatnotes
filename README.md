@@ -10,8 +10,51 @@ Log into the [demo site](https://demo.flatnotes.io) and take a look around. The 
 flatnotes is designed to be a distraction free note taking app that puts your note content first. This means:
 
 * A clean and simple user interface.
-* No folders, categories, keywords, notebooks, tags or anything like that. Just all of your notes backed by powerful search functionality.
+* No folders, categories, keywords, notebooks, tags or anything like that. Just all of your notes, backed by powerful search functionality.
 * Quick access to a full text search from anywhere in the app (keyboard shortcut "/").
+
+Another key design principle is not to take your notes hostage. Your notes are just markdown files. There's no database, proprietary formatting, complicated folder structures or anything like that. You're free at any point to just move the files elsewhere and use another app.
+
+Equally, the only thing flatnotes caches is the search index and that's incrementally synced on every search (and when flatnotes first starts). This means that you're free to add, edit & delete the markdown files outside of flatnotes whilst flatnotes is running.
+
+
+## Installation
+
+The easiest way to install flatnotes is using Docker.
+
+### Example Docker Run Command
+
+```shell
+docker run -d \
+  -e "FLATNOTES_USERNAME=user" \
+  -e "FLATNOTES_PASSWORD=changeMe!" \
+  -e "FLATNOTES_SECRET_KEY=aLongRandomSeriesOfCharacters" \
+  -p "80:80" \
+  dullage/flatnotes:latest
+```
+
+### Example Docker Compose
+```yaml
+version: "3"
+
+services:
+  flatnotes:
+    container_name: flatnotes
+    image: dullage/flatnotes:latest
+    environment:
+      FLATNOTES_USERNAME: "user"
+      FLATNOTES_PASSWORD: "changeMe!"
+      FLATNOTES_SECRET_KEY: "aLongRandomSeriesOfCharacters"
+      # FLATNOTES_SESSION_EXPIRY_DAYS: "7"
+      # Optional. Defaults to 30.
+    volumes:
+      - "./data:/data"
+      # - "./index:/data/.flatnotes"
+      # Optional. Allows you to save the search index in a different location. 
+    ports:
+      - "80:80"
+    restart: unless-stopped
+```
 
 
 ## Q&A
@@ -31,7 +74,7 @@ Yup. The only thing flatnotes caches is the search index and that's synced on ev
 Yes! See the [Advanced Searching](https://github.com/Dullage/flatnotes/wiki/Advanced-Searching) wiki page.
 
 ### How do I get my notes out of flatnotes?
-They're just markdown files. There's no database, proprietary formatting, complicated folder structures or anything like that so you're free to just move the files elsewhere and use another markdown editor.
+They're just markdown files.  You're free to just move the files elsewhere and use another app.
 
 ### Is there an API?
 Yes. The docs are available at the `/docs` endpoint. See [demo.flatnotes.io/docs](https://demo.flatnotes.io/docs) as an example.
