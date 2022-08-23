@@ -22,6 +22,8 @@ Equally, the only thing flatnotes caches is the search index and that's incremen
 
 The easiest way to install flatnotes is using Docker.
 
+Note: To use either of the options below, please ensure the current directory contains a folder called "data" and that it's writable by user 1000.
+
 ### Example Docker Run Command
 
 ```shell
