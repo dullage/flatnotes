@@ -1,3 +1,18 @@
+FROM --platform=$BUILDPLATFORM python:3.10-slim-bullseye AS build
+
+RUN apt update && apt install -y npm
+
+ARG BUILD_DIR=/build
+RUN mkdir ${BUILD_DIR}
+WORKDIR ${BUILD_DIR}
+
+COPY package.json package-lock.json ./
+RUN npm ci
+
+COPY flatnotes/src ./flatnotes/src
+RUN npm run build
+
+
 FROM python:3.10-slim-bullseye
 
 ARG USER=flatnotes
@@ -22,20 +37,18 @@ RUN adduser \
     ${USER} \
     || echo "User '${UID}' already exists."
 
-RUN apt update && apt install -y \
-      npm \
- && rm -rf /var/lib/apt/lists/* \
- && pip install pipenv
+RUN pip install pipenv
 
 RUN mkdir -p ${DATA_DIR}
 RUN chown -R ${UID}:${GID} ${APP_DIR}
 WORKDIR ${APP_DIR}
+
 USER ${UID}
 
-COPY --chown=${UID}:${GID} LICENSE Pipfile Pipfile.lock package.json package-lock.json ./
-RUN pipenv install --deploy --ignore-pipfile && npm ci
+COPY --chown=${UID}:${GID} LICENSE Pipfile Pipfile.lock ./
+RUN pipenv install --deploy --ignore-pipfile
 
-COPY --chown=${UID}:${GID} flatnotes ./flatnotes
-RUN npm run build
+COPY flatnotes ./flatnotes
+COPY --from=build --chown=${UID}:${GID} /build/flatnotes/dist ./flatnotes/dist
 
 ENTRYPOINT [ "pipenv", "run", "python", "-m", "uvicorn", "main:app", "--app-dir", "flatnotes", "--host", "0.0.0.0", "--port", "80" ]
