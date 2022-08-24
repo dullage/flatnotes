@@ -1,5 +1,6 @@
 import logging
 import os
+import secrets
 from typing import List, Literal
 
 from auth import (
@@ -33,10 +34,13 @@ flatnotes = Flatnotes(os.environ["FLATNOTES_PATH"])
 
 @app.post("/api/token")
 async def token(data: LoginModel):
-    if (
-        data.username.lower() != FLATNOTES_USERNAME.lower()
-        or data.password != FLATNOTES_PASSWORD
-    ):
+    username_correct = secrets.compare_digest(
+        FLATNOTES_USERNAME.lower(), data.username.lower()
+    )
+    password_correct = secrets.compare_digest(
+        FLATNOTES_PASSWORD, data.password
+    )
+    if not (username_correct and password_correct):
         raise HTTPException(
             status_code=400, detail="Incorrect username or password"
         )
