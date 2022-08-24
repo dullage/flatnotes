@@ -5,6 +5,7 @@ from datetime import datetime
 from typing import List, Tuple
 
 import whoosh
+from helpers import empty_dir, strip_ext
 from whoosh import writing
 from whoosh.analysis import CharsetFilter, StemmingAnalyzer
 from whoosh.fields import ID, STORED, TEXT, SchemaClass
@@ -12,8 +13,6 @@ from whoosh.index import Index
 from whoosh.qparser import MultifieldParser
 from whoosh.searching import Hit
 from whoosh.support.charset import accent_map
-
-from helpers import empty_dir, strip_ext
 
 MARKDOWN_EXT = ".md"
 INDEX_SCHEMA_VERSION = "2"

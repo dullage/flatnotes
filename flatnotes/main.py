@@ -10,9 +10,9 @@ from auth import (
     validate_token,
 )
 from error_responses import (
-    title_exists_response,
-    note_not_found_response,
     invalid_title_response,
+    note_not_found_response,
+    title_exists_response,
 )
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.responses import HTMLResponse
