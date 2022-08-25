@@ -1,12 +1,5 @@
 <template>
-  <div
-    class="
-      d-flex
-      flex-column
-      justify-content-center
-      align-items-center
-    "
-  >
+  <div class="d-flex flex-column justify-content-center align-items-center">
     <!-- Logo -->
     <Logo class="mb-3"></Logo>
 
@@ -95,7 +88,7 @@ export default {
             localStorage.setItem("token", response.data.access_token);
           }
           let redirectPath = helpers.getSearchParam(constants.params.redirect);
-          EventBus.$emit("navigate", redirectPath || "/");
+          EventBus.$emit("navigate", redirectPath || constants.basePaths.home);
         })
         .catch(function (error) {
           if (error.handled) {

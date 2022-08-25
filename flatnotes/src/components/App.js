@@ -74,7 +74,7 @@ export default {
       // Note
       else if (basePath == constants.basePaths.note) {
         this.updateDocumentTitle();
-        this.noteTitle = path[2];
+        this.noteTitle = decodeURIComponent(path[2]);
         this.currentView = this.views.note;
       }
 

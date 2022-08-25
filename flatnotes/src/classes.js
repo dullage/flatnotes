@@ -8,7 +8,7 @@ class Note {
   }
 
   get href() {
-    return `${constants.basePaths.note}/${this.title}`;
+    return `${constants.basePaths.note}/${encodeURIComponent(this.title)}`;
   }
 
   get lastModifiedAsDate() {

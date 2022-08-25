@@ -16,7 +16,9 @@
     <!-- Loaded -->
     <div v-else class="d-flex flex-column h-100">
       <!-- Buttons -->
-      <div class="d-flex justify-content-between flex-wrap align-items-end mb-3">
+      <div
+        class="d-flex justify-content-between flex-wrap align-items-end mb-3"
+      >
         <!-- Title -->
         <h2 v-if="editMode == false" class="title" :title="currentNote.title">
           {{ currentNote.title }}
@@ -166,6 +168,8 @@
 </style>
 
 <script>
+import * as constants from "../constants";
+
 import { Editor } from "@toast-ui/vue-editor";
 import EventBus from "../eventBus";
 import LoadingIndicator from "./LoadingIndicator";
@@ -212,7 +216,7 @@ export default {
       let parent = this;
       this.noteLoadFailed = false;
       api
-        .get(`/api/notes/${title}`)
+        .get(`/api/notes/${encodeURIComponent(title)}`)
         .then(function (response) {
           parent.currentNote = new Note(
             response.data.title,
@@ -375,7 +379,7 @@ export default {
         this.titleInput != this.currentNote.title
       ) {
         api
-          .patch(`/api/notes/${this.currentNote.title}`, {
+          .patch(`/api/notes/${encodeURIComponent(this.currentNote.title)}`, {
             newTitle: this.titleInput,
             newContent: newContent,
           })
@@ -426,7 +430,7 @@ export default {
       localStorage.removeItem(this.currentNote.title);
       if (this.currentNote.lastModified == null) {
         // Cancelling a new note
-        EventBus.$emit("navigate", "/");
+        EventBus.$emit("navigate", constants.basePaths.home);
       } else {
         this.setEditMode(false);
       }
@@ -447,10 +451,12 @@ export default {
         .then(function (response) {
           if (response == true) {
             api
-              .delete(`/api/notes/${parent.currentNote.title}`)
+              .delete(
+                `/api/notes/${encodeURIComponent(parent.currentNote.title)}`
+              )
               .then(function () {
                 parent.$emit("note-deleted");
-                EventBus.$emit("navigate", "/");
+                EventBus.$emit("navigate", constants.basePaths.home);
               })
               .catch(function (error) {
                 if (!error.handled) {

@@ -74,7 +74,7 @@ export default {
           "navigate",
           `${constants.basePaths.search}?${
             constants.params.searchTerm
-          }=${encodeURI(this.searchTermInput)}`
+          }=${encodeURIComponent(this.searchTermInput)}`
         );
       } else {
         this.$bvToast.toast("Please enter a search term ✘", {
