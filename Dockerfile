@@ -23,6 +23,7 @@ ARG APP_DIR=/app
 ARG DATA_DIR=${APP_DIR}/data
 
 ENV FLATNOTES_PATH=${DATA_DIR}
+ENV PORT=80
 
 RUN addgroup \
     --gid $GID \
@@ -51,4 +52,4 @@ RUN pipenv install --deploy --ignore-pipfile
 COPY flatnotes ./flatnotes
 COPY --from=build --chown=${UID}:${GID} /build/flatnotes/dist ./flatnotes/dist
 
-ENTRYPOINT [ "pipenv", "run", "python", "-m", "uvicorn", "main:app", "--app-dir", "flatnotes", "--host", "0.0.0.0", "--port", "80" ]
+ENTRYPOINT [ "pipenv", "run", "python", "-m", "uvicorn", "main:app", "--app-dir", "flatnotes", "--host", "0.0.0.0", "--port", "${PORT}" ]
