@@ -1,13 +1,14 @@
 import glob
 import logging
 import os
+import re
 from datetime import datetime
 from typing import List, Tuple
 
 import whoosh
-from helpers import empty_dir, strip_ext
+from helpers import empty_dir, re_extract, strip_ext
 from whoosh import writing
-from whoosh.analysis import CharsetFilter, StemmingAnalyzer
+from whoosh.analysis import CharsetFilter, KeywordAnalyzer, StemmingAnalyzer
 from whoosh.fields import ID, STORED, TEXT, SchemaClass
 from whoosh.index import Index
 from whoosh.qparser import MultifieldParser
@@ -15,7 +16,8 @@ from whoosh.searching import Hit
 from whoosh.support.charset import accent_map
 
 MARKDOWN_EXT = ".md"
-INDEX_SCHEMA_VERSION = "2"
+INDEX_SCHEMA_VERSION = "3"
+TAG_TOKEN_REGEX = re.compile(r"(?:(?<=^#)|(?<=\s#))\w+(?=\s|$)")
 
 StemmingFoldingAnalyzer = StemmingAnalyzer() | CharsetFilter(accent_map)
 
@@ -25,6 +27,7 @@ class IndexSchema(SchemaClass):
     last_modified = STORED()
     title = TEXT(field_boost=2, analyzer=StemmingFoldingAnalyzer)
     content = TEXT(analyzer=StemmingFoldingAnalyzer)
+    tags = TEXT(analyzer=KeywordAnalyzer(lowercase=True))
 
 
 class InvalidTitleError(Exception):
@@ -147,11 +150,13 @@ class Flatnotes(object):
         """Add a Note object to the index using the given writer. If the
         filename already exists in the index an update will be performed
         instead."""
+        content, tag_list = re_extract(TAG_TOKEN_REGEX, note.content)
         writer.update_document(
             filename=note.filename,
             last_modified=note.last_modified,
             title=note.title,
-            content=note.content,
+            content=content,
+            tags=" ".join(tag_list),
         )
 
     def get_notes(self) -> List[Note]:
@@ -208,12 +213,12 @@ class Flatnotes(object):
         ):
             self.update_index(clean=clean)
 
-    def search(self, term: str) -> Tuple[NoteHit]:
+    def search(self, term: str) -> Tuple[NoteHit, ...]:
         """Search the index for the given term."""
         self.update_index_debounced()
         with self.index.searcher() as searcher:
             query = MultifieldParser(
-                ["title", "content"], self.index.schema
+                ["title", "content", "tags"], self.index.schema
             ).parse(term)
-            results = searcher.search(query)
+            results = searcher.search(query, limit=None)
             return tuple(NoteHit(self, hit) for hit in results)
