@@ -3,7 +3,7 @@ import logging
 import os
 import re
 from datetime import datetime
-from typing import List, Tuple
+from typing import List, Set, Tuple
 
 import whoosh
 from helpers import empty_dir, re_extract, strip_ext
@@ -17,7 +17,6 @@ from whoosh.support.charset import accent_map
 
 MARKDOWN_EXT = ".md"
 INDEX_SCHEMA_VERSION = "3"
-TAG_TOKEN_REGEX = re.compile(r"(?:(?<=^#)|(?<=\s#))\w+(?=\s|$)")
 
 StemmingFoldingAnalyzer = StemmingAnalyzer() | CharsetFilter(accent_map)
 
@@ -27,7 +26,7 @@ class IndexSchema(SchemaClass):
     last_modified = STORED()
     title = TEXT(field_boost=2, analyzer=StemmingFoldingAnalyzer)
     content = TEXT(analyzer=StemmingFoldingAnalyzer)
-    tags = TEXT(analyzer=KeywordAnalyzer(lowercase=True))
+    tags = TEXT(analyzer=KeywordAnalyzer())
 
 
 class InvalidTitleError(Exception):
@@ -99,17 +98,27 @@ class Note:
         return not any(invalid_char in title for invalid_char in invalid_chars)
 
 
-class NoteHit(Note):
+class SearchResult(Note):
     def __init__(self, flatnotes: "Flatnotes", hit: Hit) -> None:
         super().__init__(flatnotes, strip_ext(hit["filename"]))
-        self.title_highlights = hit.highlights("title", text=self.title)
-        self.content_highlights = hit.highlights(
+        self._title_highlights = hit.highlights("title", text=self.title)
+        self._content_highlights = hit.highlights(
             "content",
             text=self.content,
         )
 
+    @property
+    def title_highlights(self):
+        return self._title_highlights
+
+    @property
+    def content_highlights(self):
+        return self._content_highlights
+
 
 class Flatnotes(object):
+    TAG_SECTION_RE = re.compile(r"(?:\s+#\w+)+$")
+
     def __init__(self, dir: str) -> None:
         if not os.path.exists(dir):
             raise NotADirectoryError(f"'{dir}' is not a valid directory.")
@@ -144,19 +153,36 @@ class Flatnotes(object):
                 self.index_dir, IndexSchema, indexname=INDEX_SCHEMA_VERSION
             )
 
+    def _extract_tags(self, content) -> Tuple[str, Set[str]]:
+        """Strip the tag section from the given content and return a tuple
+        consisting of:
+
+        - The content without the tag section.
+        - A deduplicated list of tags converted to lowercase."""
+        content_ex_tags, tag_sections = re_extract(
+            self.TAG_SECTION_RE, content
+        )
+        try:
+            tags = tag_sections[0].split()
+            tags = [tag[1:].lower() for tag in tags]
+            return (content_ex_tags, set(tags))
+        except IndexError:
+            return (content, set())
+
     def _add_note_to_index(
         self, writer: writing.IndexWriter, note: Note
     ) -> None:
         """Add a Note object to the index using the given writer. If the
         filename already exists in the index an update will be performed
         instead."""
-        content, tag_list = re_extract(TAG_TOKEN_REGEX, note.content)
+        content_ex_tags, tag_set = self._extract_tags(note.content)
+        tag_string = " ".join(tag_set)
         writer.update_document(
             filename=note.filename,
             last_modified=note.last_modified,
             title=note.title,
-            content=content,
-            tags=" ".join(tag_list),
+            content=content_ex_tags,
+            tags=tag_string,
         )
 
     def get_notes(self) -> List[Note]:
@@ -213,7 +239,14 @@ class Flatnotes(object):
         ):
             self.update_index(clean=clean)
 
-    def search(self, term: str) -> Tuple[NoteHit, ...]:
+    def get_tags(self):
+        """Return a list of all indexed tags."""
+        self.update_index_debounced()
+        with self.index.reader() as reader:
+            tags = reader.field_terms("tags")
+            return [tag for tag in tags]
+
+    def search(self, term: str) -> Tuple[SearchResult, ...]:
         """Search the index for the given term."""
         self.update_index_debounced()
         with self.index.searcher() as searcher:
@@ -221,4 +254,4 @@ class Flatnotes(object):
                 ["title", "content", "tags"], self.index.schema
             ).parse(term)
             results = searcher.search(query, limit=None)
-            return tuple(NoteHit(self, hit) for hit in results)
+            return tuple(SearchResult(self, hit) for hit in results)

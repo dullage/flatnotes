@@ -17,7 +17,7 @@ from error_responses import (
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
-from models import LoginModel, NoteHitModel, NoteModel, NotePatchModel
+from models import LoginModel, NoteModel, NotePatchModel, SearchResultModel
 
 from flatnotes import Flatnotes, InvalidTitleError, Note
 
@@ -142,10 +142,18 @@ async def delete_note(title: str, _: str = Depends(validate_token)):
         return note_not_found_response
 
 
-@app.get("/api/search", response_model=List[NoteHitModel])
+@app.get("/api/tags")
+async def get_tags(_: str = Depends(validate_token)):
+    """Get a list of all indexed tags."""
+    return flatnotes.get_tags()
+
+
+@app.get("/api/search", response_model=List[SearchResultModel])
 async def search(term: str, _: str = Depends(validate_token)):
     """Perform a full text search for a note."""
-    return [NoteHitModel.dump(note_hit) for note_hit in flatnotes.search(term)]
+    return [
+        SearchResultModel.dump(note_hit) for note_hit in flatnotes.search(term)
+    ]
 
 
 app.mount("/", StaticFiles(directory="flatnotes/dist"), name="dist")
