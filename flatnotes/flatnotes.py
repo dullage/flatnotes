@@ -105,7 +105,7 @@ class SearchResult(Note):
         super().__init__(flatnotes, strip_ext(hit["filename"]))
 
         self._matched_fields = self._get_matched_fields(hit.matched_terms())
-
+        self._rank = hit.rank
         self._title_highlights = (
             hit.highlights("title", text=self.title)
             if "title" in self._matched_fields
@@ -124,6 +124,10 @@ class SearchResult(Note):
             if "tags" in self._matched_fields
             else None
         )
+
+    @property
+    def rank(self):
+        return self._rank
 
     @property
     def title_highlights(self):

@@ -128,16 +128,8 @@ export default {
             parent.searchFailedMessage = "No Results";
             parent.searchFailed = true;
           } else {
-            response.data.forEach(function (result) {
-              parent.searchResults.push(
-                new SearchResult(
-                  result.title,
-                  result.lastModified,
-                  result.titleHighlights,
-                  result.contentHighlights,
-                  result.tagMatches
-                )
-              );
+            response.data.forEach(function (searchResult) {
+              parent.searchResults.push(new SearchResult(searchResult));
             });
           }
         })
