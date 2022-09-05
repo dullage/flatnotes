@@ -9,7 +9,11 @@ export const basePaths = {
 };
 
 // Params
-export const params = { searchTerm: "term", redirect: "redirect" };
+export const params = {
+  searchTerm: "term",
+  redirect: "redirect",
+  showHighlights: "showHighlights",
+};
 
 // Other
 export const alphabet = [

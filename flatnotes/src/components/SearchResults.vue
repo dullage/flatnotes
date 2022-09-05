@@ -14,17 +14,34 @@
 
     <!-- Search Results Loaded -->
     <div v-else>
+      <button type="button" class="bttn mb-3" @click="toggleHighlights">
+        <b-icon :icon="showHighlights ? 'eye-slash' : 'eye'"></b-icon>
+        {{ showHighlights ? "Hide" : "Show" }} Highlights
+      </button>
       <div
         v-for="result in searchResults"
         :key="result.title"
-        class="bttn result mb-3"
+        class="bttn result mb-2"
       >
         <a :href="result.href" @click.prevent="openNote(result.href)">
+          <div class="d-flex align-items-center">
+            <p
+              class="result-title"
+              v-html="
+                showHighlights ? result.titleHighlightsOrTitle : result.title
+              "
+            ></p>
+          </div>
           <p
-            class="font-weight-bold mb-0"
-            v-html="result.titleHighlightsOrTitle"
+            v-show="showHighlights"
+            class="result-contents"
+            v-html="result.contentHighlights"
           ></p>
-          <p class="result-contents" v-html="result.contentHighlights"></p>
+          <div v-show="showHighlights">
+            <span v-for="tag in result.tagMatches" :key="tag" class="tag mr-2"
+              >#{{ tag }}</span
+            >
+          </div>
         </a>
       </div>
     </div>
@@ -36,6 +53,10 @@
 
 .result p {
   margin: 0;
+}
+
+.result-title {
+  color: $text;
 }
 
 .result-contents {
@@ -50,9 +71,20 @@
   font-weight: bold;
   color: $logo-key-colour;
 }
+
+.tag {
+  color: white;
+  font-size: 14px;
+  background-color: $logo-key-colour;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
 </style>
 
 <script>
+import * as constants from "../constants";
+import * as helpers from "../helpers";
+
 import EventBus from "../eventBus";
 import LoadingIndicator from "./LoadingIndicator";
 import { SearchResult } from "../classes";
@@ -73,6 +105,7 @@ export default {
       searchFailedMessage: "Failed to load Search Results",
       searchFailedIcon: null,
       searchResults: null,
+      showHighlights: true,
     };
   },
 
@@ -101,7 +134,8 @@ export default {
                   result.title,
                   result.lastModified,
                   result.titleHighlights,
-                  result.contentHighlights
+                  result.contentHighlights,
+                  result.tagMatches
                 )
               );
             });
@@ -119,6 +153,14 @@ export default {
       EventBus.$emit("navigate", href);
     },
 
+    toggleHighlights: function () {
+      this.showHighlights = !this.showHighlights;
+      helpers.setSearchParam(
+        constants.params.showHighlights,
+        this.showHighlights
+      );
+    },
+
     init: function () {
       this.getSearchResults();
     },
@@ -126,6 +168,15 @@ export default {
 
   created: function () {
     this.init();
+
+    let showHighlightsParam = helpers.getSearchParam(
+      constants.params.showHighlights
+    );
+    if (typeof showHighlightsParam == "string") {
+      this.showHighlights = showHighlightsParam === "true";
+    } else {
+      this.showHighlights = true;
+    }
   },
 };
 </script>

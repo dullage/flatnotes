@@ -21,10 +21,11 @@ class Note {
 }
 
 class SearchResult extends Note {
-  constructor(title, lastModified, titleHighlights, contentHighlights) {
+  constructor(title, lastModified, titleHighlights, contentHighlights, tagMatches) {
     super(title, lastModified);
     this.titleHighlights = titleHighlights;
     this.contentHighlights = contentHighlights;
+    this.tagMatches = tagMatches;
   }
 
   get titleHighlightsOrTitle() {
