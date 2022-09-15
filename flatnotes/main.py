@@ -149,10 +149,21 @@ async def get_tags(_: str = Depends(validate_token)):
 
 
 @app.get("/api/search", response_model=List[SearchResultModel])
-async def search(term: str, _: str = Depends(validate_token)):
-    """Perform a full text search for a note."""
+async def search(
+    term: str,
+    sort: Literal["score", "title", "lastModified"] = "score",
+    order: Literal["asc", "desc"] = "desc",
+    limit: int = None,
+    _: str = Depends(validate_token),
+):
+    """Perform a full text search on all notes."""
+    if sort == "lastModified":
+        sort = "last_modified"
     return [
-        SearchResultModel.dump(note_hit) for note_hit in flatnotes.search(term)
+        SearchResultModel.dump(note_hit)
+        for note_hit in flatnotes.search(
+            term, sort=sort, order=order, limit=limit
+        )
     ]
 
 

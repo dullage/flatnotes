@@ -3,15 +3,16 @@ import logging
 import os
 import re
 from datetime import datetime
-from typing import List, Set, Tuple
+from typing import List, Literal, Set, Tuple
 
 import whoosh
 from helpers import empty_dir, re_extract, strip_ext
 from whoosh import writing
-from whoosh.analysis import CharsetFilter, KeywordAnalyzer, StemmingAnalyzer
-from whoosh.fields import ID, STORED, TEXT, SchemaClass
+from whoosh.analysis import CharsetFilter, StemmingAnalyzer
+from whoosh.fields import DATETIME, ID, KEYWORD, TEXT, SchemaClass
 from whoosh.index import Index
 from whoosh.qparser import MultifieldParser
+from whoosh.qparser.dateparse import DateParserPlugin
 from whoosh.query import Every
 from whoosh.searching import Hit
 from whoosh.support.charset import accent_map
@@ -24,10 +25,12 @@ StemmingFoldingAnalyzer = StemmingAnalyzer() | CharsetFilter(accent_map)
 
 class IndexSchema(SchemaClass):
     filename = ID(unique=True, stored=True)
-    last_modified = STORED()
-    title = TEXT(field_boost=2, analyzer=StemmingFoldingAnalyzer)
+    last_modified = DATETIME(stored=True, sortable=True)
+    title = TEXT(
+        field_boost=2, analyzer=StemmingFoldingAnalyzer, sortable=True
+    )
     content = TEXT(analyzer=StemmingFoldingAnalyzer)
-    tags = TEXT(analyzer=KeywordAnalyzer())
+    tags = KEYWORD(lowercase=True)
 
 
 class InvalidTitleError(Exception):
@@ -105,7 +108,10 @@ class SearchResult(Note):
         super().__init__(flatnotes, strip_ext(hit["filename"]))
 
         self._matched_fields = self._get_matched_fields(hit.matched_terms())
-        self._rank = hit.rank
+        # If the search was ordered using a text field then hit.score is the
+        # value of that field. This isn't useful so only set self._score if it
+        # is a float.
+        self._score = hit.score if type(hit.score) is float else None
         self._title_highlights = (
             hit.highlights("title", text=self.title)
             if "title" in self._matched_fields
@@ -126,8 +132,8 @@ class SearchResult(Note):
         )
 
     @property
-    def rank(self):
-        return self._rank
+    def score(self):
+        return self._score
 
     @property
     def title_highlights(self):
@@ -211,7 +217,7 @@ class Flatnotes(object):
         tag_string = " ".join(tag_set)
         writer.update_document(
             filename=note.filename,
-            last_modified=note.last_modified,
+            last_modified=datetime.fromtimestamp(note.last_modified),
             title=note.title,
             content=content_ex_tags,
             tags=tag_string,
@@ -244,7 +250,8 @@ class Flatnotes(object):
                     logging.info(f"'{idx_filename}' removed from index")
                 # Update modified
                 elif (
-                    os.path.getmtime(idx_filepath) != idx_note["last_modified"]
+                    datetime.fromtimestamp(os.path.getmtime(idx_filepath))
+                    != idx_note["last_modified"]
                 ):
                     logging.info(f"'{idx_filename}' updated")
                     self._add_note_to_index(
@@ -278,15 +285,46 @@ class Flatnotes(object):
             tags = reader.field_terms("tags")
             return [tag for tag in tags]
 
-    def search(self, term: str) -> Tuple[SearchResult, ...]:
+    def search(
+        self,
+        term: str,
+        sort: Literal["score", "title", "last_modified"] = "score",
+        order: Literal["asc", "desc"] = "desc",
+        limit: int = None,
+    ) -> Tuple[SearchResult, ...]:
         """Search the index for the given term."""
         self.update_index_debounced()
+        term = term.strip()
         with self.index.searcher() as searcher:
+            # Parse Query
             if term == "*":
                 query = Every()
             else:
-                query = MultifieldParser(
+                parser = MultifieldParser(
                     ["title", "content", "tags"], self.index.schema
-                ).parse(term)
-            results = searcher.search(query, limit=None, terms=True)
+                )
+                parser.add_plugin(DateParserPlugin())
+                query = parser.parse(term)
+
+            # Determine Sort By
+            # Note: For the 'sort' option, "score" is converted to None as
+            # that is the default for searches anyway and it's quicker for
+            # Whoosh if you specify None.
+            sort = sort if sort in ["title", "last_modified"] else None
+
+            # Determine Sort Direction
+            # Note: Confusingly, when sorting by 'score', reverse = True means
+            # asc so we have to flip the logic for that case!
+            reverse = order == "desc"
+            if sort is None:
+                reverse = not reverse
+
+            # Run Search
+            results = searcher.search(
+                query,
+                sortedby=sort,
+                reverse=reverse,
+                limit=limit,
+                terms=True,
+            )
             return tuple(SearchResult(self, hit) for hit in results)

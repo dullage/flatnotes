@@ -45,7 +45,7 @@
   </div>
 </template>
 
-<style lang="scss" >
+<style lang="scss" scoped>
 @import "../colours";
 
 .centered {
@@ -66,7 +66,6 @@
   font-weight: bold;
   font-size: 32px;
   color: $very-muted-text;
-  margin-bottom: 1px solid $very-muted-text;
 }
 
 .note-row {

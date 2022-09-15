@@ -30,7 +30,7 @@ class NotePatchModel(CamelCaseBaseModel):
 
 
 class SearchResultModel(CamelCaseBaseModel):
-    rank: int
+    score: Optional[float]
     title: str
     last_modified: int
     title_highlights: Optional[str]
@@ -40,7 +40,7 @@ class SearchResultModel(CamelCaseBaseModel):
     @classmethod
     def dump(self, search_result: SearchResult) -> Dict:
         return {
-            "rank": search_result.rank,
+            "score": search_result.score,
             "title": search_result.title,
             "lastModified": search_result.last_modified,
             "titleHighlights": search_result.title_highlights,

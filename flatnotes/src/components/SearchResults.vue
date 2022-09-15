@@ -1,5 +1,8 @@
 <template>
   <div>
+    <!-- Input -->
+    <SearchInput :initial-value="searchTerm" class="mb-1"></SearchInput>
+
     <!-- Searching -->
     <div
       v-if="searchResults == null || searchResults.length == 0"
@@ -14,35 +17,63 @@
 
     <!-- Search Results Loaded -->
     <div v-else>
-      <button type="button" class="bttn mb-3" @click="toggleHighlights">
-        <b-icon :icon="showHighlights ? 'eye-slash' : 'eye'"></b-icon>
-        {{ showHighlights ? "Hide" : "Show" }} Highlights
-      </button>
+      <!-- Controls -->
+      <div class="mb-3">
+        <select v-model="sortBy" class="bttn sort-select">
+          <option
+            v-for="option in sortOptions"
+            :key="option"
+            :value="option"
+            class="p-0"
+          >
+            Order: {{ sortOptionToString(option) }}
+          </option>
+        </select>
+
+        <button
+          v-if="searchResultsIncludeHighlights"
+          type="button"
+          class="bttn"
+          @click="showHighlights = !showHighlights"
+        >
+          <b-icon :icon="showHighlights ? 'eye-slash' : 'eye'"></b-icon>
+          {{ showHighlights ? "Hide" : "Show" }} Highlights
+        </button>
+      </div>
+
+      <!-- Results -->
       <div
-        v-for="result in searchResults"
-        :key="result.title"
-        class="bttn result mb-2"
+        v-for="group in resultsGrouped"
+        :key="group.name"
+        :class="{ 'mb-4': sortByIsGrouped }"
       >
-        <a :href="result.href" @click.prevent="openNote(result.href)">
-          <div class="d-flex align-items-center">
+        <p v-if="sortByIsGrouped" class="group-name">{{ group.name }}</p>
+        <div
+          v-for="result in group.searchResults"
+          :key="result.title"
+          class="bttn result mb-2"
+        >
+          <a :href="result.href" @click.prevent="openNote(result.href)">
+            <div class="d-flex align-items-center">
+              <p
+                class="result-title"
+                v-html="
+                  showHighlights ? result.titleHighlightsOrTitle : result.title
+                "
+              ></p>
+            </div>
             <p
-              class="result-title"
-              v-html="
-                showHighlights ? result.titleHighlightsOrTitle : result.title
-              "
+              v-show="showHighlights"
+              class="result-contents"
+              v-html="result.contentHighlights"
             ></p>
-          </div>
-          <p
-            v-show="showHighlights"
-            class="result-contents"
-            v-html="result.contentHighlights"
-          ></p>
-          <div v-show="showHighlights">
-            <span v-for="tag in result.tagMatches" :key="tag" class="tag mr-2"
-              >#{{ tag }}</span
-            >
-          </div>
-        </a>
+            <div v-show="showHighlights">
+              <span v-for="tag in result.tagMatches" :key="tag" class="tag mr-2"
+                >#{{ tag }}</span
+              >
+            </div>
+          </a>
+        </div>
       </div>
     </div>
   </div>
@@ -50,6 +81,18 @@
 
 <style lang="scss" scoped>
 @import "../colours";
+
+.sort-select {
+  padding-inline: 6px;
+}
+
+.group-name {
+  padding-left: 8px;
+  font-weight: bold;
+  font-size: 32px;
+  color: $very-muted-text;
+  margin-bottom: 2px;
+}
 
 .result p {
   margin: 0;
@@ -87,12 +130,14 @@ import * as helpers from "../helpers";
 
 import EventBus from "../eventBus";
 import LoadingIndicator from "./LoadingIndicator";
+import SearchInput from "./SearchInput";
 import { SearchResult } from "../classes";
 import api from "../api";
 
 export default {
   components: {
     LoadingIndicator,
+    SearchInput,
   },
 
   props: {
@@ -105,13 +150,43 @@ export default {
       searchFailedMessage: "Failed to load Search Results",
       searchFailedIcon: null,
       searchResults: null,
+      searchResultsIncludeHighlights: null,
+      sortBy: 0,
       showHighlights: true,
     };
+  },
+
+  computed: {
+    sortByIsGrouped: function () {
+      return this.sortBy == this.sortOptions.title;
+    },
+
+    resultsGrouped: function () {
+      if (this.sortBy == this.sortOptions.title) {
+        return this.resultsByTitle();
+      } else if (this.sortBy == this.sortOptions.lastModified) {
+        return this.resultsByLastModified();
+      } else {
+        // Default
+        return this.resultsByScore();
+      }
+    },
   },
 
   watch: {
     searchTerm: function () {
       this.init();
+    },
+
+    showHighlights: function () {
+      helpers.setSearchParam(
+        constants.params.showHighlights,
+        this.showHighlights
+      );
+    },
+
+    sortBy: function () {
+      helpers.setSearchParam(constants.params.sortBy, this.sortBy);
     },
   },
 
@@ -119,6 +194,7 @@ export default {
     getSearchResults: function () {
       let parent = this;
       this.searchFailed = false;
+      this.searchResultsIncludeHighlights = false;
       api
         .get("/api/search", { params: { term: this.searchTerm } })
         .then(function (response) {
@@ -128,8 +204,15 @@ export default {
             parent.searchFailedMessage = "No Results";
             parent.searchFailed = true;
           } else {
-            response.data.forEach(function (searchResult) {
-              parent.searchResults.push(new SearchResult(searchResult));
+            response.data.forEach(function (responseItem) {
+              let searchResult = new SearchResult(responseItem);
+              parent.searchResults.push(searchResult);
+              if (
+                parent.searchResultsIncludeHighlights == false &&
+                searchResult.includesHighlights
+              ) {
+                parent.searchResultsIncludeHighlights = true;
+              }
             });
           }
         })
@@ -141,16 +224,88 @@ export default {
         });
     },
 
+    resultsByScore: function () {
+      return [
+        {
+          name: "_",
+          searchResults: [...this.searchResults].sort(function (
+            searchResultA,
+            searchResultB
+          ) {
+            return searchResultB.score - searchResultA.score;
+          }),
+        },
+      ];
+    },
+
+    resultsByLastModified: function () {
+      return [
+        {
+          name: "_",
+          searchResults: this.searchResults.sort(function (
+            searchResultA,
+            searchResultB
+          ) {
+            return searchResultB.lastModified - searchResultA.lastModified;
+          }),
+        },
+      ];
+    },
+
+    resultsByTitle: function () {
+      // Set up an empty dictionary of groups
+      let notesGroupedDict = {};
+      let specialCharGroupTitle = "#";
+      [specialCharGroupTitle, ...constants.alphabet].forEach(function (group) {
+        notesGroupedDict[group] = [];
+      });
+
+      // Add results to the group dictionary
+      this.searchResults.forEach(function (searchResult) {
+        let firstCharUpper = searchResult.title[0].toUpperCase();
+        if (constants.alphabet.includes(firstCharUpper)) {
+          notesGroupedDict[firstCharUpper].push(searchResult);
+        } else {
+          notesGroupedDict[specialCharGroupTitle].push(searchResult);
+        }
+      });
+
+      // Convert dict to an array skipping empty groups
+      let notesGroupedArray = [];
+      Object.entries(notesGroupedDict).forEach(function (item) {
+        if (item[1].length) {
+          notesGroupedArray.push({
+            name: item[0],
+            searchResults: item[1].sort(function (
+              SearchResultA,
+              SearchResultB
+            ) {
+              // Sort by title within each group
+              return SearchResultA.title.localeCompare(SearchResultB.title);
+            }),
+          });
+        }
+      });
+
+      // Ensure the array is ordered correctly
+      notesGroupedArray.sort(function (groupA, groupB) {
+        return groupA.name.localeCompare(groupB.name);
+      });
+
+      return notesGroupedArray;
+    },
+
     openNote: function (href) {
       EventBus.$emit("navigate", href);
     },
 
-    toggleHighlights: function () {
-      this.showHighlights = !this.showHighlights;
-      helpers.setSearchParam(
-        constants.params.showHighlights,
-        this.showHighlights
-      );
+    sortOptionToString: function (sortOption) {
+      let sortOptionStrings = {
+        0: "Score",
+        1: "Title",
+        2: "Last Modified",
+      };
+      return sortOptionStrings[sortOption];
     },
 
     init: function () {
@@ -159,16 +314,15 @@ export default {
   },
 
   created: function () {
+    this.sortOptions = constants.searchSortOptions;
     this.init();
 
-    let showHighlightsParam = helpers.getSearchParam(
-      constants.params.showHighlights
+    this.showHighlights = helpers.getSearchParamBool(
+      constants.params.showHighlights,
+      true
     );
-    if (typeof showHighlightsParam == "string") {
-      this.showHighlights = showHighlightsParam === "true";
-    } else {
-      this.showHighlights = true;
-    }
+
+    this.sortBy = helpers.getSearchParamInt(constants.params.sortBy, 0);
   },
 };
 </script>

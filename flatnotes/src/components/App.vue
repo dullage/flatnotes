@@ -55,10 +55,6 @@
       v-if="currentView == views.search"
       class="flex-grow-1 search-results-view d-flex flex-column"
     >
-      <SearchInput
-        :initial-value="searchTerm"
-        class="search-input mb-4"
-      ></SearchInput>
       <SearchResults
         :search-term="searchTerm"
         class="flex-grow-1"
