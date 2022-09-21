@@ -33,7 +33,6 @@ export default {
         home: 1,
         note: 2,
         search: 3,
-        notes: 4,
       },
       currentView: 1,
 
@@ -76,12 +75,6 @@ export default {
         this.updateDocumentTitle();
         this.noteTitle = decodeURIComponent(path[2]);
         this.currentView = this.views.note;
-      }
-
-      // Notes
-      else if (basePath == constants.basePaths.notes) {
-        this.updateDocumentTitle();
-        this.currentView = this.views.notes;
       }
 
       // Login

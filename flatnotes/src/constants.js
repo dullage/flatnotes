@@ -5,7 +5,6 @@ export const basePaths = {
   note: "/note",
   search: "/search",
   new: "/new",
-  notes: "/notes",
 };
 
 // Params

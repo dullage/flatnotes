@@ -61,14 +61,6 @@
       ></SearchResults>
     </div>
 
-    <!-- Notes -->
-    <NoteList
-      v-if="currentView == views.notes"
-      class="flex-grow-1"
-      grouped
-      show-last-modified
-    ></NoteList>
-
     <!-- Note -->
     <NoteViewerEditor
       v-if="currentView == this.views.note"
