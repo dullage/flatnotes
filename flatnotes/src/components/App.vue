@@ -14,7 +14,7 @@
       :show-logo="currentView != views.home"
       @navigate-home="navigate(constants.basePaths.home)"
       @new-note="newNote()"
-      @a-z="navigate(constants.basePaths.notes)"
+      @a-z="az()"
       @logout="logout()"
       @search="openSearch()"
     ></NavBar>
