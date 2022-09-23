@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="mb-4">
     <!-- Input -->
     <SearchInput :initial-value="searchTerm" class="mb-1"></SearchInput>
 
@@ -45,22 +45,30 @@
       <div
         v-for="group in resultsGrouped"
         :key="group.name"
-        :class="{ 'mb-4': sortByIsGrouped }"
+        :class="{ 'mb-5': sortByIsGrouped }"
       >
         <p v-if="sortByIsGrouped" class="group-name">{{ group.name }}</p>
         <div
           v-for="result in group.searchResults"
           :key="result.title"
-          class="bttn result mb-2"
+          class="bttn result"
+          :class="{ 'mb-3': searchResultsIncludeHighlights && showHighlights }"
         >
           <a :href="result.href" @click.prevent="openNote(result.href)">
-            <div class="d-flex align-items-center">
+            <div class="d-flex justify-content-between">
               <p
                 class="result-title"
                 v-html="
                   showHighlights ? result.titleHighlightsOrTitle : result.title
                 "
               ></p>
+              <span
+                class="last-modified"
+                v-b-tooltip.hover
+                title="Last Modified"
+              >
+                {{ result.lastModifiedAsString }}
+              </span>
             </div>
             <p
               v-show="showHighlights"
@@ -91,7 +99,7 @@
   font-weight: bold;
   font-size: 32px;
   color: $very-muted-text;
-  margin-bottom: 2px;
+  margin-bottom: 8px;
 }
 
 .result p {
@@ -100,6 +108,11 @@
 
 .result-title {
   color: $text;
+}
+
+.last-modified {
+  color: $muted-text;
+  font-size: 12px;
 }
 
 .result-contents {
@@ -178,15 +191,15 @@ export default {
       this.init();
     },
 
+    sortBy: function () {
+      helpers.setSearchParam(constants.params.sortBy, this.sortBy);
+    },
+
     showHighlights: function () {
       helpers.setSearchParam(
         constants.params.showHighlights,
         this.showHighlights
       );
-    },
-
-    sortBy: function () {
-      helpers.setSearchParam(constants.params.sortBy, this.sortBy);
     },
   },
 
@@ -309,6 +322,13 @@ export default {
     },
 
     init: function () {
+      this.sortBy = helpers.getSearchParamInt(constants.params.sortBy, 0);
+
+      this.showHighlights = helpers.getSearchParamBool(
+        constants.params.showHighlights,
+        true
+      );
+
       this.getSearchResults();
     },
   },
@@ -316,13 +336,6 @@ export default {
   created: function () {
     this.sortOptions = constants.searchSortOptions;
     this.init();
-
-    this.showHighlights = helpers.getSearchParamBool(
-      constants.params.showHighlights,
-      true
-    );
-
-    this.sortBy = helpers.getSearchParamInt(constants.params.sortBy, 0);
   },
 };
 </script>
