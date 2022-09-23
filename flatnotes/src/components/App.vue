@@ -85,7 +85,7 @@
 
 .recently-modified {
   // Prevent UI from moving during load
-  min-height: 180px;
+  min-height: 190px;
 }
 </style>
 

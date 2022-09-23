@@ -9,7 +9,7 @@
         :failed="loadingFailed"
         :failedMessage="loadingFailedMessage"
         :failedBootstrapIcon="loadingFailedIcon"
-        :show-loader="showLoader"
+        :show-loader="false"
       />
     </div>
 
