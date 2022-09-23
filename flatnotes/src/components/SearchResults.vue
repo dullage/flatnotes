@@ -63,7 +63,7 @@
                 "
               ></p>
               <span
-                class="last-modified"
+                class="last-modified d-none d-md-block"
                 v-b-tooltip.hover
                 title="Last Modified"
               >
