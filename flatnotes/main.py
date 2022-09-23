@@ -59,29 +59,6 @@ async def root(title: str = ""):
     return HTMLResponse(content=html)
 
 
-@app.get("/api/notes", response_model=List[NoteModel])
-async def get_notes(
-    start: int = 0,
-    limit: int = None,
-    sort: Literal["title", "lastModified"] = "title",
-    order: Literal["asc", "desc"] = "asc",
-    include_content: bool = False,
-    _: str = Depends(validate_token),
-):
-    """Get all notes."""
-    notes = flatnotes.get_notes()
-    notes.sort(
-        key=lambda note: note.last_modified
-        if sort == "lastModified"
-        else note.title,
-        reverse=order == "desc",
-    )
-    return [
-        NoteModel.dump(note, include_content=include_content)
-        for note in notes[start : None if limit is None else start + limit]
-    ]
-
-
 @app.post("/api/notes", response_model=NoteModel)
 async def post_note(data: NoteModel, _: str = Depends(validate_token)):
     """Create a new note."""

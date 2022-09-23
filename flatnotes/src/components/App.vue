@@ -41,13 +41,10 @@
         :initial-value="searchTerm"
         class="search-input mb-4"
       ></SearchInput>
-      <NoteList
+      <RecentlyModified
         class="recently-modified"
-        mini-header="Recently Modified"
-        :num-recently-modified="5"
-        :show-loader="false"
-        centered
-      ></NoteList>
+        :max-notes="5"
+      ></RecentlyModified>
     </div>
 
     <!-- Search Results -->

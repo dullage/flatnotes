@@ -7,8 +7,8 @@ import Login from "./Login";
 import Logo from "./Logo";
 import Mousetrap from "mousetrap";
 import NavBar from "./NavBar";
-import NoteList from "./NoteList";
 import NoteViewerEditor from "./NoteViewerEditor";
+import RecentlyModified from "./RecentlyModified"
 import SearchInput from "./SearchInput";
 import SearchResults from "./SearchResults";
 
@@ -16,7 +16,6 @@ export default {
   name: "App",
 
   components: {
-    NoteList,
     LoadingIndicator,
     Login,
     NavBar,
@@ -24,6 +23,7 @@ export default {
     Logo,
     NoteViewerEditor,
     SearchResults,
+    RecentlyModified,
   },
 
   data: function() {

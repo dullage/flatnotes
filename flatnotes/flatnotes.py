@@ -223,7 +223,7 @@ class Flatnotes(object):
             tags=tag_string,
         )
 
-    def get_notes(self) -> List[Note]:
+    def _get_notes(self) -> List[Note]:
         """Return a list containing a Note object for every file in the notes
         directory."""
         return [
@@ -262,7 +262,7 @@ class Flatnotes(object):
                 else:
                     indexed.add(idx_filename)
         # Add new
-        for note in self.get_notes():
+        for note in self._get_notes():
             if note.filename not in indexed:
                 self._add_note_to_index(writer, note)
                 logging.info(f"'{note.filename}' added to index")
