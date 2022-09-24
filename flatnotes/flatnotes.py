@@ -112,19 +112,22 @@ class SearchResult(Note):
         # value of that field. This isn't useful so only set self._score if it
         # is a float.
         self._score = hit.score if type(hit.score) is float else None
+
         self._title_highlights = (
             hit.highlights("title", text=self.title)
             if "title" in self._matched_fields
             else None
         )
-        self._content_highlights = (
-            hit.highlights(
+
+        if "content" in self._matched_fields:
+            content_ex_tags, _ = Flatnotes.extract_tags(self.content)
+            self._content_highlights = hit.highlights(
                 "content",
-                text=self.content,
+                text=content_ex_tags,
             )
-            if "content" in self._matched_fields
-            else None
-        )
+        else:
+            self._content_highlights = None
+
         self._tag_matches = (
             [field[1] for field in hit.matched_terms() if field[0] == "tags"]
             if "tags" in self._matched_fields
@@ -155,7 +158,7 @@ class SearchResult(Note):
 
 
 class Flatnotes(object):
-    TAG_SECTION_RE = re.compile(r"(?:\s+#\w+)+$")
+    TAG_RE = re.compile(r"(?:(?<=^#)|(?<=\s#))\w+(?=\s|$)")
 
     def __init__(self, dir: str) -> None:
         if not os.path.exists(dir):
@@ -191,18 +194,15 @@ class Flatnotes(object):
                 self.index_dir, IndexSchema, indexname=INDEX_SCHEMA_VERSION
             )
 
-    def _extract_tags(self, content) -> Tuple[str, Set[str]]:
-        """Strip the tag section from the given content and return a tuple
-        consisting of:
+    @classmethod
+    def extract_tags(cls, content) -> Tuple[str, Set[str]]:
+        """Strip tags from the given content and return a tuple consisting of:
 
-        - The content without the tag section.
-        - A deduplicated list of tags converted to lowercase."""
-        content_ex_tags, tag_sections = re_extract(
-            self.TAG_SECTION_RE, content
-        )
+        - The content without the tags.
+        - A set of tags converted to lowercase."""
+        content_ex_tags, tags = re_extract(cls.TAG_RE, content)
         try:
-            tags = tag_sections[0].split()
-            tags = [tag[1:].lower() for tag in tags]
+            tags = [tag.lower() for tag in tags]
             return (content_ex_tags, set(tags))
         except IndexError:
             return (content, set())
@@ -213,7 +213,7 @@ class Flatnotes(object):
         """Add a Note object to the index using the given writer. If the
         filename already exists in the index an update will be performed
         instead."""
-        content_ex_tags, tag_set = self._extract_tags(note.content)
+        content_ex_tags, tag_set = self.extract_tags(note.content)
         tag_string = " ".join(tag_set)
         writer.update_document(
             filename=note.filename,
