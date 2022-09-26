@@ -6,16 +6,18 @@ from datetime import datetime
 from typing import List, Literal, Set, Tuple
 
 import whoosh
-from helpers import empty_dir, re_extract, strip_ext
 from whoosh import writing
 from whoosh.analysis import CharsetFilter, StemmingAnalyzer
 from whoosh.fields import DATETIME, ID, KEYWORD, TEXT, SchemaClass
+from whoosh.highlight import ContextFragmenter, WholeFragmenter
 from whoosh.index import Index
 from whoosh.qparser import MultifieldParser
 from whoosh.qparser.dateparse import DateParserPlugin
 from whoosh.query import Every
 from whoosh.searching import Hit
 from whoosh.support.charset import accent_map
+
+from helpers import empty_dir, re_extract, strip_ext
 
 MARKDOWN_EXT = ".md"
 INDEX_SCHEMA_VERSION = "3"
@@ -113,13 +115,14 @@ class SearchResult(Note):
         # is a float.
         self._score = hit.score if type(hit.score) is float else None
 
-        self._title_highlights = (
-            hit.highlights("title", text=self.title)
-            if "title" in self._matched_fields
-            else None
-        )
+        if "title" in self._matched_fields:
+            hit.results.fragmenter = WholeFragmenter()
+            self._title_highlights = hit.highlights("title", text=self.title)
+        else:
+            self._title_highlights = None
 
         if "content" in self._matched_fields:
+            hit.results.fragmenter = ContextFragmenter()
             content_ex_tags, _ = Flatnotes.extract_tags(self.content)
             self._content_highlights = hit.highlights(
                 "content",
