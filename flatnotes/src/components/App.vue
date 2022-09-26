@@ -12,9 +12,6 @@
       v-if="currentView != views.login"
       class="w-100 mb-5"
       :show-logo="currentView != views.home"
-      @navigate-home="navigate(constants.basePaths.home)"
-      @new-note="newNote()"
-      @a-z="az()"
       @logout="logout()"
       @search="openSearch()"
     ></NavBar>

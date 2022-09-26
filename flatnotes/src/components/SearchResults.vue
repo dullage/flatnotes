@@ -54,7 +54,7 @@
           class="bttn result"
           :class="{ 'mb-3': searchResultsIncludeHighlights && showHighlights }"
         >
-          <a :href="result.href" @click.prevent="openNote(result.href)">
+          <a :href="result.href" @click.prevent="openNote(result.href, $event)">
             <div class="d-flex justify-content-between">
               <p
                 class="result-title"
@@ -308,8 +308,8 @@ export default {
       return notesGroupedArray;
     },
 
-    openNote: function (href) {
-      EventBus.$emit("navigate", href);
+    openNote: function (href, event) {
+      EventBus.$emit("navigate", href, event);
     },
 
     sortOptionToString: function (sortOption) {

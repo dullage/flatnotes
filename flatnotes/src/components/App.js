@@ -105,18 +105,6 @@ export default {
       this.navigate(constants.basePaths.login);
     },
 
-    newNote: function() {
-      this.navigate(constants.basePaths.new);
-    },
-
-    az: function() {
-      let params = new URLSearchParams();
-      params.set(constants.params.searchTerm, "*");
-      params.set(constants.params.sortBy, constants.searchSortOptions.title);
-      params.set(constants.params.showHighlights, false);
-      this.navigate(`${constants.basePaths.search}?${params.toString()}`);
-    },
-
     noteDeletedToast: function() {
       this.$bvToast.toast("Note deleted ✓", {
         variant: "success",

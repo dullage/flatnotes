@@ -1,19 +1,26 @@
 <template>
   <div class="d-flex justify-content-between align-items-center">
     <!-- Logo -->
-    <Logo
-      class="cursor-pointer"
-      :class="{ invisible: !showLogo }"
-      @click.native="$emit('navigate-home')"
-      responsive
-    ></Logo>
+    <a
+      :href="constants.basePaths.home"
+      @click.prevent="navigate(constants.basePaths.home, $event)"
+    >
+      <Logo
+        :class="{ invisible: !showLogo }"
+        responsive
+      ></Logo>
+    </a>
 
     <!-- Buttons -->
-    <div>
+    <div class="d-flex">
       <!-- New Note -->
-      <button type="button" class="bttn" @click="$emit('new-note')">
+      <a
+        :href="constants.basePaths.new"
+        class="bttn"
+        @click.prevent="navigate(constants.basePaths.new, $event)"
+      >
         <b-icon icon="plus-circle"></b-icon> New
-      </button>
+      </a>
 
       <!-- Log Out -->
       <button type="button" class="bttn" @click="$emit('logout')">
@@ -21,7 +28,9 @@
       </button>
 
       <!-- A-Z -->
-      <button type="button" class="bttn" @click="$emit('a-z')">A-Z</button>
+      <a :href="azHref" class="bttn" @click.prevent="navigate(azHref, $event)"
+        >A-Z</a
+      >
 
       <!-- Search -->
       <button
@@ -43,13 +52,12 @@
 .invisible {
   visibility: hidden;
 }
-
-.cursor-pointer {
-  cursor: pointer;
-}
 </style>
 
 <script>
+import * as constants from "../constants";
+
+import EventBus from "../eventBus";
 import Logo from "./Logo";
 
 export default {
@@ -62,6 +70,26 @@ export default {
       type: Boolean,
       default: true,
     },
+  },
+
+  computed: {
+    azHref: function () {
+      let params = new URLSearchParams();
+      params.set(constants.params.searchTerm, "*");
+      params.set(constants.params.sortBy, constants.searchSortOptions.title);
+      params.set(constants.params.showHighlights, false);
+      return `${constants.basePaths.search}?${params.toString()}`;
+    },
+  },
+
+  methods: {
+    navigate: function (href, event) {
+      EventBus.$emit("navigate", href, event);
+    },
+  },
+
+  created: function () {
+    this.constants = constants;
   },
 };
 </script>
