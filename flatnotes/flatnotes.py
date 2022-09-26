@@ -29,10 +29,10 @@ class IndexSchema(SchemaClass):
     filename = ID(unique=True, stored=True)
     last_modified = DATETIME(stored=True, sortable=True)
     title = TEXT(
-        field_boost=2, analyzer=StemmingFoldingAnalyzer, sortable=True
+        field_boost=2.0, analyzer=StemmingFoldingAnalyzer, sortable=True
     )
     content = TEXT(analyzer=StemmingFoldingAnalyzer)
-    tags = KEYWORD(lowercase=True)
+    tags = KEYWORD(lowercase=True, field_boost=2.0)
 
 
 class InvalidTitleError(Exception):
