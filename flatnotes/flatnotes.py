@@ -161,7 +161,8 @@ class SearchResult(Note):
 
 
 class Flatnotes(object):
-    TAG_RE = re.compile(r"(?:(?<=^#)|(?<=\s#))\w+(?=\s|$)")
+    TAGS_RE = re.compile(r"(?:(?<=^#)|(?<=\s#))\w+(?=\s|$)")
+    TAGS_WITH_HASH_RE = re.compile(r"(?:(?<=^)|(?<=\s))#\w+(?=\s|$)")
 
     def __init__(self, dir: str) -> None:
         if not os.path.exists(dir):
@@ -203,7 +204,7 @@ class Flatnotes(object):
 
         - The content without the tags.
         - A set of tags converted to lowercase."""
-        content_ex_tags, tags = re_extract(cls.TAG_RE, content)
+        content_ex_tags, tags = re_extract(cls.TAGS_RE, content)
         try:
             tags = [tag.lower() for tag in tags]
             return (content_ex_tags, set(tags))
@@ -288,6 +289,16 @@ class Flatnotes(object):
             tags = reader.field_terms("tags")
             return [tag for tag in tags]
 
+    def pre_process_search_term(self, term):
+        term = term.strip()
+        # Replace "#tagname" with "tags:tagname"
+        term = re.sub(
+            self.TAGS_WITH_HASH_RE,
+            lambda tag: "tags:" + tag.group(0)[1:],
+            term,
+        )
+        return term
+
     def search(
         self,
         term: str,
@@ -297,7 +308,7 @@ class Flatnotes(object):
     ) -> Tuple[SearchResult, ...]:
         """Search the index for the given term."""
         self.update_index_debounced()
-        term = term.strip()
+        term = self.pre_process_search_term(term)
         with self.index.searcher() as searcher:
             # Parse Query
             if term == "*":
