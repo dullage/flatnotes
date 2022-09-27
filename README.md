@@ -10,7 +10,7 @@ Log into the [demo site](https://demo.flatnotes.io) and take a look around. The 
 flatnotes is designed to be a distraction free note taking app that puts your note content first. This means:
 
 * A clean and simple user interface.
-* No folders, categories, keywords, notebooks, tags or anything like that. Just all of your notes, backed by powerful search functionality.
+* No folders, notebooks or anything like that. Just all of your notes, backed by powerful search and tagging functionality.
 * Quick access to a full text search from anywhere in the app (keyboard shortcut "/").
 
 Another key design principle is not to take your notes hostage. Your notes are just markdown files. There's no database, proprietary formatting, complicated folder structures or anything like that. You're free at any point to just move the files elsewhere and use another app.
@@ -82,6 +82,11 @@ They're just markdown files.  You're free to just move the files elsewhere and u
 
 ### Is there an API?
 Yes. The docs are available at the `/docs` endpoint. See [demo.flatnotes.io/docs](https://demo.flatnotes.io/docs) as an example.
+
+### If there aren't any folders, how to I organise my notes?
+The first option is to choose not to. This frees you from the burden of organisation. You can then rely on flatnotes' powerful search functionality to find the note you are looking for. 
+
+Additionally you are able to tag notes by using a hashtag anywhere in the note content e.g. #work. Tags are indexed separately from the rest of the content and so can be searched separately either by using the field prefix e.g. "tags:work" or using the hashtag shortcut e.g. "#work".
 
 
 ## Roadmap
