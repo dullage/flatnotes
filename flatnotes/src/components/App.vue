@@ -12,9 +12,6 @@
       v-if="currentView != views.login"
       class="w-100 mb-5"
       :show-logo="currentView != views.home"
-      @navigate-home="navigate(constants.basePaths.home)"
-      @new-note="newNote()"
-      @a-z="navigate(constants.basePaths.notes)"
       @logout="logout()"
       @search="openSearch()"
     ></NavBar>
@@ -41,13 +38,10 @@
         :initial-value="searchTerm"
         class="search-input mb-4"
       ></SearchInput>
-      <NoteList
+      <RecentlyModified
         class="recently-modified"
-        mini-header="Recently Modified"
-        :num-recently-modified="5"
-        :show-loader="false"
-        centered
-      ></NoteList>
+        :max-notes="5"
+      ></RecentlyModified>
     </div>
 
     <!-- Search Results -->
@@ -55,23 +49,11 @@
       v-if="currentView == views.search"
       class="flex-grow-1 search-results-view d-flex flex-column"
     >
-      <SearchInput
-        :initial-value="searchTerm"
-        class="search-input mb-4"
-      ></SearchInput>
       <SearchResults
         :search-term="searchTerm"
         class="flex-grow-1"
       ></SearchResults>
     </div>
-
-    <!-- Notes -->
-    <NoteList
-      v-if="currentView == views.notes"
-      class="flex-grow-1"
-      grouped
-      show-last-modified
-    ></NoteList>
 
     <!-- Note -->
     <NoteViewerEditor
@@ -100,7 +82,7 @@
 
 .recently-modified {
   // Prevent UI from moving during load
-  min-height: 180px;
+  min-height: 190px;
 }
 </style>
 

@@ -21,14 +21,28 @@ class Note {
 }
 
 class SearchResult extends Note {
-  constructor(title, lastModified, titleHighlights, contentHighlights) {
-    super(title, lastModified);
-    this.titleHighlights = titleHighlights;
-    this.contentHighlights = contentHighlights;
+  constructor(searchResult) {
+    super(searchResult.title, searchResult.lastModified);
+    this.score = searchResult.score;
+    this.titleHighlights = searchResult.titleHighlights;
+    this.contentHighlights = searchResult.contentHighlights;
+    this.tagMatches = searchResult.tagMatches;
   }
 
   get titleHighlightsOrTitle() {
     return this.titleHighlights ? this.titleHighlights : this.title;
+  }
+
+  get includesHighlights() {
+    if (
+      this.titleHighlights ||
+      this.contentHighlights ||
+      (this.tagMatches != null && this.tagMatches.length)
+    ) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }
 

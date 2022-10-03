@@ -5,11 +5,15 @@ export const basePaths = {
   note: "/note",
   search: "/search",
   new: "/new",
-  notes: "/notes",
 };
 
 // Params
-export const params = { searchTerm: "term", redirect: "redirect" };
+export const params = {
+  searchTerm: "term",
+  redirect: "redirect",
+  showHighlights: "showHighlights",
+  sortBy: "sortBy",
+};
 
 // Other
 export const alphabet = [
@@ -40,3 +44,5 @@ export const alphabet = [
   "Y",
   "Z",
 ];
+
+export const searchSortOptions = { score: 0, title: 1, lastModified: 2 };

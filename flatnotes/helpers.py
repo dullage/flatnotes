@@ -1,5 +1,7 @@
 import os
+import re
 import shutil
+from typing import List, Tuple
 
 from pydantic import BaseModel
 
@@ -21,6 +23,16 @@ def empty_dir(path):
             os.remove(item_path)
         elif os.path.isdir(item_path):
             shutil.rmtree(item_path)
+
+
+def re_extract(pattern, string) -> Tuple[str, List[str]]:
+    """Similar to re.sub but returns a tuple of:
+
+    - `string` with matches removed
+    - list of matches"""
+    matches = []
+    text = re.sub(pattern, lambda tag: matches.append(tag.group()), string)
+    return (text, matches)
 
 
 class CamelCaseBaseModel(BaseModel):

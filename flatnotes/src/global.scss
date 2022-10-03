@@ -44,4 +44,6 @@ a {
 }
 .bttn:hover {
   background-color: $button-background;
+  cursor: pointer;
+  color: inherit;
 }

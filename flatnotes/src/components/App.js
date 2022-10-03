@@ -7,8 +7,8 @@ import Login from "./Login";
 import Logo from "./Logo";
 import Mousetrap from "mousetrap";
 import NavBar from "./NavBar";
-import NoteList from "./NoteList";
 import NoteViewerEditor from "./NoteViewerEditor";
+import RecentlyModified from "./RecentlyModified"
 import SearchInput from "./SearchInput";
 import SearchResults from "./SearchResults";
 
@@ -16,7 +16,6 @@ export default {
   name: "App",
 
   components: {
-    NoteList,
     LoadingIndicator,
     Login,
     NavBar,
@@ -24,6 +23,7 @@ export default {
     Logo,
     NoteViewerEditor,
     SearchResults,
+    RecentlyModified,
   },
 
   data: function() {
@@ -33,7 +33,6 @@ export default {
         home: 1,
         note: 2,
         search: 3,
-        notes: 4,
       },
       currentView: 1,
 
@@ -78,12 +77,6 @@ export default {
         this.currentView = this.views.note;
       }
 
-      // Notes
-      else if (basePath == constants.basePaths.notes) {
-        this.updateDocumentTitle();
-        this.currentView = this.views.notes;
-      }
-
       // Login
       else if (basePath == constants.basePaths.login) {
         this.updateDocumentTitle("Log In");
@@ -110,10 +103,6 @@ export default {
       sessionStorage.removeItem("token");
       localStorage.removeItem("token");
       this.navigate(constants.basePaths.login);
-    },
-
-    newNote: function() {
-      this.navigate(constants.basePaths.new);
     },
 
     noteDeletedToast: function() {

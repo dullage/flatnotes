@@ -1,8 +1,8 @@
-from typing import Dict, Optional
+from typing import Dict, List, Optional
 
 from helpers import CamelCaseBaseModel
 
-from flatnotes import Note, NoteHit
+from flatnotes import Note, SearchResult
 
 
 class LoginModel(CamelCaseBaseModel):
@@ -29,17 +29,21 @@ class NotePatchModel(CamelCaseBaseModel):
     new_content: Optional[str]
 
 
-class NoteHitModel(CamelCaseBaseModel):
+class SearchResultModel(CamelCaseBaseModel):
+    score: Optional[float]
     title: str
     last_modified: int
     title_highlights: Optional[str]
     content_highlights: Optional[str]
+    tag_matches: Optional[List[str]]
 
     @classmethod
-    def dump(self, note_hit: NoteHit) -> Dict:
+    def dump(self, search_result: SearchResult) -> Dict:
         return {
-            "title": note_hit.title,
-            "lastModified": note_hit.last_modified,
-            "titleHighlights": note_hit.title_highlights,
-            "contentHighlights": note_hit.content_highlights,
+            "score": search_result.score,
+            "title": search_result.title,
+            "lastModified": search_result.last_modified,
+            "titleHighlights": search_result.title_highlights,
+            "contentHighlights": search_result.content_highlights,
+            "tagMatches": search_result.tag_matches,
         }
