@@ -3,23 +3,19 @@ import os
 import secrets
 from typing import List, Literal
 
-from auth import (
-    FLATNOTES_PASSWORD,
-    FLATNOTES_USERNAME,
-    create_access_token,
-    validate_token,
-)
+from fastapi import Depends, FastAPI, HTTPException
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+
+from auth import create_access_token, validate_token
+from config import config
 from error_responses import (
     invalid_title_response,
     note_not_found_response,
     title_exists_response,
 )
-from fastapi import Depends, FastAPI, HTTPException
-from fastapi.responses import HTMLResponse
-from fastapi.staticfiles import StaticFiles
-from models import LoginModel, NoteModel, NotePatchModel, SearchResultModel
-
 from flatnotes import Flatnotes, InvalidTitleError, Note
+from models import LoginModel, NoteModel, NotePatchModel, SearchResultModel
 
 logging.basicConfig(
     format="%(asctime)s [%(levelname)s]: %(message)s",
@@ -29,22 +25,20 @@ logger = logging.getLogger()
 logger.setLevel(os.environ.get("LOGLEVEL", "INFO").upper())
 
 app = FastAPI()
-flatnotes = Flatnotes(os.environ["FLATNOTES_PATH"])
+flatnotes = Flatnotes(config.data_path)
 
 
 @app.post("/api/token")
 async def token(data: LoginModel):
     username_correct = secrets.compare_digest(
-        FLATNOTES_USERNAME.lower(), data.username.lower()
+        config.username.lower(), data.username.lower()
     )
-    password_correct = secrets.compare_digest(
-        FLATNOTES_PASSWORD, data.password
-    )
+    password_correct = secrets.compare_digest(config.password, data.password)
     if not (username_correct and password_correct):
         raise HTTPException(
             status_code=400, detail="Incorrect username or password"
         )
-    access_token = create_access_token(data={"sub": FLATNOTES_USERNAME})
+    access_token = create_access_token(data={"sub": config.username})
     return {"access_token": access_token, "token_type": "bearer"}
 
 
