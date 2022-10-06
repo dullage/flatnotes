@@ -1,5 +1,3 @@
-import logging
-import os
 import secrets
 from typing import List, Literal
 
@@ -16,13 +14,6 @@ from error_responses import (
 )
 from flatnotes import Flatnotes, InvalidTitleError, Note
 from models import LoginModel, NoteModel, NotePatchModel, SearchResultModel
-
-logging.basicConfig(
-    format="%(asctime)s [%(levelname)s]: %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-)
-logger = logging.getLogger()
-logger.setLevel(os.environ.get("LOGLEVEL", "INFO").upper())
 
 app = FastAPI()
 flatnotes = Flatnotes(config.data_path)

@@ -1,5 +1,4 @@
 import glob
-import logging
 import os
 import re
 from datetime import datetime
@@ -18,6 +17,7 @@ from whoosh.searching import Hit
 from whoosh.support.charset import accent_map
 
 from helpers import empty_dir, re_extract, strip_ext
+from logger import logger
 
 MARKDOWN_EXT = ".md"
 INDEX_SCHEMA_VERSION = "3"
@@ -183,17 +183,17 @@ class Flatnotes(object):
         if index_dir_exists and whoosh.index.exists_in(
             self.index_dir, indexname=INDEX_SCHEMA_VERSION
         ):
-            logging.info("Loading existing index")
+            logger.info("Loading existing index")
             return whoosh.index.open_dir(
                 self.index_dir, indexname=INDEX_SCHEMA_VERSION
             )
         else:
             if index_dir_exists:
-                logging.info("Deleting outdated index")
+                logger.info("Deleting outdated index")
                 empty_dir(self.index_dir)
             else:
                 os.mkdir(self.index_dir)
-            logging.info("Creating new index")
+            logger.info("Creating new index")
             return whoosh.index.create_in(
                 self.index_dir, IndexSchema, indexname=INDEX_SCHEMA_VERSION
             )
@@ -251,13 +251,13 @@ class Flatnotes(object):
                 # Delete missing
                 if not os.path.exists(idx_filepath):
                     writer.delete_by_term("filename", idx_filename)
-                    logging.info(f"'{idx_filename}' removed from index")
+                    logger.info(f"'{idx_filename}' removed from index")
                 # Update modified
                 elif (
                     datetime.fromtimestamp(os.path.getmtime(idx_filepath))
                     != idx_note["last_modified"]
                 ):
-                    logging.info(f"'{idx_filename}' updated")
+                    logger.info(f"'{idx_filename}' updated")
                     self._add_note_to_index(
                         writer, Note(self, strip_ext(idx_filename))
                     )
@@ -269,7 +269,7 @@ class Flatnotes(object):
         for note in self._get_notes():
             if note.filename not in indexed:
                 self._add_note_to_index(writer, note)
-                logging.info(f"'{note.filename}' added to index")
+                logger.info(f"'{note.filename}' added to index")
         writer.commit()
         self.last_index_update = datetime.now()
 
