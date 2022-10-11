@@ -1,11 +1,15 @@
 import os
+import sys
 
+from auth_type import AuthType
 from logger import logger
 
 
 class Config:
     def __init__(self) -> None:
         self.data_path = self.get_data_path()
+
+        self.auth_type = self.get_auth_type()
 
         self.username = self.get_username()
         self.password = self.get_password()
@@ -15,10 +19,11 @@ class Config:
 
     @classmethod
     def get_env(cls, key, mandatory=False, default=None, cast_int=False):
+        """Get an environment variable."""
         value = os.environ.get(key)
         if mandatory and not value:
             logger.error(f"Environment variable {key} must be set.")
-            exit(1)
+            sys.exit(1)
         if not mandatory and not value:
             return default
         if cast_int:
@@ -26,20 +31,43 @@ class Config:
                 value = int(value)
             except (TypeError, ValueError):
                 logger.error(f"Invalid value '{value}' for {key}.")
-                exit(1)
+                sys.exit(1)
         return value
 
     def get_data_path(self):
         return self.get_env("FLATNOTES_PATH", mandatory=True)
 
+    def get_auth_type(self):
+        key = "FLATNOTES_AUTH_TYPE"
+        auth_type = self.get_env(
+            key, mandatory=False, default=AuthType.PASSWORD.value
+        )
+        try:
+            auth_type = AuthType(auth_type.lower())
+        except ValueError:
+            logger.error(
+                f"Invalid value '{auth_type}' for {key}. "
+                + "Must be one of: "
+                + ", ".join([auth_type.value for auth_type in AuthType])
+                + "."
+            )
+            sys.exit(1)
+        return auth_type
+
     def get_username(self):
-        return self.get_env("FLATNOTES_USERNAME", mandatory=True)
+        return self.get_env(
+            "FLATNOTES_USERNAME", mandatory=self.auth_type != AuthType.NONE
+        )
 
     def get_password(self):
-        return self.get_env("FLATNOTES_PASSWORD", mandatory=True)
+        return self.get_env(
+            "FLATNOTES_PASSWORD", mandatory=self.auth_type != AuthType.NONE
+        )
 
     def get_session_key(self):
-        return self.get_env("FLATNOTES_SECRET_KEY", mandatory=True)
+        return self.get_env(
+            "FLATNOTES_SECRET_KEY", mandatory=self.auth_type != AuthType.NONE
+        )
 
     def get_session_expiry_days(self):
         return self.get_env(

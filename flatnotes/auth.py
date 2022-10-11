@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
+from auth_type import AuthType
 
 from config import config
 
@@ -24,6 +25,8 @@ def create_access_token(data: dict):
 
 
 async def validate_token(token: str = Depends(oauth2_scheme)):
+    if config.auth_type == AuthType.NONE:
+        return
     try:
         payload = jwt.decode(
             token, config.session_key, algorithms=[JWT_ALGORITHM]
@@ -31,7 +34,7 @@ async def validate_token(token: str = Depends(oauth2_scheme)):
         username = payload.get("sub")
         if username is None or username.lower() != config.username.lower():
             raise ValueError
-        return config.username
+        return
     except (JWTError, ValueError):
         raise HTTPException(
             status_code=401,
