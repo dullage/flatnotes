@@ -13,7 +13,13 @@ from error_responses import (
     title_exists_response,
 )
 from flatnotes import Flatnotes, InvalidTitleError, Note
-from models import LoginModel, NoteModel, NotePatchModel, SearchResultModel
+from models import (
+    ConfigModel,
+    LoginModel,
+    NoteModel,
+    NotePatchModel,
+    SearchResultModel,
+)
 
 app = FastAPI()
 flatnotes = Flatnotes(config.data_path)
@@ -126,6 +132,12 @@ async def search(
             term, sort=sort, order=order, limit=limit
         )
     ]
+
+
+@app.get("/api/config", response_model=ConfigModel)
+async def get_config():
+    """Retrieve server-side config required for the UI."""
+    return ConfigModel.dump(config)
 
 
 app.mount("/", StaticFiles(directory="flatnotes/dist"), name="dist")

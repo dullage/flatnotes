@@ -1,8 +1,9 @@
 from typing import Dict, List, Optional
 
-from helpers import CamelCaseBaseModel
-
+from config import Config
 from flatnotes import Note, SearchResult
+from helpers import CamelCaseBaseModel
+from auth_type import AuthType
 
 
 class LoginModel(CamelCaseBaseModel):
@@ -46,4 +47,14 @@ class SearchResultModel(CamelCaseBaseModel):
             "titleHighlights": search_result.title_highlights,
             "contentHighlights": search_result.content_highlights,
             "tagMatches": search_result.tag_matches,
+        }
+
+
+class ConfigModel(CamelCaseBaseModel):
+    auth_type: AuthType
+
+    @classmethod
+    def dump(self, config: Config) -> Dict:
+        return {
+            "authType": config.auth_type.value,
         }

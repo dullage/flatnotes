@@ -66,6 +66,10 @@ export default {
     Logo,
   },
 
+  props: {
+    authType: { type: Number, default: null },
+  },
+
   data: function () {
     return {
       usernameInput: null,
@@ -74,7 +78,20 @@ export default {
     };
   },
 
+  watch: {
+    authType: function () {
+      this.skipIfNoneAuthType();
+    },
+  },
+
   methods: {
+    skipIfNoneAuthType: function () {
+      // Skip past the login page if authentication is disabled
+      if (this.authType == constants.authTypes.none) {
+        EventBus.$emit("navigate", constants.basePaths.home);
+      }
+    },
+
     login: function () {
       let parent = this;
       api
@@ -112,6 +129,10 @@ export default {
           parent.rememberMeInput = false;
         });
     },
+  },
+
+  created: function () {
+    this.skipIfNoneAuthType();
   },
 };
 </script>

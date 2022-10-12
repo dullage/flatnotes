@@ -12,12 +12,17 @@
       v-if="currentView != views.login"
       class="w-100 mb-5"
       :show-logo="currentView != views.home"
+      :show-log-out="authType != null && authType != constants.authTypes.none"
       @logout="logout()"
       @search="openSearch()"
     ></NavBar>
 
     <!-- Login -->
-    <Login v-if="currentView == views.login" class="flex-grow-1"></Login>
+    <Login
+      v-if="currentView == views.login"
+      class="flex-grow-1"
+      :auth-type="authType"
+    ></Login>
 
     <!-- Home -->
     <div
