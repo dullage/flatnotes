@@ -1,8 +1,14 @@
 import os
 import sys
+from enum import Enum
 
-from auth_type import AuthType
 from logger import logger
+
+
+class AuthType(str, Enum):
+    NONE = "none"
+    PASSWORD = "password"
+    # TOTP = "totp"  # Not yet implemented
 
 
 class Config:

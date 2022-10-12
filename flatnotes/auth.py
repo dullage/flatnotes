@@ -3,9 +3,8 @@ from datetime import datetime, timedelta
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
-from auth_type import AuthType
 
-from config import config
+from config import AuthType, config
 
 JWT_ALGORITHM = "HS256"
 

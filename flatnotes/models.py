@@ -1,9 +1,8 @@
 from typing import Dict, List, Optional
 
-from config import Config
+from config import AuthType, Config
 from flatnotes import Note, SearchResult
 from helpers import CamelCaseBaseModel
-from auth_type import AuthType
 
 
 class LoginModel(CamelCaseBaseModel):
