@@ -1,5 +1,6 @@
 import os
 import sys
+from base64 import b32encode
 from enum import Enum
 
 from logger import logger
@@ -8,7 +9,7 @@ from logger import logger
 class AuthType(str, Enum):
     NONE = "none"
     PASSWORD = "password"
-    # TOTP = "totp"  # Not yet implemented
+    TOTP = "totp"
 
 
 class Config:
@@ -22,6 +23,8 @@ class Config:
 
         self.session_key = self.get_session_key()
         self.session_expiry_days = self.get_session_expiry_days()
+
+        self.totp_key = self.get_totp_key()
 
     @classmethod
     def get_env(cls, key, mandatory=False, default=None, cast_int=False):
@@ -82,6 +85,14 @@ class Config:
             default=30,
             cast_int=True,
         )
+
+    def get_totp_key(self):
+        totp_key = self.get_env(
+            "FLATNOTES_TOTP_KEY", mandatory=self.auth_type == AuthType.TOTP
+        )
+        if totp_key:
+            totp_key = b32encode(totp_key.encode("utf-8"))
+        return totp_key
 
 
 config = Config()

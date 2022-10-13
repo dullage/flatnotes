@@ -1,12 +1,14 @@
 import secrets
 from typing import List, Literal
 
+import pyotp
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
+from qrcode import QRCode
 
 from auth import create_access_token, validate_token
-from config import config
+from config import AuthType, config
 from error_responses import (
     invalid_title_response,
     note_not_found_response,
@@ -24,18 +26,52 @@ from models import (
 app = FastAPI()
 flatnotes = Flatnotes(config.data_path)
 
+totp = (
+    pyotp.TOTP(config.totp_key) if config.auth_type == AuthType.TOTP else None
+)
+last_used_totp = None
+
+# Display TOTP QR code
+if config.auth_type == AuthType.TOTP:
+    uri = totp.provisioning_uri(issuer_name="flatnotes", name=config.username)
+    qr = QRCode()
+    qr.add_data(uri)
+    print(
+        "\nScan this QR code with your TOTP app of choice",
+        "e.g. Authy or Google Authenticator:",
+    )
+    qr.print_ascii()
+
 
 @app.post("/api/token")
 async def token(data: LoginModel):
+    global last_used_totp
+
     username_correct = secrets.compare_digest(
         config.username.lower(), data.username.lower()
     )
-    password_correct = secrets.compare_digest(config.password, data.password)
-    if not (username_correct and password_correct):
-        raise HTTPException(
-            status_code=400, detail="Incorrect username or password"
+
+    expected_password = config.password
+    if config.auth_type == AuthType.TOTP:
+        current_totp = totp.now()
+        expected_password += current_totp
+    password_correct = secrets.compare_digest(expected_password, data.password)
+
+    if not (
+        username_correct
+        and password_correct
+        # Prevent TOTP from being reused
+        and (
+            config.auth_type != AuthType.TOTP or current_totp != last_used_totp
         )
+    ):
+        raise HTTPException(
+            status_code=400, detail="Incorrect login credentials."
+        )
+
     access_token = create_access_token(data={"sub": config.username})
+    if config.auth_type == AuthType.TOTP:
+        last_used_totp = current_totp
     return {"access_token": access_token, "token_type": "bearer"}
 
 
