@@ -1,55 +1,77 @@
 <template>
   <div class="d-flex flex-column justify-content-center align-items-center">
     <!-- Logo -->
-    <Logo class="mb-3"></Logo>
-
-    <form
-      class="d-flex flex-column align-items-center"
-      v-on:submit.prevent="login"
+    <Logo class="mb-5"></Logo>
+    <div
+      v-if="authType != null && authType != constants.authTypes.none"
+      class="d-flex flex-column justify-content-center align-items-center"
     >
-      <!-- Username -->
-      <div class="mb-1">
-        <input
-          type="text"
-          placeholder="Username"
-          class="form-control"
-          id="username"
-          autocomplete="username"
-          v-model="usernameInput"
-          autofocus
-          required
-        />
-      </div>
+      <form
+        v-show="authType != null"
+        class="d-flex flex-column align-items-center"
+        v-on:submit.prevent="login"
+      >
+        <div class="mb-1">
+          <!-- Username -->
+          <div class="mb-1">
+            <input
+              type="text"
+              placeholder="Username"
+              class="form-control"
+              id="username"
+              autocomplete="username"
+              v-model="usernameInput"
+              autofocus
+              required
+            />
+          </div>
 
-      <!-- Password -->
-      <div class="mb-2">
-        <input
-          type="password"
-          placeholder="Password"
-          class="form-control"
-          id="password"
-          autocomplete="current-password"
-          v-model="passwordInput"
-          required
-        />
-      </div>
+          <!-- Password -->
+          <div class="mb-1">
+            <input
+              type="password"
+              placeholder="Password"
+              class="form-control"
+              id="password"
+              autocomplete="current-password"
+              v-model="passwordInput"
+              required
+            />
+          </div>
 
-      <!-- Remember Me -->
-      <div class="mb-3 form-check">
-        <input
-          type="checkbox"
-          class="form-check-input"
-          id="rememberMe"
-          v-model="rememberMeInput"
-        />
-        <label class="form-check-label" for="rememberMe">Remember Me</label>
-      </div>
+          <!-- 2FA -->
+          <div v-if="authType == constants.authTypes.totp" class="mb-1">
+            <input
+              type="text"
+              inputmode="numeric"
+              pattern="[0-9]*"
+              placeholder="2FA Code"
+              class="form-control"
+              id="totp"
+              autocomplete="one-time-code"
+              v-model="totpInput"
+              required
+            />
+          </div>
+        </div>
 
-      <!-- Button -->
-      <button type="submit" class="bttn">
-        <b-icon icon="box-arrow-in-right"></b-icon> Log In
-      </button>
-    </form>
+        <!-- Remember Me -->
+        <div class="mb-3 form-check">
+          <input
+            type="checkbox"
+            class="form-check-input"
+            id="rememberMe"
+            v-model="rememberMeInput"
+          />
+          <label class="form-check-label" for="rememberMe">Remember Me</label>
+        </div>
+
+        <!-- Button -->
+        <button type="submit" class="bttn">
+          <b-icon icon="box-arrow-in-right"></b-icon> Log In
+        </button>
+      </form>
+    </div>
   </div>
 </template>
 
@@ -67,13 +89,14 @@ export default {
   },
 
   props: {
-    authType: { type: Number, default: null },
+    authType: { type: String, default: null },
   },
 
   data: function () {
     return {
       usernameInput: null,
       passwordInput: null,
+      totpInput: null,
       rememberMeInput: false,
     };
   },
@@ -97,7 +120,10 @@ export default {
       api
         .post("/api/token", {
           username: this.usernameInput,
-          password: this.passwordInput,
+          password:
+            this.authType == constants.authTypes.totp
+              ? this.passwordInput + this.totpInput
+              : this.passwordInput,
         })
         .then(function (response) {
           sessionStorage.setItem("token", response.data.access_token);
@@ -114,7 +140,7 @@ export default {
             typeof error.response !== "undefined" &&
             [400, 422].includes(error.response.status)
           ) {
-            parent.$bvToast.toast("Incorrect Username or Password ✘", {
+            parent.$bvToast.toast("Incorrect login credentials ✘", {
               variant: "danger",
               noCloseButton: true,
               toaster: "b-toaster-bottom-right",
@@ -126,12 +152,14 @@ export default {
         .finally(function () {
           parent.usernameInput = null;
           parent.passwordInput = null;
+          parent.totpInput = null;
           parent.rememberMeInput = false;
         });
     },
   },
 
   created: function () {
+    this.constants = constants;
     this.skipIfNoneAuthType();
   },
 };

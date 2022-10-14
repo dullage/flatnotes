@@ -47,9 +47,16 @@ export default {
   methods: {
     loadConfig: function() {
       let parent = this;
-      api.get("/api/config").then(function(response) {
-        parent.authType = constants.authTypes[response.data.authType];
-      });
+      api
+        .get("/api/config")
+        .then(function(response) {
+          parent.authType = response.data.authType;
+        })
+        .catch(function(error) {
+          if (!error.handled) {
+            parent.unhandledServerErrorToast();
+          }
+        });
     },
 
     route: function() {

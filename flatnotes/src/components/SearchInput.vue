@@ -4,6 +4,7 @@
       <input
         id="search-input"
         type="text"
+        inputmode="search"
         class="form-control"
         :class="{ highlight: includeHighlightClass }"
         placeholder="Search"
