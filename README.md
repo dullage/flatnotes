@@ -1,8 +1,8 @@
 ![Logo](docs/logo.svg)
 
-A database-less note taking web app that utilises a flat folder of markdown files for storage.
+A self-hosted, database-less note taking web app that utilises a flat folder of markdown files for storage.
 
-Log into the [demo site](https://demo.flatnotes.io) and take a look around. The username is `demo` and the password is `demo`. *Note: This site resets every 15 minutes.*
+Log into the [demo site](https://demo.flatnotes.io) and take a look around. *Note: This site resets every 15 minutes.*
 
 
 ## Design Principle
@@ -15,7 +15,7 @@ flatnotes is designed to be a distraction free note taking app that puts your no
 
 Another key design principle is not to take your notes hostage. Your notes are just markdown files. There's no database, proprietary formatting, complicated folder structures or anything like that. You're free at any point to just move the files elsewhere and use another app.
 
-Equally, the only thing flatnotes caches is the search index and that's incrementally synced on every search (and when flatnotes first starts). This means that you're free to add, edit & delete the markdown files outside of flatnotes whilst flatnotes is running.
+Equally, the only thing flatnotes caches is the search index and that's incrementally synced on every search (and when flatnotes first starts). This means that you're free to add, edit & delete the markdown files outside of flatnotes even whilst flatnotes is running.
 
 
 ## Installation
@@ -28,6 +28,7 @@ Note: To use either of the options below, please ensure the current directory co
 
 ```shell
 docker run -d \
+  -e "FLATNOTES_AUTH_TYPE=password"
   -e "FLATNOTES_USERNAME=user" \
   -e "FLATNOTES_PASSWORD=changeMe!" \
   -e "FLATNOTES_SECRET_KEY=aLongRandomSeriesOfCharacters" \
@@ -45,11 +46,10 @@ services:
     container_name: flatnotes
     image: dullage/flatnotes:latest
     environment:
+      FLATNOTES_AUTH_TYPE: "password"
       FLATNOTES_USERNAME: "user"
       FLATNOTES_PASSWORD: "changeMe!"
       FLATNOTES_SECRET_KEY: "aLongRandomSeriesOfCharacters"
-      # FLATNOTES_SESSION_EXPIRY_DAYS: "7"
-      # Optional. Defaults to 30.
     volumes:
       - "./data:/app/data"
       # - "./index:/app/data/.flatnotes"
@@ -58,6 +58,8 @@ services:
       - "80:80"
     restart: unless-stopped
 ```
+
+See the [Environment Variables](https://github.com/Dullage/flatnotes/wiki/Environment-Variables) article in the wiki for a full list of configuration options.
 
 
 ## Q&A
@@ -88,6 +90,15 @@ The first option is to choose not to. This frees you from the burden of organisa
 
 Additionally you are able to tag notes by using a hashtag anywhere in the note content e.g. #work. Tags are indexed separately from the rest of the content and so can be searched separately either by using the field prefix e.g. "tags:work" or using the hashtag shortcut e.g. "#work".
 
+### What types of authentication are supported?
+There are 3 types:
+
+- None = No authentication, the site is open to anyone with access.
+- Password = The site is protected by a username and password.
+- TOTP = In addition to a username and password, the site is also protected by a time based one-time-password.
+
+See the [Environment Variables](https://github.com/Dullage/flatnotes/wiki/Environment-Variables) article in the wiki for more information.
+
 
 ## Roadmap
 
@@ -96,11 +107,12 @@ I want to keep flatnotes as simple and distraction free as possible which means 
 One feature I do plan to implement is the ability to *share* a note. In the spirit of simple and database-less, the current plan is to generate temporary pre-signed URLs but this needs to be explored.
 
 
-## Support
+## Sponsorship
 
 If you find this project useful, please consider buying me a coffee. It would make my day.
 
 [!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/dullage)
+
 
 ## Thanks
 

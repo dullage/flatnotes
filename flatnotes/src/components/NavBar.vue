@@ -5,14 +5,21 @@
       :href="constants.basePaths.home"
       @click.prevent="navigate(constants.basePaths.home, $event)"
     >
-      <Logo
-        :class="{ invisible: !showLogo }"
-        responsive
-      ></Logo>
+      <Logo :class="{ invisible: !showLogo }" responsive></Logo>
     </a>
 
     <!-- Buttons -->
     <div class="d-flex">
+      <!-- Log Out -->
+      <button
+        v-if="showLogOut"
+        type="button"
+        class="bttn"
+        @click="$emit('logout')"
+      >
+        <b-icon icon="box-arrow-right"></b-icon> Log Out
+      </button>
+
       <!-- New Note -->
       <a
         :href="constants.basePaths.new"
@@ -21,11 +28,6 @@
       >
         <b-icon icon="plus-circle"></b-icon> New
       </a>
-
-      <!-- Log Out -->
-      <button type="button" class="bttn" @click="$emit('logout')">
-        <b-icon icon="box-arrow-right"></b-icon> Log Out
-      </button>
 
       <!-- A-Z -->
       <a :href="azHref" class="bttn" @click.prevent="navigate(azHref, $event)"
@@ -70,6 +72,7 @@ export default {
       type: Boolean,
       default: true,
     },
+    showLogOut: { type: Boolean, default: false },
   },
 
   computed: {

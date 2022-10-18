@@ -1,50 +1,77 @@
-import logging
-import os
 import secrets
 from typing import List, Literal
 
-from auth import (
-    FLATNOTES_PASSWORD,
-    FLATNOTES_USERNAME,
-    create_access_token,
-    validate_token,
-)
+import pyotp
+from fastapi import Depends, FastAPI, HTTPException
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from qrcode import QRCode
+
+from auth import create_access_token, validate_token
+from config import AuthType, config
 from error_responses import (
     invalid_title_response,
     note_not_found_response,
     title_exists_response,
 )
-from fastapi import Depends, FastAPI, HTTPException
-from fastapi.responses import HTMLResponse
-from fastapi.staticfiles import StaticFiles
-from models import LoginModel, NoteModel, NotePatchModel, SearchResultModel
-
 from flatnotes import Flatnotes, InvalidTitleError, Note
-
-logging.basicConfig(
-    format="%(asctime)s [%(levelname)s]: %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
+from models import (
+    ConfigModel,
+    LoginModel,
+    NoteModel,
+    NotePatchModel,
+    SearchResultModel,
 )
-logger = logging.getLogger()
-logger.setLevel(os.environ.get("LOGLEVEL", "INFO").upper())
 
 app = FastAPI()
-flatnotes = Flatnotes(os.environ["FLATNOTES_PATH"])
+flatnotes = Flatnotes(config.data_path)
+
+totp = (
+    pyotp.TOTP(config.totp_key) if config.auth_type == AuthType.TOTP else None
+)
+last_used_totp = None
+
+# Display TOTP QR code
+if config.auth_type == AuthType.TOTP:
+    uri = totp.provisioning_uri(issuer_name="flatnotes", name=config.username)
+    qr = QRCode()
+    qr.add_data(uri)
+    print(
+        "\nScan this QR code with your TOTP app of choice",
+        "e.g. Authy or Google Authenticator:",
+    )
+    qr.print_ascii()
 
 
 @app.post("/api/token")
 async def token(data: LoginModel):
+    global last_used_totp
+
     username_correct = secrets.compare_digest(
-        FLATNOTES_USERNAME.lower(), data.username.lower()
+        config.username.lower(), data.username.lower()
     )
-    password_correct = secrets.compare_digest(
-        FLATNOTES_PASSWORD, data.password
-    )
-    if not (username_correct and password_correct):
-        raise HTTPException(
-            status_code=400, detail="Incorrect username or password"
+
+    expected_password = config.password
+    if config.auth_type == AuthType.TOTP:
+        current_totp = totp.now()
+        expected_password += current_totp
+    password_correct = secrets.compare_digest(expected_password, data.password)
+
+    if not (
+        username_correct
+        and password_correct
+        # Prevent TOTP from being reused
+        and (
+            config.auth_type != AuthType.TOTP or current_totp != last_used_totp
         )
-    access_token = create_access_token(data={"sub": FLATNOTES_USERNAME})
+    ):
+        raise HTTPException(
+            status_code=400, detail="Incorrect login credentials."
+        )
+
+    access_token = create_access_token(data={"sub": config.username})
+    if config.auth_type == AuthType.TOTP:
+        last_used_totp = current_totp
     return {"access_token": access_token, "token_type": "bearer"}
 
 
@@ -141,6 +168,12 @@ async def search(
             term, sort=sort, order=order, limit=limit
         )
     ]
+
+
+@app.get("/api/config", response_model=ConfigModel)
+async def get_config():
+    """Retrieve server-side config required for the UI."""
+    return ConfigModel.dump(config)
 
 
 app.mount("/", StaticFiles(directory="flatnotes/dist"), name="dist")

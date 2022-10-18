@@ -8,9 +8,10 @@ import Logo from "./Logo";
 import Mousetrap from "mousetrap";
 import NavBar from "./NavBar";
 import NoteViewerEditor from "./NoteViewerEditor";
-import RecentlyModified from "./RecentlyModified"
+import RecentlyModified from "./RecentlyModified";
 import SearchInput from "./SearchInput";
 import SearchResults from "./SearchResults";
+import api from "../api";
 
 export default {
   name: "App",
@@ -28,6 +29,8 @@ export default {
 
   data: function() {
     return {
+      authType: null,
+
       views: {
         login: 0,
         home: 1,
@@ -42,6 +45,20 @@ export default {
   },
 
   methods: {
+    loadConfig: function() {
+      let parent = this;
+      api
+        .get("/api/config")
+        .then(function(response) {
+          parent.authType = response.data.authType;
+        })
+        .catch(function(error) {
+          if (!error.handled) {
+            parent.unhandledServerErrorToast();
+          }
+        });
+    },
+
     route: function() {
       let path = window.location.pathname.split("/");
       let basePath = `/${path[1]}`;
@@ -154,6 +171,8 @@ export default {
       parent.openSearch();
       return false;
     });
+
+    this.loadConfig();
 
     let token = localStorage.getItem("token");
     if (token != null) {
