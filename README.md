@@ -29,8 +29,8 @@ Note: To use either of the options below, please ensure the current directory co
 ```shell
 docker run -d \
   -e "FLATNOTES_AUTH_TYPE=password" \
-  -e "FLATNOTES_USERNAME=admin" \
-  -e "FLATNOTES_PASSWORD=admin" \
+  -e "FLATNOTES_USERNAME=user" \
+  -e "FLATNOTES_PASSWORD=changeMe" \
   -e "FLATNOTES_SECRET_KEY=aLongRandomSeriesOfCharacters" \
   -v "$(pwd)/data:/app/data" \
   -p "80:80" \
