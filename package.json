@@ -11,19 +11,15 @@
   "author": "Adam Dullage",
   "license": "MIT",
   "devDependencies": {
-    "@popperjs/core": "^2.11.5",
-    "@toast-ui/editor-plugin-code-syntax-highlight": "^3.0.0",
-    "@toast-ui/vue-editor": "^3.0.2",
-    "@vue/component-compiler-utils": "^3.2.2",
-    "axios": "^0.21.1",
-    "bootstrap": "4.6",
-    "bootstrap-vue": "^2.21.2",
-    "mousetrap": "^1.6.5",
-    "parcel-bundler": "^1.12.5",
-    "portal-vue": "^2.1.7",
-    "sass": "^1.37.5",
-    "vue": "^2.6.14",
-    "vue-hot-reload-api": "^2.3.4",
-    "vue-template-compiler": "^2.6.14"
+    "@toast-ui/editor-plugin-code-syntax-highlight": "3.1.0",
+    "@toast-ui/vue-editor": "3.2.2",
+    "@vue/component-compiler-utils": "3.3.0",
+    "axios": "1.3.2",
+    "bootstrap-vue": "2.23.1",
+    "mousetrap": "1.6.5",
+    "parcel-bundler": "1.12.5",
+    "sass": "1.58.0",
+    "vue-hot-reload-api": "2.3.4",
+    "vue-template-compiler": "2.7.14"
   }
 }
