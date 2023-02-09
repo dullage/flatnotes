@@ -170,7 +170,6 @@ class Flatnotes(object):
         self.dir = dir
 
         self.index = self._load_index()
-        self.last_index_update = None
         self.update_index()
 
     @property
@@ -271,16 +270,6 @@ class Flatnotes(object):
                 self._add_note_to_index(writer, note)
                 logger.info(f"'{note.filename}' added to index")
         writer.commit()
-        self.last_index_update = datetime.now()
-
-    def update_index_debounced(self, clean: bool = False) -> None:
-        """Run update_index() but only if it hasn't been run in the last 10
-        seconds."""
-        if (
-            self.last_index_update is None
-            or (datetime.now() - self.last_index_update).seconds > 10
-        ):
-            self.update_index(clean=clean)
 
     def get_tags(self):
         """Return a list of all indexed tags."""
@@ -307,7 +296,7 @@ class Flatnotes(object):
         limit: int = None,
     ) -> Tuple[SearchResult, ...]:
         """Search the index for the given term."""
-        self.update_index_debounced()
+        self.update_index()
         term = self.pre_process_search_term(term)
         with self.index.searcher() as searcher:
             # Parse Query
