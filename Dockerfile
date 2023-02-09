@@ -1,4 +1,4 @@
-FROM --platform=$BUILDPLATFORM python:3.10-slim-bullseye AS build
+FROM --platform=$BUILDPLATFORM python:3.11-slim-bullseye AS build
 
 RUN apt update && apt install -y npm
 
@@ -13,7 +13,7 @@ COPY flatnotes/src ./flatnotes/src
 RUN npm run build
 
 
-FROM python:3.10-slim-bullseye
+FROM python:3.11-slim-bullseye
 
 ARG USER=flatnotes
 ARG UID=1000
