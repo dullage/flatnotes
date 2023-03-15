@@ -109,9 +109,9 @@ One feature I do plan to implement is the ability to *share* a note. In the spir
 
 ## Sponsorship
 
-If you find this project useful, please consider buying me a coffee. It would make my day.
+If you find this project useful, please consider buying me a beer. It would genuinely make my day.
 
-[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/dullage)
+[![Sponsor](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86)](https://github.com/sponsors/Dullage)
 
 
 ## Thanks
