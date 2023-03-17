@@ -86,7 +86,7 @@
       <div v-else class="note flex-grow-1">
         <editor
           :initialValue="initialContent"
-          initialEditType="markdown"
+          :initialEditType="loadDefaultEditorMode()"
           previewStyle="tab"
           ref="toastUiEditor"
           :options="editorOptions"
@@ -304,6 +304,23 @@ export default {
       }
     },
 
+    saveDefaultEditorMode: function () {
+      let isWysiwygMode = this.$refs.toastUiEditor.invoke("isWysiwygMode");
+      localStorage.setItem(
+        "defaultEditorMode",
+        isWysiwygMode ? "wysiwyg" : "markdown"
+      );
+    },
+
+    loadDefaultEditorMode: function () {
+      let defaultWysiwygMode = localStorage.getItem("defaultEditorMode");
+      if (defaultWysiwygMode) {
+        return defaultWysiwygMode;
+      } else {
+        return "markdown";
+      }
+    },
+
     clearDraftSaveTimeout: function () {
       if (this.draftSaveTimeout != null) {
         clearTimeout(this.draftSaveTimeout);
@@ -338,6 +355,8 @@ export default {
       let parent = this;
       let newContent = this.getEditorContent();
 
+      this.saveDefaultEditorMode();
+
       // Title Validation
       if (typeof this.titleInput == "string") {
         this.titleInput = this.titleInput.trim();
@@ -348,6 +367,18 @@ export default {
           noCloseButton: true,
           toaster: "b-toaster-bottom-right",
         });
+        return;
+      }
+      const reservedCharacters = /[<>:"/\\|?*]/;
+      if (reservedCharacters.test(this.titleInput)) {
+        this.$bvToast.toast(
+          'Due to filename restrictions, the following characters are not allowed in a note title: <>:"/\\|?*',
+          {
+            variant: "danger",
+            noCloseButton: true,
+            toaster: "b-toaster-bottom-right",
+          }
+        );
         return;
       }
 
@@ -400,6 +431,7 @@ export default {
 
       // No Change
       else {
+        localStorage.removeItem(this.currentNote.title);
         this.setEditMode(false);
         this.noteSavedToast();
       }
