@@ -99,6 +99,10 @@ There are 3 types:
 
 See the [Environment Variables](https://github.com/Dullage/flatnotes/wiki/Environment-Variables) article in the wiki for more information.
 
+### What file extensions are supported?
+
+flatnotes will store all new notes with the extension `.md`. For any existing files to be picked up by flatnotes they also need to use the extension `.md`. See #50 for further detail.
+
 
 ## Roadmap
 
