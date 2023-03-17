@@ -350,6 +350,18 @@ export default {
         });
         return;
       }
+      const reservedCharacters = /[<>:"/\\|?*]/;
+      if (reservedCharacters.test(this.titleInput)) {
+        this.$bvToast.toast(
+          "Due to filename restrictions, the following characters are not allowed in a note title: <>:\"/\\|?*",
+          {
+            variant: "danger",
+            noCloseButton: true,
+            toaster: "b-toaster-bottom-right",
+          }
+        );
+        return;
+      }
 
       // New Note
       if (this.currentNote.lastModified == null) {
