@@ -101,7 +101,7 @@ See the [Environment Variables](https://github.com/Dullage/flatnotes/wiki/Enviro
 
 ### What file extensions are supported?
 
-flatnotes will store all new notes with the extension `.md`. For any existing files to be picked up by flatnotes they also need to use the extension `.md`. See #50 for further detail.
+flatnotes will store all new notes with the extension `.md`. For any existing files to be picked up by flatnotes they also need to use the extension `.md`. See [#50](https://github.com/Dullage/flatnotes/issues/50) for further detail.
 
 
 ## Roadmap
