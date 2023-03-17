@@ -431,6 +431,7 @@ export default {
 
       // No Change
       else {
+        localStorage.removeItem(this.currentNote.title);
         this.setEditMode(false);
         this.noteSavedToast();
       }
