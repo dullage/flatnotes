@@ -10,7 +10,7 @@ WORKDIR ${BUILD_DIR}
 
 RUN apt update && apt install -y npm
 
-COPY package.json package-lock.json ./
+COPY package.json package-lock.json .htmlnanorc ./
 RUN npm ci
 
 COPY flatnotes/src ./flatnotes/src
