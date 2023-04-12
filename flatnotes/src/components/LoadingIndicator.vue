@@ -18,11 +18,11 @@
 @import "../colours";
 
 p {
-  color: $muted-text;
+  color: var(--colour-text-muted);
 }
 
 .failed-icon {
-  color: $logo-key-colour;
+  color: var(--colour-brand);
   font-size: 60px;
 }
 
@@ -34,14 +34,14 @@ p {
 .loader,
 .loader:before,
 .loader:after {
-  background: $logo-key-colour;
+  background: var(--colour-brand);
   -webkit-animation: load1 1s infinite ease-in-out;
   animation: load1 1s infinite ease-in-out;
   width: 1em;
   height: 4em;
 }
 .loader {
-  color: $logo-key-colour;
+  color: var(--colour-brand);
   text-indent: -9999em;
   margin: 33% auto;
   position: relative;

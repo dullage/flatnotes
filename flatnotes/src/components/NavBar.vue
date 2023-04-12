@@ -25,12 +25,31 @@
         :href="constants.basePaths.new"
         class="bttn"
         @click.prevent="navigate(constants.basePaths.new, $event)"
+        v-b-tooltip.hover
+        title="Create a New Note"
       >
         <b-icon icon="plus-circle"></b-icon> New
       </a>
 
+      <!-- Theme Toggle -->
+      <button
+        type="button"
+        id="theme-button"
+        class="bttn"
+        @click="$emit('toggleTheme')"
+        v-b-tooltip.hover
+        title="Toggle Theme"
+      >
+        <b-icon :icon="darkTheme ? 'sun' : 'moon'"></b-icon>
+      </button>
+
       <!-- A-Z -->
-      <a :href="azHref" class="bttn" @click.prevent="navigate(azHref, $event)"
+      <a
+        :href="azHref"
+        class="bttn"
+        @click.prevent="navigate(azHref, $event)"
+        v-b-tooltip.hover
+        title="Show All Notes"
         >A-Z</a
       >
 
@@ -41,7 +60,7 @@
         class="bttn"
         @click="$emit('search')"
         v-b-tooltip.hover
-        title="Keyboard Shortcut: /"
+        title="Search (Keyboard Shortcut: /)"
       >
         <b-icon icon="search"></b-icon>
       </button>
@@ -73,6 +92,7 @@ export default {
       default: true,
     },
     showLogOut: { type: Boolean, default: false },
+    darkTheme: { type: Boolean, default: false },
   },
 
   computed: {
