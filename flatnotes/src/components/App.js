@@ -27,7 +27,7 @@ export default {
     RecentlyModified,
   },
 
-  data: function() {
+  data: function () {
     return {
       authType: null,
 
@@ -41,25 +41,36 @@ export default {
 
       noteTitle: null,
       searchTerm: null,
+      darkTheme: false,
     };
   },
 
+  watch: {
+    darkTheme: function () {
+      if (this.darkTheme) {
+        document.body.classList.add("dark-theme");
+      } else {
+        document.body.classList.remove("dark-theme");
+      }
+    },
+  },
+
   methods: {
-    loadConfig: function() {
+    loadConfig: function () {
       let parent = this;
       api
         .get("/api/config")
-        .then(function(response) {
+        .then(function (response) {
           parent.authType = response.data.authType;
         })
-        .catch(function(error) {
+        .catch(function (error) {
           if (!error.handled) {
             parent.unhandledServerErrorToast();
           }
         });
     },
 
-    route: function() {
+    route: function () {
       let path = window.location.pathname.split("/");
       let basePath = `/${path[1]}`;
 
@@ -69,7 +80,7 @@ export default {
       if (basePath == constants.basePaths.home) {
         this.updateDocumentTitle();
         this.currentView = this.views.home;
-        this.$nextTick(function() {
+        this.$nextTick(function () {
           this.focusSearchInput();
         });
       }
@@ -101,7 +112,7 @@ export default {
       }
     },
 
-    navigate: function(href, e) {
+    navigate: function (href, e) {
       if (e != undefined && e.ctrlKey == true) {
         window.open(href);
       } else {
@@ -112,17 +123,17 @@ export default {
       }
     },
 
-    updateDocumentTitle: function(suffix) {
+    updateDocumentTitle: function (suffix) {
       window.document.title = (suffix ? `${suffix} - ` : "") + "flatnotes";
     },
 
-    logout: function() {
+    logout: function () {
       sessionStorage.removeItem("token");
       localStorage.removeItem("token");
       this.navigate(constants.basePaths.login);
     },
 
-    noteDeletedToast: function() {
+    noteDeletedToast: function () {
       this.$bvToast.toast("Note deleted ✓", {
         variant: "success",
         noCloseButton: true,
@@ -130,13 +141,13 @@ export default {
       });
     },
 
-    focusSearchInput: function() {
+    focusSearchInput: function () {
       let input = document.getElementById("search-input");
       input.focus();
       input.select();
     },
 
-    openSearch: function() {
+    openSearch: function () {
       if ([this.views.home, this.views.search].includes(this.currentView)) {
         this.focusSearchInput();
         EventBus.$emit("highlight-search-input");
@@ -145,7 +156,7 @@ export default {
       }
     },
 
-    unhandledServerErrorToast: function() {
+    unhandledServerErrorToast: function () {
       this.$bvToast.toast(
         "Unknown error communicating with the server. Please try again.",
         {
@@ -156,9 +167,14 @@ export default {
         }
       );
     },
+
+    toggleTheme: function () {
+      this.darkTheme = !this.darkTheme;
+      localStorage.setItem("darkTheme", this.darkTheme);
+    },
   },
 
-  created: function() {
+  created: function () {
     let parent = this;
 
     this.constants = constants;
@@ -167,7 +183,7 @@ export default {
     EventBus.$on("unhandledServerError", this.unhandledServerErrorToast);
     EventBus.$on("updateDocumentTitle", this.updateDocumentTitle);
 
-    Mousetrap.bind("/", function() {
+    Mousetrap.bind("/", function () {
       parent.openSearch();
       return false;
     });
@@ -179,15 +195,25 @@ export default {
       sessionStorage.setItem("token", token);
     }
 
+    let darkTheme = localStorage.getItem("darkTheme");
+    if (darkTheme != null) {
+      this.darkTheme = darkTheme == "true";
+    } else if (
+      window.matchMedia &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches
+    ) {
+      this.darkTheme = true;
+    }
+
     this.route();
   },
 
-  mounted: function() {
+  mounted: function () {
     let parent = this;
 
     window.addEventListener("popstate", this.route);
 
-    this.$root.$on("bv::modal::shown", function(_, modalId) {
+    this.$root.$on("bv::modal::shown", function (_, modalId) {
       if (modalId == "search-modal") {
         parent.focusSearchInput();
       }

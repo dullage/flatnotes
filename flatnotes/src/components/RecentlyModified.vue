@@ -35,7 +35,7 @@
 .mini-header {
   font-size: 12px;
   font-weight: bold;
-  color: $very-muted-text;
+  color: var(--colour-text-very-muted);
 }
 </style>
 

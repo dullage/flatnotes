@@ -24,10 +24,10 @@
 
 @keyframes highlight {
   from {
-    background-color: $input-highlight;
+    background-color: var(--colour-background-highlight);
   }
   to {
-    background-color: white;
+    background-color: var(--colour-background-elevated);
   }
 }
 
@@ -37,9 +37,24 @@
 }
 
 .btn {
-  border: 1px solid $form-control-border;
+  border: 1px solid var(--colour-border);
   svg {
-    color: $muted-text;
+    color: var(--colour-text-muted);
+  }
+}
+
+#search-input {
+  background-color: var(--colour-background-elevated);
+  border-color: var(--colour-border);
+  color: var(--colour-text);
+
+  &:focus {
+    background-color: var(--colour-background-elevated);
+    color: var(--colour-text);
+  }
+
+  &::placeholder {
+    color: var(--colour-text-muted);
   }
 }
 </style>
