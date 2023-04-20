@@ -97,7 +97,7 @@
 .group-name {
   padding-left: 8px;
   font-weight: bold;
-  font-size: 32px;
+  font-size: 2rem;
   color: var(--colour-text-very-muted);
   margin-bottom: 8px;
 }
@@ -112,7 +112,7 @@
 
 .last-modified {
   color: var(--colour-text-muted);
-  font-size: 12px;
+  font-size: 0.75rem;
 }
 
 .result-contents {
@@ -130,10 +130,12 @@
 
 .tag {
   color: white;
-  font-size: 14px;
+  font-size: 0.75rem;
   background-color: var(--colour-brand);
   padding: 2px 6px;
   border-radius: 4px;
+  margin: 4px 0;
+  display: inline-block;
 }
 </style>
 

@@ -20,9 +20,9 @@
         class="d-flex justify-content-between flex-wrap align-items-end mb-3"
       >
         <!-- Title -->
-        <h2 v-if="editMode == false" class="title" :title="currentNote.title">
+        <h1 v-if="editMode == false" class="title" :title="currentNote.title">
           {{ currentNote.title }}
-        </h2>
+        </h1>
         <input
           v-else
           type="text"
@@ -138,13 +138,35 @@
 
 .toastui-editor-contents {
   font-family: "Inter", sans-serif;
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
+  font-size: 1rem;
+  h1 {
+    font-size: 2.25rem;
+    font-weight: 500;
     border-bottom: none;
+  }
+  h2 {
+    font-size: 2rem;
+    font-weight: 500;
+    border-bottom: none;
+  }
+  h3 {
+    font-size: 1.75rem;
+    font-weight: 500;
+  }
+  h4 {
+    font-size: 1.5rem;
+    font-weight: 500;
+  }
+  h5 {
+    font-size: 1.25rem;
+    font-weight: 500;
+  }
+  h6 {
+    font-size: 1rem;
+    font-weight: 500;
+  }
+  p {
+    margin-bottom: 1.5rem;
   }
   @include note-padding;
 }

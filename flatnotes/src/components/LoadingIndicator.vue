@@ -23,7 +23,7 @@ p {
 
 .failed-icon {
   color: var(--colour-brand);
-  font-size: 60px;
+  font-size: 4rem;
 }
 
 .failure-message {
@@ -45,7 +45,7 @@ p {
   text-indent: -9999em;
   margin: 33% auto;
   position: relative;
-  font-size: 11px;
+  font-size: 0.75rem;
   -webkit-transform: translateZ(0);
   -ms-transform: translateZ(0);
   transform: translateZ(0);
