@@ -100,7 +100,7 @@
 }
 
 .toastui-editor-md-tab-container .tab-item.active {
-  border-bottom: none;  
+  border-bottom: none;
 }
 
 .toastui-editor-toolbar-divider {
@@ -120,11 +120,44 @@
   color: var(--colour-text-muted);
 }
 
-.toastui-editor-md-code, .toastui-editor-contents code {
+.toastui-editor-md-code,
+.toastui-editor-contents code {
   background-color: var(--colour-background-tint);
 }
 
+.toastui-editor-popup {
+  background-color: var(--colour-background-elevated);
+  border: 1px solid var(--colour-border);
+}
+
+.toastui-editor-popup-body {
+  label {
+    color: var(--colour-text);
+  }
+  input {
+    background-color: var(--colour-background-elevated);
+    border: 1px solid var(--colour-border);
+  }
+}
+
+.toastui-editor-popup-add-table .toastui-editor-table-cell,
+.toastui-editor-popup-add-table .toastui-editor-table-cell.header {
+  background-color: var(--colour-background-elevated);
+  border-color: var(--colour-border);
+}
+
+.toastui-editor-popup-add-heading ul li:hover {
+  background-color: var(--colour-background-highlight);
+}
+
+.toastui-editor-popup-add-image .toastui-editor-tabs .tab-item {
+  color: var(--colour-text);
+  background-color: var(--colour-background-elevated);
+  border-color: var(--colour-border);
+}
+
 // Tables
-.toastui-editor-contents table th, .toastui-editor-contents table td {
+.toastui-editor-contents table th,
+.toastui-editor-contents table td {
   border-color: var(--colour-border);
 }
