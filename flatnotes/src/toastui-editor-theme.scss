@@ -30,6 +30,10 @@
   background-color: var(--colour-background-elevated);
 }
 
+.toastui-editor-ww-container {
+  background-color: var(--colour-background-elevated);
+}
+
 // Code Block
 .toastui-editor-contents pre,
 .toastui-editor-md-code-block-line-background {
@@ -80,7 +84,7 @@
 }
 
 .toastui-editor-defaultUI-toolbar button {
-  border: none;
+  border: 1px solid var(--colour-background-elevated);
 }
 
 .toastui-editor-defaultUI .tab-item.active {
@@ -109,7 +113,7 @@
 
 .toastui-editor-defaultUI-toolbar button:not(:disabled):hover {
   background-color: var(--colour-background-tint);
-  border: none;
+  border: 1px solid var(--colour-background-elevated);
 }
 
 .toastui-editor-md-block-quote .toastui-editor-md-marked-text {
