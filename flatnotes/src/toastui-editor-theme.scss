@@ -123,3 +123,8 @@
 .toastui-editor-md-code, .toastui-editor-contents code {
   background-color: var(--colour-background-tint);
 }
+
+// Tables
+.toastui-editor-contents table th, .toastui-editor-contents table td {
+  border-color: var(--colour-border);
+}
