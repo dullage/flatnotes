@@ -33,7 +33,7 @@
 @import "../colours";
 
 .mini-header {
-  font-size: 0.75rem;
+  font-size: 12px;
   font-weight: bold;
   color: var(--colour-text-very-muted);
 }
