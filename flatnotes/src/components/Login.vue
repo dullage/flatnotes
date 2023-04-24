@@ -8,7 +8,7 @@
     >
       <form
         v-show="authType != null"
-        class="d-flex flex-column align-items-center"
+        class="login-form d-flex flex-column align-items-center"
         v-on:submit.prevent="login"
       >
         <div class="mb-1">
@@ -74,6 +74,16 @@
     </div>
   </div>
 </template>
+
+<style lang="scss" scoped>
+.login-form {
+  input {
+    color: var(--colour-text);
+    background-color: var(--colour-background-elevated);
+    border-color: var(--colour-border);
+  }
+}
+</style>
 
 <script>
 import * as constants from "../constants";
