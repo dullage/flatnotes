@@ -156,6 +156,15 @@
   border-color: var(--colour-border);
 }
 
+.toastui-editor-popup-add-image .toastui-editor-file-name.has-file {
+  color: var(--colour-text);
+}
+
+.toastui-editor-popup-body input[type="text"] {
+  color: var(--colour-text);
+  background-color: var(--colour-background-elevated);
+}
+
 // Tables
 .toastui-editor-contents table th,
 .toastui-editor-contents table td {
