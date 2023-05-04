@@ -1,0 +1,172 @@
+@import "../colours";
+
+.note {
+  background-color: var(--colour-background-elevated);
+  box-shadow: 0 0 10px var(--colour-shadow);
+}
+
+.toastui-editor-defaultUI {
+  border: none;
+}
+
+.toastui-editor-contents {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: var(--colour-text);
+  }
+  p {
+    color: var(--colour-text);
+  }
+  pre code {
+    color: var(--colour-text);
+  }
+}
+
+.toastui-editor-main {
+  background-color: var(--colour-background-elevated);
+}
+
+.toastui-editor-ww-container {
+  background-color: var(--colour-background-elevated);
+}
+
+// Code Block
+.toastui-editor-contents pre,
+.toastui-editor-md-code-block-line-background {
+  background-color: var(--colour-background-tint);
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string {
+  background: none;
+}
+
+// Tables
+.toastui-editor-contents table th {
+  color: var(--colour-text);
+  background-color: var(--colour-background-tint);
+}
+
+.toastui-editor-contents table {
+  color: var(--colour-text);
+}
+
+.toastui-editor-md-table .toastui-editor-md-table-cell {
+  color: var(--colour-text);
+}
+
+// Editor
+.ProseMirror {
+  color: var(--colour-text);
+}
+
+// Toolbar
+.toastui-editor-defaultUI-toolbar {
+  background-color: var(--colour-background-elevated);
+  border-bottom-color: var(--colour-border);
+}
+
+.toastui-editor-defaultUI .toastui-editor-md-tab-container {
+  background-color: var(--colour-background-elevated);
+  border-bottom-color: var(--colour-border);
+}
+
+.toastui-editor-mode-switch {
+  background-color: var(--colour-background-elevated);
+  border-color: var(--colour-border);
+}
+
+.toastui-editor-defaultUI-toolbar button {
+  border: 1px solid var(--colour-background-elevated);
+}
+
+.toastui-editor-defaultUI .tab-item.active {
+  background-color: var(--colour-background-elevated);
+  color: var(--colour-text);
+  border-color: var(--colour-border);
+}
+
+.toastui-editor-defaultUI .tab-item {
+  background-color: var(--colour-background-tint);
+  color: var(--colour-text-muted);
+  border-color: var(--colour-border);
+}
+
+.toastui-editor-md-tab-container .tab-item.active {
+  border-bottom: none;
+}
+
+.toastui-editor-toolbar-divider {
+  background-color: var(--colour-text);
+}
+
+.dark-theme .toastui-editor-toolbar-icons {
+  background-position-y: -49px;
+}
+
+.toastui-editor-defaultUI-toolbar button:not(:disabled):hover {
+  background-color: var(--colour-background-tint);
+  border: 1px solid var(--colour-background-elevated);
+}
+
+.toastui-editor-md-block-quote .toastui-editor-md-marked-text {
+  color: var(--colour-text-muted);
+}
+
+.toastui-editor-md-code,
+.toastui-editor-contents code {
+  background-color: var(--colour-background-tint);
+}
+
+.toastui-editor-popup {
+  background-color: var(--colour-background-elevated);
+  border: 1px solid var(--colour-border);
+}
+
+.toastui-editor-popup-body {
+  label {
+    color: var(--colour-text);
+  }
+  input {
+    background-color: var(--colour-background-elevated);
+    border: 1px solid var(--colour-border);
+  }
+}
+
+.toastui-editor-popup-add-table .toastui-editor-table-cell,
+.toastui-editor-popup-add-table .toastui-editor-table-cell.header {
+  background-color: var(--colour-background-elevated);
+  border-color: var(--colour-border);
+}
+
+.toastui-editor-popup-add-heading ul li:hover {
+  background-color: var(--colour-background-highlight);
+}
+
+.toastui-editor-popup-add-image .toastui-editor-tabs .tab-item {
+  color: var(--colour-text);
+  background-color: var(--colour-background-elevated);
+  border-color: var(--colour-border);
+}
+
+.toastui-editor-popup-add-image .toastui-editor-file-name.has-file {
+  color: var(--colour-text);
+}
+
+.toastui-editor-popup-body input[type="text"] {
+  color: var(--colour-text);
+  background-color: var(--colour-background-elevated);
+}
+
+// Tables
+.toastui-editor-contents table th,
+.toastui-editor-contents table td {
+  border-color: var(--colour-border);
+}

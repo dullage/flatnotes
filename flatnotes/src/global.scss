@@ -13,7 +13,8 @@
 
 // Elements & Classes
 body {
-  background-color: $off-white;
+  background-color: var(--colour-background);
+  color: var(--colour-text);
   font-family: "Inter", sans-serif;
 }
 
@@ -28,22 +29,37 @@ a {
 
 .form-control:focus {
   box-shadow: none;
-  border-color: $form-control-border;
+  border-color: var(--colour-border);
 }
 
 .bttn {
   border: 0;
-  background-color: transparent;
+  background-color: var(--colour-background);
   border-radius: 4px;
   padding: 4px 10px;
-  color: $muted-text;
+  color: var(--colour-text-muted);
 
   svg {
     margin-right: 2px;
   }
+
+  &:hover {
+    background-color: var(--colour-background-tint);
+    cursor: pointer;
+    color: inherit;
+  }
 }
-.bttn:hover {
-  background-color: $button-background;
-  cursor: pointer;
-  color: inherit;
+.dark-theme .bttn:hover {
+  background-color: var(--colour-background-elevated);
+}
+
+.modal-content {
+  background-color: var(--colour-background);
+  color: var(--colour-text);
+}
+
+.modal-content {
+  .modal-header, .modal-body, .modal-footer {
+    border: 0;
+  }
 }

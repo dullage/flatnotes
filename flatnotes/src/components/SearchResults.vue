@@ -98,7 +98,7 @@
   padding-left: 8px;
   font-weight: bold;
   font-size: 32px;
-  color: $very-muted-text;
+  color: var(--colour-text-very-muted);
   margin-bottom: 8px;
 }
 
@@ -107,16 +107,16 @@
 }
 
 .result-title {
-  color: $text;
+  color: var(--colour-text);
 }
 
 .last-modified {
-  color: $muted-text;
+  color: var(--colour-text-muted);
   font-size: 12px;
 }
 
 .result-contents {
-  color: $muted-text;
+  color: var(--colour-text-muted);
 }
 </style>
 
@@ -125,13 +125,13 @@
 
 .match {
   font-weight: bold;
-  color: $logo-key-colour;
+  color: var(--colour-brand);
 }
 
 .tag {
   color: white;
   font-size: 14px;
-  background-color: $logo-key-colour;
+  background-color: var(--colour-brand);
   padding: 2px 6px;
   border-radius: 4px;
 }

@@ -1,9 +1,47 @@
-$off-white: #f8f9fd70;
-$form-control-border: #ced4da;
-$drop-shadow: #0000000a;
-$muted-text: #6c757d;
-$very-muted-text: #d8dbdd;
-$text: #222222;
-$button-background: #6ca7ff15;
-$input-highlight: #6ca7ff;
-$logo-key-colour: #f9a76b;
+$black: #000000;
+$white: #ffffff;
+
+$neutral-15: #22262C;
+$neutral-20: #2C3139;
+$neutral-45: #5E6B80;
+$neutral-60: #8891A1;
+$neutral-80: #C1C7D0;
+$neutral-94: #ECEEF0;
+$neutral-96: #F3F4F5;
+$neutral-99: #FCFCFD;
+
+$blue-96: #EFF3FF;
+
+$orange-75: #F8A66B;
+
+body {
+  --colour-brand: #{$orange-75};
+
+  --colour-background: #{$neutral-99};
+  --colour-background-elevated: #{$white};
+  --colour-background-tint: #{$neutral-96};
+  --colour-background-highlight: #{$blue-96};
+
+  --colour-text: #{$neutral-20};
+  --colour-text-muted: #{$neutral-60};
+  --colour-text-very-muted: #{$neutral-80};
+
+  --colour-shadow: #{$neutral-94};
+  --colour-border: #{$neutral-94};
+}
+
+body.dark-theme {
+  // --colour-brand: #{$orange-75};
+
+  --colour-background: #{$neutral-15};
+  --colour-background-elevated: #{$neutral-20};
+  --colour-background-tint: #{$neutral-15};
+  --colour-background-highlight: #{$neutral-60};
+
+  --colour-text: #{$neutral-80};
+  --colour-text-muted: #{$neutral-60};
+  --colour-text-very-muted: #{$neutral-45};
+
+  --colour-shadow: none;
+  --colour-border: #{$neutral-45};
+}

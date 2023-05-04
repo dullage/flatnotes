@@ -13,7 +13,9 @@
       class="w-100 mb-5"
       :show-logo="currentView != views.home"
       :show-log-out="authType != null && authType != constants.authTypes.none"
+      :dark-theme="darkTheme"
       @logout="logout()"
+      @toggleTheme="toggleTheme()"
       @search="openSearch()"
     ></NavBar>
 
@@ -82,7 +84,7 @@
 }
 
 .search-input {
-  box-shadow: 0 0 20px $drop-shadow;
+  box-shadow: 0 0 20px var(--colour-shadow);
 }
 
 .recently-modified {

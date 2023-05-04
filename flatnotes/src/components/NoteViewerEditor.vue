@@ -99,12 +99,6 @@
 </template>
 
 <style lang="scss" scoped>
-// Toast UI Markdown Editor
-@import "@toast-ui/editor/dist/toastui-editor.css";
-@import "@toast-ui/editor/dist/toastui-editor-viewer.css";
-@import "prismjs/themes/prism.css";
-@import "@toast-ui/editor-plugin-code-syntax-highlight/dist/toastui-editor-plugin-code-syntax-highlight.css";
-
 @import "../colours";
 @import "../mixins";
 
@@ -113,7 +107,7 @@
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
-  color: $text;
+  color: var(--colour-text);
   margin: 0;
 }
 
@@ -122,44 +116,37 @@
 
   // Override user agent styling
   background-color: transparent;
-  color: $text;
+  color: var(--colour-text);
   padding: 0;
-}
-
-.note {
-  background-color: white;
-  box-shadow: 0 0 10px $drop-shadow;
-}
-
-.note-viewer {
-  @include note-padding;
 }
 </style>
 
 <style lang="scss">
+// Toast UI Markdown Editor
+@import "@toast-ui/editor/dist/toastui-editor.css";
+@import "@toast-ui/editor/dist/toastui-editor-viewer.css";
+@import "prismjs/themes/prism.css";
+@import "@toast-ui/editor-plugin-code-syntax-highlight/dist/toastui-editor-plugin-code-syntax-highlight.css";
+
 @import "../colours";
 @import "../mixins";
-
-// Toast UI Overrides
-.toastui-editor-contents {
-  font-family: "Inter", sans-serif;
-  h1,
-  h2 {
-    border-bottom: none;
-  }
-}
-
-.toastui-editor-contents pre,
-.toastui-editor-md-code-block-line-background {
-  background-color: darken($off-white, 3%);
-}
-
-.toastui-editor-defaultUI {
-  border: none;
-}
+@import "../toastui-editor-theme.scss";
 
 .ProseMirror {
   font-family: "Inter", sans-serif;
+}
+
+.toastui-editor-contents {
+  font-family: "Inter", sans-serif;
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    border-bottom: none;
+  }
+  @include note-padding;
 }
 
 .toastui-editor-defaultUI .ProseMirror {
