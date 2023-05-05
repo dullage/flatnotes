@@ -17,6 +17,17 @@ Another key design principle is not to take your notes hostage. Your notes are j
 
 Equally, the only thing flatnotes caches is the search index and that's incrementally synced on every search (and when flatnotes first starts). This means that you're free to add, edit & delete the markdown files outside of flatnotes even whilst flatnotes is running.
 
+## Features
+
+* Mobile responsive web interface.
+* Raw/WYSIWYG markdown editor modes.
+* Advanced search functionality.
+* Note "tagging" functionality.
+* Light/dark themes.
+* Multiple authentication options (none, username/password, 2FA).
+* Restful API.
+
+See [the wiki](https://github.com/Dullage/flatnotes/wiki) for more details.
 
 ## Installation
 
@@ -62,48 +73,6 @@ services:
 ```
 
 See the [Environment Variables](https://github.com/Dullage/flatnotes/wiki/Environment-Variables) article in the wiki for a full list of configuration options.
-
-
-## Q&A
-
-### Where is the database?
-There is no database, only a single folder of markdown files (and the .flatnotes sub-folder).
-
-### What is the .flatnotes sub-folder for?
-This stores a full text index of your note content allowing for rapid search times.
-
-### Can I delete the .flatnotes sub-folder?
-As long as flatnotes isn't running, sure! It'll just get rebuilt then next time flatnotes is run.
-
-### Can I add, edit & delete the markdown files outside of flatnotes?
-Yup. The only thing flatnotes caches is the search index and that's synced on every search (and when flatnotes first starts).
-
-### Can I perform advanced searches?
-Yes! See the [Advanced Searching](https://github.com/Dullage/flatnotes/wiki/Advanced-Searching) wiki page.
-
-### How do I get my notes out of flatnotes?
-They're just markdown files.  You're free to just move the files elsewhere and use another app.
-
-### Is there an API?
-Yes. The docs are available at the `/docs` endpoint. See [demo.flatnotes.io/docs](https://demo.flatnotes.io/docs) as an example.
-
-### If there aren't any folders, how to I organise my notes?
-The first option is to choose not to. This frees you from the burden of organisation. You can then rely on flatnotes' powerful search functionality to find the note you are looking for. 
-
-Additionally you are able to tag notes by using a hashtag anywhere in the note content e.g. #work. Tags are indexed separately from the rest of the content and so can be searched separately either by using the field prefix e.g. "tags:work" or using the hashtag shortcut e.g. "#work".
-
-### What types of authentication are supported?
-There are 3 types:
-
-- None = No authentication, the site is open to anyone with access.
-- Password = The site is protected by a username and password.
-- TOTP = In addition to a username and password, the site is also protected by a time based one-time-password.
-
-See the [Environment Variables](https://github.com/Dullage/flatnotes/wiki/Environment-Variables) article in the wiki for more information.
-
-### What file extensions are supported?
-
-flatnotes will store all new notes with the extension `.md`. For any existing files to be picked up by flatnotes they also need to use the extension `.md`. See [#50](https://github.com/Dullage/flatnotes/issues/50) for further detail.
 
 
 ## Roadmap
