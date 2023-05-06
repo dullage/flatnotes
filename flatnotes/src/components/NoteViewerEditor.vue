@@ -118,6 +118,10 @@
   background-color: transparent;
   color: var(--colour-text);
   padding: 0;
+
+  &:focus {
+    outline: none;
+  }
 }
 </style>
 
