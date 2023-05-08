@@ -162,6 +162,7 @@ class SearchResult(Note):
 
 class Flatnotes(object):
     TAGS_RE = re.compile(r"(?:(?<=^#)|(?<=\s#))\w+(?=\s|$)")
+    MARKDOWN_RE = re.compile(r"`{1,3}.*?`{1,3}", re.DOTALL)
     TAGS_WITH_HASH_RE = re.compile(r"(?:(?<=^)|(?<=\s))#\w+(?=\s|$)")
 
     def __init__(self, dir: str) -> None:
@@ -203,7 +204,8 @@ class Flatnotes(object):
 
         - The content without the tags.
         - A set of tags converted to lowercase."""
-        content_ex_tags, tags = re_extract(cls.TAGS_RE, content)
+        content_ex_markdown = re.sub(cls.MARKDOWN_RE, '', content)
+        content_ex_tags, tags = re_extract(cls.TAGS_RE, content_ex_markdown)
         try:
             tags = [tag.lower() for tag in tags]
             return (content_ex_tags, set(tags))
