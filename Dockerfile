@@ -44,4 +44,5 @@ COPY flatnotes ./flatnotes
 COPY --from=build ${BUILD_DIR}/flatnotes/dist ./flatnotes/dist
 
 COPY entrypoint.sh /
+RUN chmod +x /entrypoint.sh
 ENTRYPOINT [ "/entrypoint.sh" ]
