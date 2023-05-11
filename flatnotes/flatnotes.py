@@ -43,10 +43,10 @@ class InvalidTitleError(Exception):
 
 class Note:
     def __init__(
-        self, flatnotes: "Flatnotes", title: str, new: bool = False
-    ) -> None:
+            self, flatnotes: "Flatnotes", title: str, new: bool = False) -> None:
         self._flatnotes = flatnotes
         self._title = title.strip()
+        self.subdirs = os.path.join("")
         if not self._is_valid_title(self._title):
             raise InvalidTitleError
         if new and os.path.exists(self.filepath):
@@ -54,9 +54,23 @@ class Note:
         elif new:
             open(self.filepath, "w").close()
 
+    def set_subdirs(self, subdirs):
+        self.subdirs = subdirs
+
     @property
     def filepath(self):
-        return os.path.join(self._flatnotes.dir, self.filename)
+#        return os.path.join(self._flatnotes.dir, self.subdirs, self.filename)
+#        filepath = os.path.join(self._flatnotes.dir, self.subdirs, self.filename)
+        filepath = os.path.join("")
+        dirlist = glob.glob(os.path.join(self._flatnotes.dir, "**/*" + MARKDOWN_EXT), recursive=True)
+        for file in dirlist:
+            if self.filename in file:
+                filepath = file
+        return filepath
+
+    @property
+    def dir_listing(self):
+        return os.walk(self._flatnotes.dir)
 
     @property
     def filename(self):
@@ -77,7 +91,7 @@ class Note:
         if not self._is_valid_title(new_title):
             raise InvalidTitleError
         new_filepath = os.path.join(
-            self._flatnotes.dir, new_title + MARKDOWN_EXT
+            self._flatnotes.dir, self.subdirs, new_title + MARKDOWN_EXT
         )
         os.rename(self.filepath, new_filepath)
         self._title = new_title
@@ -229,12 +243,15 @@ class Flatnotes(object):
     def _get_notes(self) -> List[Note]:
         """Return a list containing a Note object for every file in the notes
         directory."""
-        return [
-            Note(self, strip_ext(os.path.split(filepath)[1]))
-            for filepath in glob.glob(
-                os.path.join(self.dir, "*" + MARKDOWN_EXT)
-            )
-        ]
+        notes = []
+        for filepath in glob.glob(os.path.join(self.dir, "**/*" + MARKDOWN_EXT), recursive=True):
+            name = strip_ext(os.path.split(filepath)[1])
+            name = str(name)
+            note = Note(self, name)
+            subdirs = os.path.relpath(os.path.dirname(filepath), self.dir)
+            note.set_subdirs(subdirs)
+            notes.append(note)
+        return notes
 
     def update_index(self, clean: bool = False) -> None:
         """Synchronize the index with the notes directory.
