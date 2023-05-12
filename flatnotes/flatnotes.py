@@ -54,7 +54,8 @@ class Note:
 
     @property
     def filepath(self):
-        filepath = os.path.join("")
+        filepath = os.path.join(
+                self._flatnotes.dir, self._title + MARKDOWN_EXT)
         dirlist = glob.glob(os.path.join(
             self._flatnotes.dir, "**/*" + MARKDOWN_EXT),
                             recursive=True)
