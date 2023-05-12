@@ -24,7 +24,6 @@ INDEX_SCHEMA_VERSION = "3"
 
 StemmingFoldingAnalyzer = StemmingAnalyzer() | CharsetFilter(accent_map)
 
-
 class IndexSchema(SchemaClass):
     filename = ID(unique=True, stored=True)
     last_modified = DATETIME(stored=True, sortable=True)
@@ -46,7 +45,6 @@ class Note:
             self, flatnotes: "Flatnotes", title: str, new: bool = False) -> None:
         self._flatnotes = flatnotes
         self._title = title.strip()
-        self.subdirs = os.path.join("")
         if not self._is_valid_title(self._title):
             raise InvalidTitleError
         if new and os.path.exists(self.filepath):
@@ -54,23 +52,16 @@ class Note:
         elif new:
             open(self.filepath, "w").close()
 
-    def set_subdirs(self, subdirs):
-        self.subdirs = subdirs
-
     @property
     def filepath(self):
-#        return os.path.join(self._flatnotes.dir, self.subdirs, self.filename)
-#        filepath = os.path.join(self._flatnotes.dir, self.subdirs, self.filename)
         filepath = os.path.join("")
-        dirlist = glob.glob(os.path.join(self._flatnotes.dir, "**/*" + MARKDOWN_EXT), recursive=True)
+        dirlist = glob.glob(os.path.join(
+            self._flatnotes.dir, "**/*" + MARKDOWN_EXT),
+                            recursive=True)
         for file in dirlist:
             if self.filename in file:
                 filepath = file
         return filepath
-
-    @property
-    def dir_listing(self):
-        return os.walk(self._flatnotes.dir)
 
     @property
     def filename(self):
@@ -90,8 +81,10 @@ class Note:
         new_title = new_title.strip()
         if not self._is_valid_title(new_title):
             raise InvalidTitleError
+        old_filepath = self.filepath
+        path = os.path.split(old_filepath)[0]
         new_filepath = os.path.join(
-            self._flatnotes.dir, self.subdirs, new_title + MARKDOWN_EXT
+            path, new_title + MARKDOWN_EXT
         )
         os.rename(self.filepath, new_filepath)
         self._title = new_title
@@ -248,8 +241,6 @@ class Flatnotes(object):
             name = strip_ext(os.path.split(filepath)[1])
             name = str(name)
             note = Note(self, name)
-            subdirs = os.path.relpath(os.path.dirname(filepath), self.dir)
-            note.set_subdirs(subdirs)
             notes.append(note)
         return notes
 
