@@ -41,6 +41,7 @@ if config.auth_type == AuthType.TOTP:
         "e.g. Authy or Google Authenticator:",
     )
     qr.print_ascii()
+    print(f"Or manually enter this key: {totp.secret.decode('utf-8')}\n")
 
 
 @app.post("/api/token")
