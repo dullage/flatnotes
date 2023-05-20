@@ -62,6 +62,7 @@ docker run -d \
   -e "FLATNOTES_USERNAME=user" \
   -e "FLATNOTES_PASSWORD=changeMe" \
   -e "FLATNOTES_SECRET_KEY=aLongRandomSeriesOfCharacters" \
+  -e "FLATNOTES_ROOT_PATH=/flatnotes" \
   -v "$(pwd)/data:/data" \
   -p "8080:8080" \
   dullage/flatnotes:latest
@@ -82,6 +83,7 @@ services:
       FLATNOTES_USERNAME: "user"
       FLATNOTES_PASSWORD: "changeMe!"
       FLATNOTES_SECRET_KEY: "aLongRandomSeriesOfCharacters"
+      FLATNOTES_ROOT_PATH: "/flatnotes"
     volumes:
       - "./data:/data"
       # Optional. Allows you to save the search index in a different location: 

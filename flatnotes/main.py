@@ -23,7 +23,7 @@ from models import (
     SearchResultModel,
 )
 
-app = FastAPI()
+app = FastAPI(root_path=config.root_path)
 flatnotes = Flatnotes(config.data_path)
 
 totp = (
