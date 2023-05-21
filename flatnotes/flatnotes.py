@@ -20,7 +20,7 @@ from helpers import empty_dir, re_extract, strip_ext
 from logger import logger
 
 MARKDOWN_EXT = ".md"
-INDEX_SCHEMA_VERSION = "3"
+INDEX_SCHEMA_VERSION = "4"
 
 StemmingFoldingAnalyzer = StemmingAnalyzer() | CharsetFilter(accent_map)
 
