@@ -282,7 +282,7 @@ class Flatnotes(object):
 
     def get_tags(self):
         """Return a list of all indexed tags."""
-        self.update_index_debounced()
+        self.update_index()
         with self.index.reader() as reader:
             tags = reader.field_terms("tags")
             return [tag for tag in tags]
