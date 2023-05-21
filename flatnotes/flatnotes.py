@@ -20,7 +20,7 @@ from helpers import empty_dir, re_extract, strip_ext
 from logger import logger
 
 MARKDOWN_EXT = ".md"
-INDEX_SCHEMA_VERSION = "3"
+INDEX_SCHEMA_VERSION = "4"
 
 StemmingFoldingAnalyzer = StemmingAnalyzer() | CharsetFilter(accent_map)
 
@@ -162,6 +162,7 @@ class SearchResult(Note):
 
 class Flatnotes(object):
     TAGS_RE = re.compile(r"(?:(?<=^#)|(?<=\s#))\w+(?=\s|$)")
+    CODEBLOCK_RE = re.compile(r"`{1,3}.*?`{1,3}", re.DOTALL)
     TAGS_WITH_HASH_RE = re.compile(r"(?:(?<=^)|(?<=\s))#\w+(?=\s|$)")
 
     def __init__(self, dir: str) -> None:
@@ -203,7 +204,9 @@ class Flatnotes(object):
 
         - The content without the tags.
         - A set of tags converted to lowercase."""
-        content_ex_tags, tags = re_extract(cls.TAGS_RE, content)
+        content_ex_codeblock = re.sub(cls.CODEBLOCK_RE, '', content)
+        _, tags = re_extract(cls.TAGS_RE, content_ex_codeblock)
+        content_ex_tags, _ = re_extract(cls.TAGS_RE, content)
         try:
             tags = [tag.lower() for tag in tags]
             return (content_ex_tags, set(tags))
