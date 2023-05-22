@@ -191,7 +191,10 @@ export default {
       noteLoadFailed: false,
       noteLoadFailedIcon: null,
       noteLoadFailedMessage: "Failed to load Note",
-      viewerOptions: { plugins: [codeSyntaxHighlight] },
+      viewerOptions: {
+        plugins: [codeSyntaxHighlight],
+        extendedAutolinks: true,
+      },
       editorOptions: { plugins: [codeSyntaxHighlight] },
     };
   },
