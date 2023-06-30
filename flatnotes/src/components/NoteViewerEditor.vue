@@ -189,6 +189,27 @@ export default {
     titleToLoad: { type: String, default: null },
   },
 
+  customHTMLRenderer: {
+    heading( node, { entering, getChildrenText } ) {
+      const tagName = `h${node.level}`;
+
+      if (entering) {
+	return {
+	  type: 'openTag',
+          tagName,
+          attributes: {
+	    id: getChildrenText(node)
+	       .toLowerCase()
+	       .replace(/[^a-z0-9-\s]*/g, '')
+	       .trim()
+	       .replace(/\s/g, '-')
+          }
+        };
+      }
+      return { type: 'closeTag', tagName };
+    }
+  },
+
   data: function () {
     return {
       editMode: false,
@@ -200,10 +221,13 @@ export default {
       noteLoadFailedIcon: null,
       noteLoadFailedMessage: "Failed to load Note",
       viewerOptions: {
+	customHTMLRenderer: customHTMLRenderer,
         plugins: [codeSyntaxHighlight],
         extendedAutolinks: true,
       },
-      editorOptions: { plugins: [codeSyntaxHighlight] },
+      editorOptions: {
+        customHTMLRenderer: customHTMLRenderer,
+        plugins: [codeSyntaxHighlight] },
     };
   },
 
