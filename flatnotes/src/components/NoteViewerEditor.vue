@@ -189,28 +189,28 @@ export default {
     titleToLoad: { type: String, default: null },
   },
 
-  customHTMLRenderer: {
-    heading( node, { entering, getChildrenText } ) {
-      const tagName = `h${node.level}`;
-
-      if (entering) {
-	return {
-	  type: 'openTag',
-          tagName,
-          attributes: {
-	    id: getChildrenText(node)
-	       .toLowerCase()
-	       .replace(/[^a-z0-9-\s]*/g, '')
-	       .trim()
-	       .replace(/\s/g, '-')
-          }
-        };
-      }
-      return { type: 'closeTag', tagName };
-    }
-  },
-
   data: function () {
+    const customHTMLRenderer = {
+      heading( node, { entering, getChildrenText } ) {
+	const tagName = `h${node.level}`;
+
+	if (entering) {
+	  return {
+	    type: 'openTag',
+	    tagName,
+	    attributes: {
+	      id: getChildrenText(node)
+		  .toLowerCase()
+	          .replace(/[^a-z0-9-\s]*/g, '')
+	          .trim()
+	          .replace(/\s/g, '-')
+	    }
+	  };
+	}
+	return { type: 'closeTag', tagName };
+      }
+    };
+
     return {
       editMode: false,
       draftSaveTimeout: null,
