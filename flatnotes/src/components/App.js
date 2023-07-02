@@ -100,8 +100,8 @@ export default {
 
       // Note
       else if (basePath == constants.basePaths.note) {
-        this.updateDocumentTitle();
         this.noteTitle = decodeURIComponent(path[2]);
+        this.updateDocumentTitle(this.noteTitle);
         this.currentView = this.views.note;
       }
 
@@ -172,6 +172,11 @@ export default {
       this.darkTheme = !this.darkTheme;
       localStorage.setItem("darkTheme", this.darkTheme);
     },
+
+    updateNoteTitle: function (title) {
+      this.noteTitle = title;
+      this.updateDocumentTitle(title);
+    },
   },
 
   created: function () {
@@ -181,7 +186,7 @@ export default {
 
     EventBus.$on("navigate", this.navigate);
     EventBus.$on("unhandledServerError", this.unhandledServerErrorToast);
-    EventBus.$on("updateDocumentTitle", this.updateDocumentTitle);
+    EventBus.$on("updateNoteTitle", this.updateNoteTitle);
 
     Mousetrap.bind("/", function () {
       parent.openSearch();
