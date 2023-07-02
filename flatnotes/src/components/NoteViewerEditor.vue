@@ -197,6 +197,18 @@ const customHTMLRenderer = {
     }
     return { type: "closeTag", tagName };
   },
+
+  document(node, { entering }) {
+    if(entering) {
+      return {
+	type: "openTag",
+	attributes: {
+	  dir: "auto",
+	},
+      };
+    }
+    return { type: "closeTag" };
+  },
 };
 
 export default {
