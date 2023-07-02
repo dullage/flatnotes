@@ -178,6 +178,27 @@ import { Viewer } from "@toast-ui/vue-editor";
 import api from "../api";
 import codeSyntaxHighlight from "@toast-ui/editor-plugin-code-syntax-highlight/dist/toastui-editor-plugin-code-syntax-highlight-all.js";
 
+const customHTMLRenderer = {
+  heading( node, { entering, getChildrenText } ) {
+    const tagName = `h${node.level}`;
+
+    if (entering) {
+      return {
+        type: 'openTag',
+        tagName,
+        attributes: {
+          id: getChildrenText(node)
+    	      .toLowerCase()
+              .replace(/[^a-z0-9-\s]*/g, '')
+              .trim()
+              .replace(/\s/g, '-')
+        }
+      };
+    }
+    return { type: 'closeTag', tagName };
+  }
+};
+
 export default {
   components: {
     Viewer,
@@ -190,26 +211,6 @@ export default {
   },
 
   data: function () {
-    const customHTMLRenderer = {
-      heading( node, { entering, getChildrenText } ) {
-	const tagName = `h${node.level}`;
-
-	if (entering) {
-	  return {
-	    type: 'openTag',
-	    tagName,
-	    attributes: {
-	      id: getChildrenText(node)
-		  .toLowerCase()
-	          .replace(/[^a-z0-9-\s]*/g, '')
-	          .trim()
-	          .replace(/\s/g, '-')
-	    }
-	  };
-	}
-	return { type: 'closeTag', tagName };
-      }
-    };
 
     return {
       editMode: false,
