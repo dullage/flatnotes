@@ -209,7 +209,9 @@ export default {
 
   watch: {
     titleToLoad: function () {
-      this.init();
+      if (this.titleToLoad !== this.currentNote?.title) {
+        this.init();
+      }
     },
   },
 
@@ -225,7 +227,7 @@ export default {
             response.data.lastModified,
             response.data.content
           );
-          EventBus.$emit("updateDocumentTitle", parent.currentNote.title);
+          // EventBus.$emit("updateDocumentTitle", parent.currentNote.title);
         })
         .catch(function (error) {
           if (error.handled) {
@@ -446,7 +448,7 @@ export default {
         response.data.lastModified,
         response.data.content
       );
-      EventBus.$emit("updateDocumentTitle", this.currentNote.title);
+      EventBus.$emit("updateNoteTitle", this.currentNote.title);
       history.replaceState(null, "", this.currentNote.href);
       this.setEditMode(false);
       this.noteSavedToast();
