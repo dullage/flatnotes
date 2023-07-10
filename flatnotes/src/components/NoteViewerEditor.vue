@@ -166,8 +166,11 @@
 }
 
 // Disable checkboxes in view mode. See https://github.com/nhn/tui.editor/issues/1087.
-.note-viewer li {
+.note-viewer li.task-list-item {
   pointer-events: none;
+  a {
+    pointer-events: auto;
+  }
 }
 </style>
 
