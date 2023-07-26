@@ -23,7 +23,7 @@ def create_access_token(data: dict):
     return encoded_jwt
 
 
-async def validate_token(token: str = Depends(oauth2_scheme)):
+def validate_token(token: str = Depends(oauth2_scheme)):
     if config.auth_type == AuthType.NONE:
         return
     try:
