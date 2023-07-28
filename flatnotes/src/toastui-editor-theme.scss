@@ -34,6 +34,13 @@
   background-color: var(--colour-background-elevated);
 }
 
+.toastui-editor-contents ul,
+.toastui-editor-contents menu,
+.toastui-editor-contents ol,
+.toastui-editor-contents dir {
+  color: var(--colour-text);
+}
+
 // Code Block
 .toastui-editor-contents pre,
 .toastui-editor-md-code-block-line-background {
