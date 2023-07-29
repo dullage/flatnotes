@@ -44,16 +44,3 @@ def validate_token(token: str = Depends(oauth2_scheme)):
 
 def no_auth():
     return
-
-
-def get_auth(for_edit: bool = True):
-    if config.auth_type == AuthType.NONE:
-        return no_auth
-    elif (
-        config.auth_type
-        in [AuthType.PASSWORD_EDIT_ONLY, AuthType.TOTP_EDIT_ONLY]
-        and for_edit is False
-    ):
-        return no_auth
-    else:
-        return validate_token

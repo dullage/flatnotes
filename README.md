@@ -34,7 +34,7 @@ Equally, the only thing flatnotes caches is the search index and that's incremen
 * Advanced search functionality.
 * Note "tagging" functionality.
 * Light/dark themes.
-* Multiple authentication options (none, username/password, 2FA).
+* Multiple authentication options (none, read only, username/password, 2FA).
 * Restful API.
 
 See [the wiki](https://github.com/dullage/flatnotes/wiki) for more details.
