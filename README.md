@@ -1,4 +1,9 @@
-![Logo](docs/logo.svg)
+<p align="center">
+  <img src="docs/logo.svg" width="300px"></img>
+</p>
+<p align="center">
+  <img alt="Docker Pulls" src="https://img.shields.io/docker/pulls/dullage/flatnotes?style=for-the-badge">
+</p>
 
 A self-hosted, database-less note-taking web app that utilises a flat folder of markdown files for storage.
 
