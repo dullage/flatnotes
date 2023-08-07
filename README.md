@@ -98,6 +98,8 @@ See the [Environment Variables](https://github.com/Dullage/flatnotes/wiki/Enviro
 
 I want to keep flatnotes as simple and distraction-free as possible which means limiting new features. This said, I welcome feedback and suggestions.
 
+One feature I do plan to implement is the ability to *share* a note. In the spirit of simple and database-less, the current plan is to generate temporary pre-signed URLs but this needs to be explored.
+
 
 ## Sponsorship
 
