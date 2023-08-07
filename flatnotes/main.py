@@ -45,7 +45,7 @@ if config.auth_type == AuthType.TOTP:
 
 
 @app.post("/api/token")
-def token(data: LoginModel):
+async def token(data: LoginModel):
     global last_used_totp
 
     username_correct = secrets.compare_digest(
@@ -81,14 +81,14 @@ def token(data: LoginModel):
 @app.get("/search")
 @app.get("/new")
 @app.get("/note/{title}")
-def root(title: str = ""):
+async def root(title: str = ""):
     with open("flatnotes/dist/index.html", "r", encoding="utf-8") as f:
         html = f.read()
     return HTMLResponse(content=html)
 
 
 @app.post("/api/notes", response_model=NoteModel)
-def post_note(data: NoteModel, _: str = Depends(validate_token)):
+async def post_note(data: NoteModel, _: str = Depends(validate_token)):
     """Create a new note."""
     try:
         note = Note(flatnotes, data.title, new=True)
@@ -101,7 +101,7 @@ def post_note(data: NoteModel, _: str = Depends(validate_token)):
 
 
 @app.get("/api/notes/{title}", response_model=NoteModel)
-def get_note(
+async def get_note(
     title: str,
     include_content: bool = True,
     _: str = Depends(validate_token),
@@ -117,7 +117,7 @@ def get_note(
 
 
 @app.patch("/api/notes/{title}", response_model=NoteModel)
-def patch_note(
+async def patch_note(
     title: str, new_data: NotePatchModel, _: str = Depends(validate_token)
 ):
     try:
@@ -136,7 +136,7 @@ def patch_note(
 
 
 @app.delete("/api/notes/{title}")
-def delete_note(title: str, _: str = Depends(validate_token)):
+async def delete_note(title: str, _: str = Depends(validate_token)):
     try:
         note = Note(flatnotes, title)
         note.delete()
@@ -147,13 +147,13 @@ def delete_note(title: str, _: str = Depends(validate_token)):
 
 
 @app.get("/api/tags")
-def get_tags(_: str = Depends(validate_token)):
+async def get_tags(_: str = Depends(validate_token)):
     """Get a list of all indexed tags."""
     return flatnotes.get_tags()
 
 
 @app.get("/api/search", response_model=List[SearchResultModel])
-def search(
+async def search(
     term: str,
     sort: Literal["score", "title", "lastModified"] = "score",
     order: Literal["asc", "desc"] = "desc",
@@ -172,7 +172,7 @@ def search(
 
 
 @app.get("/api/config", response_model=ConfigModel)
-def get_config():
+async def get_config():
     """Retrieve server-side config required for the UI."""
     return ConfigModel.dump(config)
 
