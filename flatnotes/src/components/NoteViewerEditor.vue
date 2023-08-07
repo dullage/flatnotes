@@ -35,7 +35,7 @@
         <div class="d-flex">
           <!-- Edit -->
           <button
-            v-if="canModify && editMode == false && noteLoadFailed == false"
+            v-if="editMode == false && noteLoadFailed == false"
             type="button"
             class="bttn"
             @click="setEditMode(true)"
@@ -47,7 +47,7 @@
 
           <!-- Delete -->
           <button
-            v-if="canModify && editMode == false && noteLoadFailed == false"
+            v-if="editMode == false && noteLoadFailed == false"
             type="button"
             class="bttn"
             @click="deleteNote"
@@ -216,7 +216,6 @@ export default {
 
   props: {
     titleToLoad: { type: String, default: null },
-    authType: { type: String, default: null },
   },
 
   data: function () {
@@ -239,14 +238,6 @@ export default {
         plugins: [codeSyntaxHighlight],
       },
     };
-  },
-
-  computed: {
-    canModify: function () {
-      return (
-        this.authType != null && this.authType != constants.authTypes.readOnly
-      );
-    },
   },
 
   watch: {
@@ -562,7 +553,7 @@ export default {
 
     // 'e' to edit
     Mousetrap.bind("e", function () {
-      if (parent.editMode == false && parent.canModify) {
+      if (parent.editMode == false) {
         parent.setEditMode(true);
       }
     });

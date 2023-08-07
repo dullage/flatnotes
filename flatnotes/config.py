@@ -8,9 +8,10 @@ from logger import logger
 
 class AuthType(str, Enum):
     NONE = "none"
-    READ_ONLY = "read_only"
     PASSWORD = "password"
+    PASSWORD_EDIT_ONLY = "password_edit_only"
     TOTP = "totp"
+    TOTP_EDIT_ONLY = "totp_edit_only"
 
 
 class Config:

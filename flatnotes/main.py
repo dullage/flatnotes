@@ -7,7 +7,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from qrcode import QRCode
 
-from auth import create_access_token, no_auth, validate_token
+from auth import create_access_token, get_auth, validate_token
 from config import AuthType, config
 from error_responses import (
     invalid_title_response,
@@ -31,11 +31,6 @@ totp = (
 )
 last_used_totp = None
 
-if config.auth_type in [AuthType.NONE, AuthType.READ_ONLY]:
-    authenticate = no_auth
-else:
-    authenticate = validate_token
-
 # Display TOTP QR code
 if config.auth_type == AuthType.TOTP:
     uri = totp.provisioning_uri(issuer_name="flatnotes", name=config.username)
@@ -48,41 +43,37 @@ if config.auth_type == AuthType.TOTP:
     qr.print_ascii()
     print(f"Or manually enter this key: {totp.secret.decode('utf-8')}\n")
 
-if config.auth_type not in [AuthType.NONE, AuthType.READ_ONLY]:
 
-    @app.post("/api/token")
-    def token(data: LoginModel):
-        global last_used_totp
+@app.post("/api/token")
+def token(data: LoginModel):
+    global last_used_totp
 
-        username_correct = secrets.compare_digest(
-            config.username.lower(), data.username.lower()
+    username_correct = secrets.compare_digest(
+        config.username.lower(), data.username.lower()
+    )
+
+    expected_password = config.password
+    if config.auth_type == AuthType.TOTP:
+        current_totp = totp.now()
+        expected_password += current_totp
+    password_correct = secrets.compare_digest(expected_password, data.password)
+
+    if not (
+        username_correct
+        and password_correct
+        # Prevent TOTP from being reused
+        and (
+            config.auth_type != AuthType.TOTP or current_totp != last_used_totp
+        )
+    ):
+        raise HTTPException(
+            status_code=400, detail="Incorrect login credentials."
         )
 
-        expected_password = config.password
-        if config.auth_type == AuthType.TOTP:
-            current_totp = totp.now()
-            expected_password += current_totp
-        password_correct = secrets.compare_digest(
-            expected_password, data.password
-        )
-
-        if not (
-            username_correct
-            and password_correct
-            # Prevent TOTP from being reused
-            and (
-                config.auth_type != AuthType.TOTP
-                or current_totp != last_used_totp
-            )
-        ):
-            raise HTTPException(
-                status_code=400, detail="Incorrect login credentials."
-            )
-
-        access_token = create_access_token(data={"sub": config.username})
-        if config.auth_type == AuthType.TOTP:
-            last_used_totp = current_totp
-        return {"access_token": access_token, "token_type": "bearer"}
+    access_token = create_access_token(data={"sub": config.username})
+    if config.auth_type == AuthType.TOTP:
+        last_used_totp = current_totp
+    return {"access_token": access_token, "token_type": "bearer"}
 
 
 @app.get("/")
@@ -96,28 +87,26 @@ def root(title: str = ""):
     return HTMLResponse(content=html)
 
 
-if config.auth_type != AuthType.READ_ONLY:
-
-    @app.post(
-        "/api/notes",
-        dependencies=[Depends(authenticate)],
-        response_model=NoteModel,
-    )
-    def post_note(data: NoteModel):
-        """Create a new note."""
-        try:
-            note = Note(flatnotes, data.title, new=True)
-            note.content = data.content
-            return NoteModel.dump(note, include_content=True)
-        except InvalidTitleError:
-            return invalid_title_response
-        except FileExistsError:
-            return title_exists_response
+@app.post(
+    "/api/notes",
+    dependencies=[Depends(get_auth(for_edit=True))],
+    response_model=NoteModel,
+)
+def post_note(data: NoteModel):
+    """Create a new note."""
+    try:
+        note = Note(flatnotes, data.title, new=True)
+        note.content = data.content
+        return NoteModel.dump(note, include_content=True)
+    except InvalidTitleError:
+        return invalid_title_response
+    except FileExistsError:
+        return title_exists_response
 
 
 @app.get(
     "/api/notes/{title}",
-    dependencies=[Depends(authenticate)],
+    dependencies=[Depends(get_auth(for_edit=False))],
     response_model=NoteModel,
 )
 def get_note(
@@ -134,45 +123,43 @@ def get_note(
         return note_not_found_response
 
 
-if config.auth_type != AuthType.READ_ONLY:
-
-    @app.patch(
-        "/api/notes/{title}",
-        dependencies=[Depends(authenticate)],
-        response_model=NoteModel,
-    )
-    def patch_note(title: str, new_data: NotePatchModel):
-        try:
-            note = Note(flatnotes, title)
-            if new_data.new_title is not None:
-                note.title = new_data.new_title
-            if new_data.new_content is not None:
-                note.content = new_data.new_content
-            return NoteModel.dump(note, include_content=True)
-        except InvalidTitleError:
-            return invalid_title_response
-        except FileExistsError:
-            return title_exists_response
-        except FileNotFoundError:
-            return note_not_found_response
+@app.patch(
+    "/api/notes/{title}",
+    dependencies=[Depends(get_auth(for_edit=True))],
+    response_model=NoteModel,
+)
+def patch_note(title: str, new_data: NotePatchModel):
+    try:
+        note = Note(flatnotes, title)
+        if new_data.new_title is not None:
+            note.title = new_data.new_title
+        if new_data.new_content is not None:
+            note.content = new_data.new_content
+        return NoteModel.dump(note, include_content=True)
+    except InvalidTitleError:
+        return invalid_title_response
+    except FileExistsError:
+        return title_exists_response
+    except FileNotFoundError:
+        return note_not_found_response
 
 
-if config.auth_type != AuthType.READ_ONLY:
-
-    @app.delete("/api/notes/{title}", dependencies=[Depends(authenticate)])
-    def delete_note(title: str):
-        try:
-            note = Note(flatnotes, title)
-            note.delete()
-        except InvalidTitleError:
-            return invalid_title_response
-        except FileNotFoundError:
-            return note_not_found_response
+@app.delete(
+    "/api/notes/{title}", dependencies=[Depends(get_auth(for_edit=True))]
+)
+def delete_note(title: str):
+    try:
+        note = Note(flatnotes, title)
+        note.delete()
+    except InvalidTitleError:
+        return invalid_title_response
+    except FileNotFoundError:
+        return note_not_found_response
 
 
 @app.get(
     "/api/tags",
-    dependencies=[Depends(authenticate)],
+    dependencies=[Depends(get_auth(for_edit=False))],
 )
 def get_tags():
     """Get a list of all indexed tags."""
@@ -181,7 +168,7 @@ def get_tags():
 
 @app.get(
     "/api/search",
-    dependencies=[Depends(authenticate)],
+    dependencies=[Depends(get_auth(for_edit=False))],
     response_model=List[SearchResultModel],
 )
 def search(
