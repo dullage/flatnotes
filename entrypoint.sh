@@ -28,7 +28,7 @@ echo "  - The note directory inside the Docker container has moved from /app/dat
 
 echo Starting flatnotes...
 cd ${APP_PATH}
-exec gosu ${PUID}:${PGID} \
+exec gosu ${PUID}:${GUID} \
   python -m \
   uvicorn \
   main:app \
