@@ -156,14 +156,6 @@
 .toastui-editor-defaultUI .ProseMirror {
   @include note-padding;
 }
-
-// Override the default font-family for code blocks as some of the fallbacks are not monospace
-.toastui-editor-contents code,
-.toastui-editor-contents pre,
-.toastui-editor-md-code,
-.toastui-editor-md-code-block {
-  font-family: Consolas, "Lucida Console", Monaco, "Andale Mono", monospace;
-}
 </style>
 
 <script>
