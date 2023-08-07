@@ -1,27 +1,17 @@
 ![Logo](docs/logo.svg)
 
-A self-hosted, database-less note-taking web app that utilises a flat folder of markdown files for storage.
+A self-hosted, database-less note taking web app that utilises a flat folder of markdown files for storage.
 
 Log into the [demo site](https://demo.flatnotes.io) and take a look around. *Note: This site resets every 15 minutes.*
 
-## Contents
-
-* [Design Principle](#design-principle)
-* [Features](#features)
-* [Getting Started](#getting-started)
-  * [Hosted](#hosted)
-  * [Self Hosted](#self-hosted)
-* [Roadmap](#roadmap)
-* [Sponsorship](#sponsorship)
-* [Thanks](#thanks)
 
 ## Design Principle
 
-flatnotes is designed to be a distraction-free note-taking app that puts your note content first. This means:
+flatnotes is designed to be a distraction free note taking app that puts your note content first. This means:
 
 * A clean and simple user interface.
 * No folders, notebooks or anything like that. Just all of your notes, backed by powerful search and tagging functionality.
-* Quick access to a full-text search from anywhere in the app (keyboard shortcut "/").
+* Quick access to a full text search from anywhere in the app (keyboard shortcut "/").
 
 Another key design principle is not to take your notes hostage. Your notes are just markdown files. There's no database, proprietary formatting, complicated folder structures or anything like that. You're free at any point to just move the files elsewhere and use another app.
 
@@ -34,30 +24,21 @@ Equally, the only thing flatnotes caches is the search index and that's incremen
 * Advanced search functionality.
 * Note "tagging" functionality.
 * Light/dark themes.
-* Multiple authentication options (none, read-only, username/password, 2FA).
+* Multiple authentication options (none, username/password, 2FA).
 * Restful API.
 
-See [the wiki](https://github.com/dullage/flatnotes/wiki) for more details.
+See [the wiki](https://github.com/Dullage/flatnotes/wiki) for more details.
 
-## Getting Started
+## Installation
 
-### Hosted
-
-A quick and easy way to get started with flatnotes is to host it on PikaPods. Just click the button below and follow the instructions.
-
-[![PikaPods](https://www.pikapods.com/static/run-button-34.svg)](https://www.pikapods.com/pods?run=flatnotes)
-
-
-### Self Hosted
-
-If you'd prefer to host flatnotes yourself then the recommendation is to use Docker.
+The easiest way to install flatnotes is using Docker.
 
 ### Example Docker Run Command
 
 ```shell
 docker run -d \
   -e "PUID=1000" \
-  -e "PGID=1000" \
+  -e "GUID=1000" \
   -e "FLATNOTES_AUTH_TYPE=password" \
   -e "FLATNOTES_USERNAME=user" \
   -e "FLATNOTES_PASSWORD=changeMe" \
@@ -77,7 +58,7 @@ services:
     image: dullage/flatnotes:latest
     environment:
       PUID: 1000
-      PGID: 1000
+      GUID: 1000
       FLATNOTES_AUTH_TYPE: "password"
       FLATNOTES_USERNAME: "user"
       FLATNOTES_PASSWORD: "changeMe!"
@@ -96,7 +77,9 @@ See the [Environment Variables](https://github.com/Dullage/flatnotes/wiki/Enviro
 
 ## Roadmap
 
-I want to keep flatnotes as simple and distraction-free as possible which means limiting new features. This said, I welcome feedback and suggestions.
+I want to keep flatnotes as simple and distraction free as possible which means limiting new features. This said, I welcome feedback and suggestions.
+
+One feature I do plan to implement is the ability to *share* a note. In the spirit of simple and database-less, the current plan is to generate temporary pre-signed URLs but this needs to be explored.
 
 
 ## Sponsorship
@@ -108,7 +91,7 @@ If you find this project useful, please consider buying me a beer. It would genu
 
 ## Thanks
 
-A special thanks to 2 fantastic open-source projects that make flatnotes possible.
+A special thanks to 2 fantastic open source projects that make flatnotes possible.
 
 * [Whoosh](https://whoosh.readthedocs.io/en/latest/intro.html) - A fast, pure Python search engine library.
 * [TOAST UI Editor](https://ui.toast.com/tui-editor) - A GFM Markdown and WYSIWYG editor for the browser.

@@ -12,7 +12,7 @@
       v-if="currentView != views.login"
       class="w-100 mb-5"
       :show-logo="currentView != views.home"
-      :auth-type="authType"
+      :show-log-out="authType != null && authType != constants.authTypes.none"
       :dark-theme="darkTheme"
       @logout="logout()"
       @toggleTheme="toggleTheme()"
@@ -29,19 +29,26 @@
     <!-- Home -->
     <div
       v-if="currentView == views.home"
-      class="home-view align-self-center d-flex flex-column justify-content-center align-items-center flex-grow-1 w-100"
+      class="
+        home-view
+        align-self-center
+        d-flex
+        flex-column
+        justify-content-center
+        align-items-center
+        flex-grow-1
+        w-100
+      "
     >
       <Logo class="mb-3"></Logo>
       <SearchInput
         :initial-value="searchTerm"
         class="search-input mb-4"
       ></SearchInput>
-      <div v-if="authType != null && authType != constants.authTypes.readOnly">
-        <RecentlyModified
-          class="recently-modified"
-          :max-notes="5"
-        ></RecentlyModified>
-      </div>
+      <RecentlyModified
+        class="recently-modified"
+        :max-notes="5"
+      ></RecentlyModified>
     </div>
 
     <!-- Search Results -->
@@ -60,7 +67,6 @@
       v-if="currentView == this.views.note"
       class="flex-grow-1"
       :titleToLoad="noteTitle"
-      :auth-type="authType"
       @note-deleted="noteDeletedToast"
     ></NoteViewerEditor>
   </div>

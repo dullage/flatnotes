@@ -35,7 +35,7 @@
         <div class="d-flex">
           <!-- Edit -->
           <button
-            v-if="canModify && editMode == false && noteLoadFailed == false"
+            v-if="editMode == false && noteLoadFailed == false"
             type="button"
             class="bttn"
             @click="setEditMode(true)"
@@ -47,7 +47,7 @@
 
           <!-- Delete -->
           <button
-            v-if="canModify && editMode == false && noteLoadFailed == false"
+            v-if="editMode == false && noteLoadFailed == false"
             type="button"
             class="bttn"
             @click="deleteNote"
@@ -156,22 +156,6 @@
 .toastui-editor-defaultUI .ProseMirror {
   @include note-padding;
 }
-
-// Override the default font-family for code blocks as some of the fallbacks are not monospace
-.toastui-editor-contents code,
-.toastui-editor-contents pre,
-.toastui-editor-md-code,
-.toastui-editor-md-code-block {
-  font-family: Consolas, "Lucida Console", Monaco, "Andale Mono", monospace;
-}
-
-// Disable checkboxes in view mode. See https://github.com/nhn/tui.editor/issues/1087.
-.note-viewer li.task-list-item {
-  pointer-events: none;
-  a {
-    pointer-events: auto;
-  }
-}
 </style>
 
 <script>
@@ -186,27 +170,6 @@ import { Viewer } from "@toast-ui/vue-editor";
 import api from "../api";
 import codeSyntaxHighlight from "@toast-ui/editor-plugin-code-syntax-highlight/dist/toastui-editor-plugin-code-syntax-highlight-all.js";
 
-const customHTMLRenderer = {
-  heading(node, { entering, getChildrenText }) {
-    const tagName = `h${node.level}`;
-
-    if (entering) {
-      return {
-        type: "openTag",
-        tagName,
-        attributes: {
-          id: getChildrenText(node)
-            .toLowerCase()
-            .replace(/[^a-z0-9-\s]*/g, "")
-            .trim()
-            .replace(/\s/g, "-"),
-        },
-      };
-    }
-    return { type: "closeTag", tagName };
-  },
-};
-
 export default {
   components: {
     Viewer,
@@ -216,7 +179,6 @@ export default {
 
   props: {
     titleToLoad: { type: String, default: null },
-    authType: { type: String, default: null },
   },
 
   data: function () {
@@ -229,31 +191,14 @@ export default {
       noteLoadFailed: false,
       noteLoadFailedIcon: null,
       noteLoadFailedMessage: "Failed to load Note",
-      viewerOptions: {
-        customHTMLRenderer: customHTMLRenderer,
-        plugins: [codeSyntaxHighlight],
-        extendedAutolinks: true,
-      },
-      editorOptions: {
-        customHTMLRenderer: customHTMLRenderer,
-        plugins: [codeSyntaxHighlight],
-      },
+      viewerOptions: { plugins: [codeSyntaxHighlight] },
+      editorOptions: { plugins: [codeSyntaxHighlight] },
     };
-  },
-
-  computed: {
-    canModify: function () {
-      return (
-        this.authType != null && this.authType != constants.authTypes.readOnly
-      );
-    },
   },
 
   watch: {
     titleToLoad: function () {
-      if (this.titleToLoad !== this.currentNote?.title) {
-        this.init();
-      }
+      this.init();
     },
   },
 
@@ -269,7 +214,7 @@ export default {
             response.data.lastModified,
             response.data.content
           );
-          // EventBus.$emit("updateDocumentTitle", parent.currentNote.title);
+          EventBus.$emit("updateDocumentTitle", parent.currentNote.title);
         })
         .catch(function (error) {
           if (error.handled) {
@@ -490,7 +435,7 @@ export default {
         response.data.lastModified,
         response.data.content
       );
-      EventBus.$emit("updateNoteTitle", this.currentNote.title);
+      EventBus.$emit("updateDocumentTitle", this.currentNote.title);
       history.replaceState(null, "", this.currentNote.href);
       this.setEditMode(false);
       this.noteSavedToast();
@@ -562,7 +507,7 @@ export default {
 
     // 'e' to edit
     Mousetrap.bind("e", function () {
-      if (parent.editMode == false && parent.canModify) {
+      if (parent.editMode == false) {
         parent.setEditMode(true);
       }
     });

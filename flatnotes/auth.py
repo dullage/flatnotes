@@ -23,7 +23,7 @@ def create_access_token(data: dict):
     return encoded_jwt
 
 
-def validate_token(token: str = Depends(oauth2_scheme)):
+async def validate_token(token: str = Depends(oauth2_scheme)):
     if config.auth_type == AuthType.NONE:
         return
     try:
@@ -40,7 +40,3 @@ def validate_token(token: str = Depends(oauth2_scheme)):
             detail="Invalid authentication credentials",
             headers={"WWW-Authenticate": "Bearer"},
         )
-
-
-def no_auth():
-    return
