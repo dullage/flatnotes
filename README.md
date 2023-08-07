@@ -57,7 +57,7 @@ If you'd prefer to host flatnotes yourself then the recommendation is to use Doc
 ```shell
 docker run -d \
   -e "PUID=1000" \
-  -e "PGID=1000" \
+  -e "GUID=1000" \
   -e "FLATNOTES_AUTH_TYPE=password" \
   -e "FLATNOTES_USERNAME=user" \
   -e "FLATNOTES_PASSWORD=changeMe" \
@@ -77,7 +77,7 @@ services:
     image: dullage/flatnotes:latest
     environment:
       PUID: 1000
-      PGID: 1000
+      GUID: 1000
       FLATNOTES_AUTH_TYPE: "password"
       FLATNOTES_USERNAME: "user"
       FLATNOTES_PASSWORD: "changeMe!"
