@@ -7,7 +7,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from qrcode import QRCode
 
-from auth import create_access_token, get_auth, validate_token
+from auth import create_access_token, validate_token
 from config import AuthType, config
 from error_responses import (
     invalid_title_response,
@@ -87,12 +87,8 @@ def root(title: str = ""):
     return HTMLResponse(content=html)
 
 
-@app.post(
-    "/api/notes",
-    dependencies=[Depends(get_auth(for_edit=True))],
-    response_model=NoteModel,
-)
-def post_note(data: NoteModel):
+@app.post("/api/notes", response_model=NoteModel)
+def post_note(data: NoteModel, _: str = Depends(validate_token)):
     """Create a new note."""
     try:
         note = Note(flatnotes, data.title, new=True)
@@ -104,14 +100,11 @@ def post_note(data: NoteModel):
         return title_exists_response
 
 
-@app.get(
-    "/api/notes/{title}",
-    dependencies=[Depends(get_auth(for_edit=False))],
-    response_model=NoteModel,
-)
+@app.get("/api/notes/{title}", response_model=NoteModel)
 def get_note(
     title: str,
     include_content: bool = True,
+    _: str = Depends(validate_token),
 ):
     """Get a specific note."""
     try:
@@ -123,12 +116,10 @@ def get_note(
         return note_not_found_response
 
 
-@app.patch(
-    "/api/notes/{title}",
-    dependencies=[Depends(get_auth(for_edit=True))],
-    response_model=NoteModel,
-)
-def patch_note(title: str, new_data: NotePatchModel):
+@app.patch("/api/notes/{title}", response_model=NoteModel)
+def patch_note(
+    title: str, new_data: NotePatchModel, _: str = Depends(validate_token)
+):
     try:
         note = Note(flatnotes, title)
         if new_data.new_title is not None:
@@ -144,10 +135,8 @@ def patch_note(title: str, new_data: NotePatchModel):
         return note_not_found_response
 
 
-@app.delete(
-    "/api/notes/{title}", dependencies=[Depends(get_auth(for_edit=True))]
-)
-def delete_note(title: str):
+@app.delete("/api/notes/{title}")
+def delete_note(title: str, _: str = Depends(validate_token)):
     try:
         note = Note(flatnotes, title)
         note.delete()
@@ -157,25 +146,19 @@ def delete_note(title: str):
         return note_not_found_response
 
 
-@app.get(
-    "/api/tags",
-    dependencies=[Depends(get_auth(for_edit=False))],
-)
-def get_tags():
+@app.get("/api/tags")
+def get_tags(_: str = Depends(validate_token)):
     """Get a list of all indexed tags."""
     return flatnotes.get_tags()
 
 
-@app.get(
-    "/api/search",
-    dependencies=[Depends(get_auth(for_edit=False))],
-    response_model=List[SearchResultModel],
-)
+@app.get("/api/search", response_model=List[SearchResultModel])
 def search(
     term: str,
     sort: Literal["score", "title", "lastModified"] = "score",
     order: Literal["asc", "desc"] = "desc",
     limit: int = None,
+    _: str = Depends(validate_token),
 ):
     """Perform a full text search on all notes."""
     if sort == "lastModified":
