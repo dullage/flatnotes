@@ -8,6 +8,7 @@ from logger import logger
 
 class AuthType(str, Enum):
     NONE = "none"
+    READ_ONLY = "read_only"
     PASSWORD = "password"
     TOTP = "totp"
 
@@ -65,17 +66,23 @@ class Config:
 
     def get_username(self):
         return self.get_env(
-            "FLATNOTES_USERNAME", mandatory=self.auth_type != AuthType.NONE
+            "FLATNOTES_USERNAME",
+            mandatory=self.auth_type
+            not in [AuthType.NONE, AuthType.READ_ONLY],
         )
 
     def get_password(self):
         return self.get_env(
-            "FLATNOTES_PASSWORD", mandatory=self.auth_type != AuthType.NONE
+            "FLATNOTES_PASSWORD",
+            mandatory=self.auth_type
+            not in [AuthType.NONE, AuthType.READ_ONLY],
         )
 
     def get_session_key(self):
         return self.get_env(
-            "FLATNOTES_SECRET_KEY", mandatory=self.auth_type != AuthType.NONE
+            "FLATNOTES_SECRET_KEY",
+            mandatory=self.auth_type
+            not in [AuthType.NONE, AuthType.READ_ONLY],
         )
 
     def get_session_expiry_days(self):

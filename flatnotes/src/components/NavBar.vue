@@ -12,7 +12,7 @@
     <div class="d-flex">
       <!-- Log Out -->
       <button
-        v-if="showLogOut"
+        v-if="showLogOutButton"
         type="button"
         class="bttn"
         @click="$emit('logout')"
@@ -22,6 +22,7 @@
 
       <!-- New Note -->
       <a
+        v-if="showNewButton"
         :href="constants.basePaths.new"
         class="bttn"
         @click.prevent="navigate(constants.basePaths.new, $event)"
@@ -91,7 +92,7 @@ export default {
       type: Boolean,
       default: true,
     },
-    showLogOut: { type: Boolean, default: false },
+    authType: { type: String, default: null },
     darkTheme: { type: Boolean, default: false },
   },
 
@@ -102,6 +103,21 @@ export default {
       params.set(constants.params.sortBy, constants.searchSortOptions.title);
       params.set(constants.params.showHighlights, false);
       return `${constants.basePaths.search}?${params.toString()}`;
+    },
+
+    showLogOutButton: function () {
+      return (
+        this.authType != null &&
+        ![constants.authTypes.none, constants.authTypes.readOnly].includes(
+          this.authType
+        )
+      );
+    },
+
+    showNewButton: function () {
+      return (
+        this.authType != null && this.authType != constants.authTypes.readOnly
+      );
     },
   },
 
