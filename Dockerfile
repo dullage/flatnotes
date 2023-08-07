@@ -43,9 +43,6 @@ RUN pipenv install --deploy --ignore-pipfile --system
 COPY flatnotes ./flatnotes
 COPY --from=build ${BUILD_DIR}/flatnotes/dist ./flatnotes/dist
 
-VOLUME /data
-EXPOSE 8080/tcp
-
 COPY entrypoint.sh /
 RUN chmod +x /entrypoint.sh
 ENTRYPOINT [ "/entrypoint.sh" ]
