@@ -36,12 +36,10 @@
         :initial-value="searchTerm"
         class="search-input mb-4"
       ></SearchInput>
-      <div v-if="authType != null && authType != constants.authTypes.readOnly">
-        <RecentlyModified
-          class="recently-modified"
-          :max-notes="5"
-        ></RecentlyModified>
-      </div>
+      <RecentlyModified
+        class="recently-modified"
+        :max-notes="5"
+      ></RecentlyModified>
     </div>
 
     <!-- Search Results -->
