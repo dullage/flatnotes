@@ -179,24 +179,24 @@ import api from "../api";
 import codeSyntaxHighlight from "@toast-ui/editor-plugin-code-syntax-highlight/dist/toastui-editor-plugin-code-syntax-highlight-all.js";
 
 const customHTMLRenderer = {
-  heading(node, { entering, getChildrenText }) {
+  heading( node, { entering, getChildrenText } ) {
     const tagName = `h${node.level}`;
 
     if (entering) {
       return {
-        type: "openTag",
+        type: 'openTag',
         tagName,
         attributes: {
           id: getChildrenText(node)
-            .toLowerCase()
-            .replace(/[^a-z0-9-\s]*/g, "")
-            .trim()
-            .replace(/\s/g, "-"),
-        },
+    	      .toLowerCase()
+              .replace(/[^a-z0-9-\s]*/g, '')
+              .trim()
+              .replace(/\s/g, '-')
+        }
       };
     }
-    return { type: "closeTag", tagName };
-  },
+    return { type: 'closeTag', tagName };
+  }
 };
 
 export default {
@@ -211,6 +211,7 @@ export default {
   },
 
   data: function () {
+
     return {
       editMode: false,
       draftSaveTimeout: null,
@@ -221,14 +222,13 @@ export default {
       noteLoadFailedIcon: null,
       noteLoadFailedMessage: "Failed to load Note",
       viewerOptions: {
-        customHTMLRenderer: customHTMLRenderer,
+	customHTMLRenderer: customHTMLRenderer,
         plugins: [codeSyntaxHighlight],
         extendedAutolinks: true,
       },
       editorOptions: {
         customHTMLRenderer: customHTMLRenderer,
-        plugins: [codeSyntaxHighlight],
-      },
+        plugins: [codeSyntaxHighlight] },
     };
   },
 
