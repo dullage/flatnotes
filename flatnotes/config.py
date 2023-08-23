@@ -65,21 +65,21 @@ class Config:
         return auth_type
 
     def get_username(self):
-        return self.get_env(
+        return self.get_secret("FLATNOTES_USERNAME") or self.get_env(
             "FLATNOTES_USERNAME",
             mandatory=self.auth_type
             not in [AuthType.NONE, AuthType.READ_ONLY],
         )
 
     def get_password(self):
-        return self.get_env(
+        return self.get_secret("FLATNOTES_PASSWORD") or self.get_env(
             "FLATNOTES_PASSWORD",
             mandatory=self.auth_type
             not in [AuthType.NONE, AuthType.READ_ONLY],
         )
 
     def get_session_key(self):
-        return self.get_env(
+        return self.get_secret("FLATNOTES_SECRET_KEY") or self.get_env(
             "FLATNOTES_SECRET_KEY",
             mandatory=self.auth_type
             not in [AuthType.NONE, AuthType.READ_ONLY],
@@ -101,5 +101,13 @@ class Config:
             totp_key = b32encode(totp_key.encode("utf-8"))
         return totp_key
 
+    def get_secret(self, secret_name):
+        assert(secret_name in ["FLATNOTES_USERNAME", "FLATNOTES_PASSWORD", "FLATNOTES_SECRET_KEY"])
+        try:
+            with open("/run/secrets/" + secret_name, "r") as secret_file:
+                return secret_file.read().strip("\n")
+        except Exception:
+            logger.info("Secret file " + secret_name + " not found, fallback to Enviroment variable")
+            return None
 
 config = Config()
