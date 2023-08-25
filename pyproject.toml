@@ -1,0 +1,4 @@
+[tool.isort]
+profile = "black"
+line_length = 79
+src_paths = ["flatnotes"]
