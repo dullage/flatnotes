@@ -64,7 +64,7 @@ class Note:
 
     @property
     def last_modified(self):
-        return os.path.getmtime(self.filepath)
+        return int(os.path.getmtime(self.filepath))
 
     # Editable Properties
     @property

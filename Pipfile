@@ -11,9 +11,9 @@ isort = "*"
 
 [packages]
 whoosh = "2.7.4"
-fastapi = "0.90.0"
-uvicorn = {extras = ["standard"], version = "0.20.0"}
-aiofiles = "23.1.0"
+fastapi = "0.102.0"
+uvicorn = {extras = ["standard"], version = "0.23.2"}
+aiofiles = "23.2.0"
 python-jose = {extras = ["cryptography"], version = "3.3.0"}
 pyotp = "2.8.0"
 qrcode = "7.4.2"
