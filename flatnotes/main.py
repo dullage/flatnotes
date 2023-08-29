@@ -1,5 +1,5 @@
 import secrets
-from typing import List, Literal
+from typing import List, Literal, Union
 
 import pyotp
 from fastapi import Depends, FastAPI, HTTPException
@@ -18,9 +18,12 @@ from flatnotes import Flatnotes, InvalidTitleError, Note
 from models import (
     ConfigModel,
     LoginModel,
-    NoteModel,
+    NoteResponseModel,
+    NoteContentResponseModel,
     NotePatchModel,
+    NotePostModel,
     SearchResultModel,
+    TokenModel,
 )
 
 app = FastAPI()
@@ -50,7 +53,7 @@ if config.auth_type == AuthType.TOTP:
 
 if config.auth_type not in [AuthType.NONE, AuthType.READ_ONLY]:
 
-    @app.post("/api/token")
+    @app.post("/api/token", response_model=TokenModel)
     def token(data: LoginModel):
         global last_used_totp
 
@@ -82,14 +85,14 @@ if config.auth_type not in [AuthType.NONE, AuthType.READ_ONLY]:
         access_token = create_access_token(data={"sub": config.username})
         if config.auth_type == AuthType.TOTP:
             last_used_totp = current_totp
-        return {"access_token": access_token, "token_type": "bearer"}
+        return TokenModel(access_token=access_token)
 
 
-@app.get("/")
-@app.get("/login")
-@app.get("/search")
-@app.get("/new")
-@app.get("/note/{title}")
+@app.get("/", include_in_schema=False)
+@app.get("/login", include_in_schema=False)
+@app.get("/search", include_in_schema=False)
+@app.get("/new", include_in_schema=False)
+@app.get("/note/{title}", include_in_schema=False)
 def root(title: str = ""):
     with open("flatnotes/dist/index.html", "r", encoding="utf-8") as f:
         html = f.read()
@@ -101,14 +104,14 @@ if config.auth_type != AuthType.READ_ONLY:
     @app.post(
         "/api/notes",
         dependencies=[Depends(authenticate)],
-        response_model=NoteModel,
+        response_model=NoteContentResponseModel,
     )
-    def post_note(data: NoteModel):
+    def post_note(data: NotePostModel):
         """Create a new note."""
         try:
             note = Note(flatnotes, data.title, new=True)
             note.content = data.content
-            return NoteModel.dump(note, include_content=True)
+            return NoteContentResponseModel.model_validate(note)
         except InvalidTitleError:
             return invalid_title_response
         except FileExistsError:
@@ -118,7 +121,7 @@ if config.auth_type != AuthType.READ_ONLY:
 @app.get(
     "/api/notes/{title}",
     dependencies=[Depends(authenticate)],
-    response_model=NoteModel,
+    response_model=Union[NoteContentResponseModel, NoteResponseModel],
 )
 def get_note(
     title: str,
@@ -127,7 +130,10 @@ def get_note(
     """Get a specific note."""
     try:
         note = Note(flatnotes, title)
-        return NoteModel.dump(note, include_content=include_content)
+        if include_content:
+            return NoteContentResponseModel.model_validate(note)
+        else:
+            return NoteResponseModel.model_validate(note)
     except InvalidTitleError:
         return invalid_title_response
     except FileNotFoundError:
@@ -139,7 +145,7 @@ if config.auth_type != AuthType.READ_ONLY:
     @app.patch(
         "/api/notes/{title}",
         dependencies=[Depends(authenticate)],
-        response_model=NoteModel,
+        response_model=NoteContentResponseModel,
     )
     def patch_note(title: str, new_data: NotePatchModel):
         try:
@@ -148,7 +154,7 @@ if config.auth_type != AuthType.READ_ONLY:
                 note.title = new_data.new_title
             if new_data.new_content is not None:
                 note.content = new_data.new_content
-            return NoteModel.dump(note, include_content=True)
+            return NoteContentResponseModel.model_validate(note)
         except InvalidTitleError:
             return invalid_title_response
         except FileExistsError:
@@ -159,7 +165,11 @@ if config.auth_type != AuthType.READ_ONLY:
 
 if config.auth_type != AuthType.READ_ONLY:
 
-    @app.delete("/api/notes/{title}", dependencies=[Depends(authenticate)])
+    @app.delete(
+        "/api/notes/{title}",
+        dependencies=[Depends(authenticate)],
+        response_model=None,
+    )
     def delete_note(title: str):
         try:
             note = Note(flatnotes, title)
@@ -173,6 +183,7 @@ if config.auth_type != AuthType.READ_ONLY:
 @app.get(
     "/api/tags",
     dependencies=[Depends(authenticate)],
+    response_model=List[str],
 )
 def get_tags():
     """Get a list of all indexed tags."""
@@ -194,7 +205,7 @@ def search(
     if sort == "lastModified":
         sort = "last_modified"
     return [
-        SearchResultModel.dump(note_hit)
+        SearchResultModel.model_validate(note_hit)
         for note_hit in flatnotes.search(
             term, sort=sort, order=order, limit=limit
         )
@@ -204,7 +215,7 @@ def search(
 @app.get("/api/config", response_model=ConfigModel)
 def get_config():
     """Retrieve server-side config required for the UI."""
-    return ConfigModel.dump(config)
+    return ConfigModel.model_validate(config)
 
 
 app.mount("/", StaticFiles(directory="flatnotes/dist"), name="dist")

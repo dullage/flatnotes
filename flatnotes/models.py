@@ -1,59 +1,57 @@
-from typing import Dict, List, Optional
+from typing import List, Optional
 
-from config import AuthType, Config
-from flatnotes import Note, SearchResult
-from helpers import CamelCaseBaseModel
+from pydantic import BaseModel, Field
+
+from config import AuthType
+from helpers import camel_case
 
 
-class LoginModel(CamelCaseBaseModel):
+class TokenModel(BaseModel):
+    # Use of BaseModel instead of CustomBaseModel is intentional as OAuth
+    # requires keys to be snake_case
+    access_token: str
+    token_type: str = Field("bearer")
+
+
+class CustomBaseModel(BaseModel):
+    class Config:
+        alias_generator = camel_case
+        populate_by_name = True
+        from_attributes = True
+
+
+class LoginModel(CustomBaseModel):
     username: str
     password: str
 
 
-class NoteModel(CamelCaseBaseModel):
+class NotePostModel(CustomBaseModel):
     title: str
-    last_modified: Optional[int]
-    content: Optional[str]
-
-    @classmethod
-    def dump(cls, note: Note, include_content: bool = True) -> Dict:
-        return {
-            "title": note.title,
-            "lastModified": note.last_modified,
-            "content": note.content if include_content else None,
-        }
+    content: Optional[str] = Field(None)
 
 
-class NotePatchModel(CamelCaseBaseModel):
-    new_title: Optional[str]
-    new_content: Optional[str]
-
-
-class SearchResultModel(CamelCaseBaseModel):
-    score: Optional[float]
+class NoteResponseModel(CustomBaseModel):
     title: str
     last_modified: int
-    title_highlights: Optional[str]
-    content_highlights: Optional[str]
-    tag_matches: Optional[List[str]]
-
-    @classmethod
-    def dump(self, search_result: SearchResult) -> Dict:
-        return {
-            "score": search_result.score,
-            "title": search_result.title,
-            "lastModified": search_result.last_modified,
-            "titleHighlights": search_result.title_highlights,
-            "contentHighlights": search_result.content_highlights,
-            "tagMatches": search_result.tag_matches,
-        }
 
 
-class ConfigModel(CamelCaseBaseModel):
+class NoteContentResponseModel(NoteResponseModel):
+    content: Optional[str] = Field(None)
+
+
+class NotePatchModel(CustomBaseModel):
+    new_title: Optional[str] = Field(None)
+    new_content: Optional[str] = Field(None)
+
+
+class SearchResultModel(CustomBaseModel):
+    score: Optional[float] = Field(None)
+    title: str
+    last_modified: int
+    title_highlights: Optional[str] = Field(None)
+    content_highlights: Optional[str] = Field(None)
+    tag_matches: Optional[List[str]] = Field(None)
+
+
+class ConfigModel(CustomBaseModel):
     auth_type: AuthType
-
-    @classmethod
-    def dump(self, config: Config) -> Dict:
-        return {
-            "authType": config.auth_type.value,
-        }

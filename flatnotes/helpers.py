@@ -3,8 +3,6 @@ import re
 import shutil
 from typing import List, Tuple
 
-from pydantic import BaseModel
-
 
 def strip_ext(filename):
     return os.path.splitext(filename)[0]
@@ -33,8 +31,3 @@ def re_extract(pattern, string) -> Tuple[str, List[str]]:
     matches = []
     text = re.sub(pattern, lambda tag: matches.append(tag.group()), string)
     return (text, matches)
-
-
-class CamelCaseBaseModel(BaseModel):
-    class Config:
-        alias_generator = camel_case
