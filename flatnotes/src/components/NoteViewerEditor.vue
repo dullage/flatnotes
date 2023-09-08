@@ -300,11 +300,22 @@ export default {
       return this.currentNote.content;
     },
 
+    setBeforeUnloadConfirmation: function (enable = true) {
+      if (enable) {
+        window.onbeforeunload = function() {
+          return true;
+        };
+      } else {
+        window.onbeforeunload = null;
+      }
+    },
+
     setEditMode: function (editMode = true) {
       let parent = this;
 
       // To Edit Mode
       if (editMode === true) {
+        this.setBeforeUnloadConfirmation(true);
         this.titleInput = this.currentNote.title;
         let draftContent = localStorage.getItem(this.currentNote.title);
 
@@ -338,6 +349,7 @@ export default {
       else {
         this.titleInput = null;
         this.initialContent = null;
+        this.setBeforeUnloadConfirmation(false);
         this.editMode = false;
       }
     },
