@@ -517,13 +517,24 @@ export default {
     },
 
     cancelNote: function () {
-      localStorage.removeItem(this.currentNote.title);
-      if (this.currentNote.lastModified == null) {
-        // Cancelling a new note
-        EventBus.$emit("navigate", constants.basePaths.home);
-      } else {
-        this.setEditMode(false);
-      }
+		this.$bvModal.msgBoxConfirm(`Are you sure you want to close the note '${this.currentNote.title}' without saving?`,
+			{
+				centered: true,
+				title: "Confirm Closure",
+				okTitle: "Yes, Close",
+				okVariant: "warning",	
+			})
+			.then(function (response) {
+			  if (response == true) {
+				localStorage.removeItem(this.currentNote.title);
+				if (this.currentNote.lastModified == null) {
+					// Cancelling a new note
+					EventBus.$emit("navigate", constants.basePaths.home);
+				} else {
+					this.setEditMode(false);
+				}
+			  }
+			});
     },
 
     deleteNote: function () {
