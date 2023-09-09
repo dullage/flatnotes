@@ -33,7 +33,7 @@ if [ `id -u` -eq 0 ] && [ `id -g` -eq 0 ]; then
       main:app \
       --app-dir flatnotes \
       --host 0.0.0.0 \
-      --port ${PORT} \
+      --port 8080 \
       --proxy-headers \
       --forwarded-allow-ips "*"
 else
@@ -43,7 +43,7 @@ else
       main:app \
       --app-dir flatnotes \
       --host 0.0.0.0 \
-      --port ${PORT} \
+      --port 8080 \
       --proxy-headers \
       --forwarded-allow-ips "*"
 fi
