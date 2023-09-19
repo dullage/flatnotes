@@ -60,7 +60,7 @@
             v-if="editMode == true"
             type="button"
             class="bttn"
-            @click="cancelNote"
+            @click="confirmCancelNote"
           >
             <b-icon icon="arrow-return-left"></b-icon> Cancel
           </button>
@@ -302,7 +302,7 @@ export default {
 
     setBeforeUnloadConfirmation: function (enable = true) {
       if (enable) {
-        window.onbeforeunload = function() {
+        window.onbeforeunload = function () {
           return true;
         };
       } else {
@@ -517,24 +517,40 @@ export default {
     },
 
     cancelNote: function () {
-		this.$bvModal.msgBoxConfirm(`Are you sure you want to close the note '${this.currentNote.title}' without saving?`,
-			{
-				centered: true,
-				title: "Confirm Closure",
-				okTitle: "Yes, Close",
-				okVariant: "warning",	
-			})
-			.then(function (response) {
-			  if (response == true) {
-				localStorage.removeItem(this.currentNote.title);
-				if (this.currentNote.lastModified == null) {
-					// Cancelling a new note
-					EventBus.$emit("navigate", constants.basePaths.home);
-				} else {
-					this.setEditMode(false);
-				}
-			  }
-			});
+      localStorage.removeItem(this.currentNote.title);
+      if (this.currentNote.lastModified == null) {
+        // Cancelling a new note
+        EventBus.$emit("navigate", constants.basePaths.home);
+      } else {
+        this.setEditMode(false);
+      }
+    },
+
+    confirmCancelNote: function () {
+      let parent = this;
+      let newContent = this.getEditorContent();
+      if (
+        newContent != this.currentNote.content ||
+        this.titleInput != this.currentNote.title
+      ) {
+        this.$bvModal
+          .msgBoxConfirm(
+            `Are you sure you want to close the note '${this.currentNote.title}' without saving?`,
+            {
+              centered: true,
+              title: "Confirm Closure",
+              okTitle: "Yes, Close",
+              okVariant: "warning",
+            }
+          )
+          .then(function (response) {
+            if (response == true) {
+              parent.cancelNote();
+            }
+          });
+      } else {
+        this.cancelNote();
+      }
     },
 
     deleteNote: function () {
