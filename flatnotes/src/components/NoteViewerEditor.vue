@@ -60,7 +60,7 @@
             v-if="editMode == true"
             type="button"
             class="bttn"
-            @click="cancelNote"
+            @click="confirmCancelNote"
           >
             <b-icon icon="arrow-return-left"></b-icon> Cancel
           </button>
@@ -300,11 +300,22 @@ export default {
       return this.currentNote.content;
     },
 
+    setBeforeUnloadConfirmation: function (enable = true) {
+      if (enable) {
+        window.onbeforeunload = function () {
+          return true;
+        };
+      } else {
+        window.onbeforeunload = null;
+      }
+    },
+
     setEditMode: function (editMode = true) {
       let parent = this;
 
       // To Edit Mode
       if (editMode === true) {
+        this.setBeforeUnloadConfirmation(true);
         this.titleInput = this.currentNote.title;
         let draftContent = localStorage.getItem(this.currentNote.title);
 
@@ -338,6 +349,7 @@ export default {
       else {
         this.titleInput = null;
         this.initialContent = null;
+        this.setBeforeUnloadConfirmation(false);
         this.editMode = false;
       }
     },
@@ -511,6 +523,33 @@ export default {
         EventBus.$emit("navigate", constants.basePaths.home);
       } else {
         this.setEditMode(false);
+      }
+    },
+
+    confirmCancelNote: function () {
+      let parent = this;
+      let newContent = this.getEditorContent();
+      if (
+        newContent != this.currentNote.content ||
+        this.titleInput != this.currentNote.title
+      ) {
+        this.$bvModal
+          .msgBoxConfirm(
+            `Are you sure you want to close the note '${this.currentNote.title}' without saving?`,
+            {
+              centered: true,
+              title: "Confirm Closure",
+              okTitle: "Yes, Close",
+              okVariant: "warning",
+            }
+          )
+          .then(function (response) {
+            if (response == true) {
+              parent.cancelNote();
+            }
+          });
+      } else {
+        this.cancelNote();
       }
     },
 
