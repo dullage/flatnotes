@@ -48,10 +48,10 @@ See [the wiki](https://github.com/dullage/flatnotes/wiki) for more details.
 
 ### Hosted
 
-A quick and easy way to get started with flatnotes is to host it on PikaPods. Just click the button below and follow the instructions.
+A quick and easy way to get started with flatnotes is to host it on PikaPods and Elestio. Just click the buttons below and follow the instructions.
 
-[![PikaPods](https://www.pikapods.com/static/run-button-34.svg)](https://www.pikapods.com/pods?run=flatnotes)
-
+[![PikaPods](https://www.pikapods.com/static/run-button-34.svg)](https://www.pikapods.com/pods?run=flatnotes) 
+[![Deploy on Elestio](https://pub-da36157c854648669813f3f76c526c2b.r2.dev/deploy-on-elestio-black.png)](https://elest.io/open-source/flatnotes)
 
 ### Self Hosted
 
