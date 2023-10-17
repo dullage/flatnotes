@@ -32,7 +32,7 @@ class NotePostModel(CustomBaseModel):
 
 class NoteResponseModel(CustomBaseModel):
     title: str
-    last_modified: int
+    last_modified: float
 
 
 class NoteContentResponseModel(NoteResponseModel):
@@ -47,7 +47,7 @@ class NotePatchModel(CustomBaseModel):
 class SearchResultModel(CustomBaseModel):
     score: Optional[float] = Field(None)
     title: str
-    last_modified: int
+    last_modified: float
     title_highlights: Optional[str] = Field(None)
     content_highlights: Optional[str] = Field(None)
     tag_matches: Optional[List[str]] = Field(None)
