@@ -1,30 +1,36 @@
+import os
 import secrets
+import shutil
 from typing import List, Literal, Union
 
 import pyotp
-from fastapi import Depends, FastAPI, HTTPException
-from fastapi.responses import HTMLResponse
+from fastapi import Depends, FastAPI, HTTPException, UploadFile
+from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from qrcode import QRCode
 
 from auth import create_access_token, no_auth, validate_token
 from config import AuthType, config
 from error_responses import (
-    invalid_title_response,
+    filename_exists_response,
+    invalid_filename_response,
     note_not_found_response,
-    title_exists_response,
 )
 from flatnotes import Flatnotes, InvalidTitleError, Note
+from helpers import is_valid_filename
 from models import (
     ConfigModel,
     LoginModel,
-    NoteResponseModel,
     NoteContentResponseModel,
     NotePatchModel,
     NotePostModel,
+    NoteResponseModel,
     SearchResultModel,
     TokenModel,
 )
+
+ATTACHMENTS_DIR = os.path.join(config.data_path, "attachments")
+os.makedirs(ATTACHMENTS_DIR, exist_ok=True)
 
 app = FastAPI()
 flatnotes = Flatnotes(config.data_path)
@@ -113,9 +119,9 @@ if config.auth_type != AuthType.READ_ONLY:
             note.content = data.content
             return NoteContentResponseModel.model_validate(note)
         except InvalidTitleError:
-            return invalid_title_response
+            return invalid_filename_response
         except FileExistsError:
-            return title_exists_response
+            return filename_exists_response
 
 
 @app.get(
@@ -135,7 +141,7 @@ def get_note(
         else:
             return NoteResponseModel.model_validate(note)
     except InvalidTitleError:
-        return invalid_title_response
+        return invalid_filename_response
     except FileNotFoundError:
         return note_not_found_response
 
@@ -156,9 +162,9 @@ if config.auth_type != AuthType.READ_ONLY:
                 note.content = new_data.new_content
             return NoteContentResponseModel.model_validate(note)
         except InvalidTitleError:
-            return invalid_title_response
+            return invalid_filename_response
         except FileExistsError:
-            return title_exists_response
+            return filename_exists_response
         except FileNotFoundError:
             return note_not_found_response
 
@@ -175,7 +181,7 @@ if config.auth_type != AuthType.READ_ONLY:
             note = Note(flatnotes, title)
             note.delete()
         except InvalidTitleError:
-            return invalid_title_response
+            return invalid_filename_response
         except FileNotFoundError:
             return note_not_found_response
 
@@ -216,6 +222,39 @@ def search(
 def get_config():
     """Retrieve server-side config required for the UI."""
     return ConfigModel.model_validate(config)
+
+
+if config.auth_type != AuthType.READ_ONLY:
+
+    @app.post(
+        "/api/attachments",
+        dependencies=[Depends(authenticate)],
+        response_model=None,
+    )
+    def post_attachment(file: UploadFile):
+        """Upload an attachment."""
+        if not is_valid_filename(file.filename):
+            return invalid_filename_response
+        filepath = os.path.join(ATTACHMENTS_DIR, file.filename)
+        if os.path.exists(filepath):
+            return filename_exists_response
+        with open(filepath, "wb") as f:
+            shutil.copyfileobj(file.file, f)
+
+
+@app.get(
+    "/attachments/{filename}",
+    dependencies=[Depends(authenticate)],
+    include_in_schema=False,
+)
+def get_attachment(filename: str):
+    """Download an attachment."""
+    if not is_valid_filename(filename):
+        raise HTTPException(status_code=400, detail="Invalid filename.")
+    filepath = os.path.join(ATTACHMENTS_DIR, filename)
+    if not os.path.isfile(filepath):
+        raise HTTPException(status_code=404, detail="File not found.")
+    return FileResponse(filepath)
 
 
 app.mount("/", StaticFiles(directory="flatnotes/dist"), name="dist")

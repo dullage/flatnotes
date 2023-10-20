@@ -17,6 +17,7 @@ aiofiles = "23.2.0"
 python-jose = {extras = ["cryptography"], version = "3.3.0"}
 pyotp = "2.8.0"
 qrcode = "7.4.2"
+python-multipart = "0.0.6"
 
 [requires]
 python_version = "3.11"

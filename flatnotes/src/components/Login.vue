@@ -88,6 +88,7 @@
 <script>
 import * as constants from "../constants";
 import * as helpers from "../helpers";
+import { setToken } from "../tokenStorage";
 
 import EventBus from "../eventBus";
 import Logo from "./Logo";
@@ -136,10 +137,7 @@ export default {
               : this.passwordInput,
         })
         .then(function (response) {
-          sessionStorage.setItem("token", response.data.access_token);
-          if (parent.rememberMeInput == true) {
-            localStorage.setItem("token", response.data.access_token);
-          }
+          setToken(response.data.access_token, parent.rememberMeInput);
           let redirectPath = helpers.getSearchParam(constants.params.redirect);
           EventBus.$emit("navigate", redirectPath || constants.basePaths.home);
         })

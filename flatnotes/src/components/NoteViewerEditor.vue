@@ -186,6 +186,8 @@ import { Viewer } from "@toast-ui/vue-editor";
 import api from "../api";
 import codeSyntaxHighlight from "@toast-ui/editor-plugin-code-syntax-highlight/dist/toastui-editor-plugin-code-syntax-highlight-all.js";
 
+const reservedFilenameCharacters = /[<>:"/\\|?*]/;
+
 const customHTMLRenderer = {
   heading(node, { entering, getChildrenText }) {
     const tagName = `h${node.level}`;
@@ -237,6 +239,9 @@ export default {
       editorOptions: {
         customHTMLRenderer: customHTMLRenderer,
         plugins: [codeSyntaxHighlight],
+        hooks: {
+          addImageBlobHook: this.uploadImageHook,
+        },
       },
     };
   },
@@ -258,6 +263,17 @@ export default {
   },
 
   methods: {
+    badFilenameToast: function (invalidItem) {
+      this.$bvToast.toast(
+        `Invalid ${invalidItem}. Due to filename restrictions, the following characters are not allowed: <>:"/\\|?*`,
+        {
+          variant: "danger",
+          noCloseButton: true,
+          toaster: "b-toaster-bottom-right",
+        }
+      );
+    },
+
     loadNote: function (title) {
       let parent = this;
       this.noteLoadFailed = false;
@@ -427,16 +443,9 @@ export default {
         });
         return;
       }
-      const reservedCharacters = /[<>:"/\\|?*]/;
-      if (reservedCharacters.test(this.titleInput)) {
-        this.$bvToast.toast(
-          'Due to filename restrictions, the following characters are not allowed in a note title: <>:"/\\|?*',
-          {
-            variant: "danger",
-            noCloseButton: true,
-            toaster: "b-toaster-bottom-right",
-          }
-        );
+
+      if (reservedFilenameCharacters.test(this.titleInput)) {
+        this.badFilenameToast("title");
         return;
       }
 
@@ -581,6 +590,80 @@ export default {
                 }
               });
           }
+        });
+    },
+
+    uploadImageHook(file, callback) {
+      // image.png is the default name given to images copied from the clipboard. To avoid conflicts we'll append a timestamp.
+      if (file.name == "image.png") {
+        const currentDateString = new Date().toISOString().replace(/:/g, "-");
+        file = new File([file], `image-${currentDateString}.png`, {
+          type: file.type,
+        });
+      }
+
+      // If the user has entered an alt text, use it. Otherwise, use the filename.
+      const altTextInputValue = document.getElementById(
+        "toastuiAltTextInput"
+      )?.value;
+      const altText = altTextInputValue ? altTextInputValue : file.name;
+
+      // Upload the image then use the callback to insert the URL into the editor
+      this.postAttachment(file).then(function (success) {
+        if (success === true) {
+          callback(`/attachments/${encodeURIComponent(file.name)}`, altText);
+        }
+      });
+    },
+
+    postAttachment(file) {
+      let parent = this;
+
+      if (reservedFilenameCharacters.test(file.name)) {
+        this.badFilenameToast("filename");
+        return false;
+      }
+
+      this.$bvToast.toast("Uploading attachment...", {
+        variant: "success",
+        noCloseButton: true,
+        toaster: "b-toaster-bottom-right",
+      });
+
+      const formData = new FormData();
+      formData.append("file", file);
+      return api
+        .post("/api/attachments", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then(function () {
+          parent.$bvToast.toast("Attachment uploaded ✓", {
+            variant: "success",
+            noCloseButton: true,
+            toaster: "b-toaster-bottom-right",
+          });
+          return true;
+        })
+        .catch(function (error) {
+          if (error.response?.status == 409) {
+            parent.$bvToast.toast(
+              "An attachment with this filename already exists ✘",
+              {
+                variant: "danger",
+                noCloseButton: true,
+                toaster: "b-toaster-bottom-right",
+              }
+            );
+          } else {
+            parent.$bvToast.toast("Failed to upload attachment ✘", {
+              variant: "danger",
+              noCloseButton: true,
+              toaster: "b-toaster-bottom-right",
+            });
+          }
+          return false;
         });
     },
 

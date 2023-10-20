@@ -16,7 +16,7 @@ from whoosh.query import Every
 from whoosh.searching import Hit
 from whoosh.support.charset import accent_map
 
-from helpers import empty_dir, re_extract, strip_ext
+from helpers import empty_dir, is_valid_filename, re_extract, strip_ext
 from logger import logger
 
 MARKDOWN_EXT = ".md"
@@ -47,7 +47,7 @@ class Note:
     ) -> None:
         self._flatnotes = flatnotes
         self._title = title.strip()
-        if not self._is_valid_title(self._title):
+        if not is_valid_filename(self._title):
             raise InvalidTitleError
         if new and os.path.exists(self.filepath):
             raise FileExistsError
@@ -74,7 +74,7 @@ class Note:
     @title.setter
     def title(self, new_title):
         new_title = new_title.strip()
-        if not self._is_valid_title(new_title):
+        if not is_valid_filename(new_title):
             raise InvalidTitleError
         new_filepath = os.path.join(
             self._flatnotes.dir, new_title + MARKDOWN_EXT
@@ -96,13 +96,6 @@ class Note:
 
     def delete(self):
         os.remove(self.filepath)
-
-    # Functions
-    def _is_valid_title(self, title: str) -> bool:
-        r"""Return False if the declared title contains any of the following
-        characters: <>:"/\|?*"""
-        invalid_chars = r'<>:"/\|?*'
-        return not any(invalid_char in title for invalid_char in invalid_chars)
 
 
 class SearchResult(Note):
@@ -204,7 +197,7 @@ class Flatnotes(object):
 
         - The content without the tags.
         - A set of tags converted to lowercase."""
-        content_ex_codeblock = re.sub(cls.CODEBLOCK_RE, '', content)
+        content_ex_codeblock = re.sub(cls.CODEBLOCK_RE, "", content)
         _, tags = re_extract(cls.TAGS_RE, content_ex_codeblock)
         content_ex_tags, _ = re_extract(cls.TAGS_RE, content)
         try:
