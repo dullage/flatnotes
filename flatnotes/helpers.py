@@ -31,3 +31,10 @@ def re_extract(pattern, string) -> Tuple[str, List[str]]:
     matches = []
     text = re.sub(pattern, lambda tag: matches.append(tag.group()), string)
     return (text, matches)
+
+
+def is_valid_filename(filename):
+    r"""Return False if the declared filename contains any of the following
+    characters: <>:"/\|?*"""
+    invalid_chars = r'<>:"/\|?*'
+    return not any(invalid_char in filename for invalid_char in invalid_chars)

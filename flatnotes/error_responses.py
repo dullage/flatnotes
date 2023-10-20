@@ -1,12 +1,12 @@
 from fastapi.responses import JSONResponse
 
-title_exists_response = JSONResponse(
-    content={"message": "The specified title already exists."},
+filename_exists_response = JSONResponse(
+    content={"message": "The specified filename already exists."},
     status_code=409,
 )
 
-invalid_title_response = JSONResponse(
-    content={"message": "The specified title contains invalid characters."},
+invalid_filename_response = JSONResponse(
+    content={"message": "The specified filename contains invalid characters."},
     status_code=400,
 )
 

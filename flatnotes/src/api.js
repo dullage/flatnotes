@@ -2,27 +2,28 @@ import * as constants from "./constants";
 
 import EventBus from "./eventBus";
 import axios from "axios";
+import { getToken } from "./tokenStorage";
 
 const api = axios.create();
 
 api.interceptors.request.use(
-  function(config) {
+  function (config) {
     if (config.url !== "/api/token") {
-      let token = sessionStorage.getItem("token");
+      const token = getToken();
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
-  function(error) {
+  function (error) {
     return Promise.reject(error);
   }
 );
 
 api.interceptors.response.use(
-  function(response) {
+  function (response) {
     return response;
   },
-  function(error) {
+  function (error) {
     if (
       typeof error.response !== "undefined" &&
       error.response.status === 401
