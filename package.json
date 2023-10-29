@@ -5,7 +5,7 @@
   "main": "flatnotes/src/index.html",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "parcel build flatnotes/src/index.html --out-dir flatnotes/dist",
+    "build": "parcel build --public-url FLATNOTES_ROOT_PATH flatnotes/src/index.html --out-dir flatnotes/dist",
     "watch": "parcel flatnotes/src/index.html --out-dir flatnotes/dist"
   },
   "author": "Adam Dullage",

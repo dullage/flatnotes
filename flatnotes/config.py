@@ -27,6 +27,8 @@ class Config:
 
         self.totp_key = self.get_totp_key()
 
+        self.root_path = self.get_root_path()
+
     @classmethod
     def get_env(cls, key, mandatory=False, default=None, cast_int=False):
         """Get an environment variable."""
@@ -100,6 +102,9 @@ class Config:
         if totp_key:
             totp_key = b32encode(totp_key.encode("utf-8"))
         return totp_key
+
+    def get_root_path(self):
+        return self.get_env("FLATNOTES_ROOT_PATH", mandatory=False, default="")
 
 
 config = Config()

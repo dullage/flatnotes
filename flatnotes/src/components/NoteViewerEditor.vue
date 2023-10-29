@@ -278,7 +278,7 @@ export default {
       let parent = this;
       this.noteLoadFailed = false;
       api
-        .get(`/api/notes/${encodeURIComponent(title)}`)
+        .get(`${window.flatnotesRootPath}/api/notes/${encodeURIComponent(title)}`)
         .then(function (response) {
           parent.currentNote = new Note(
             response.data.title,
@@ -452,7 +452,7 @@ export default {
       // New Note
       if (this.currentNote.lastModified == null) {
         api
-          .post(`/api/notes`, {
+          .post(`${window.flatnotesRootPath}/api/notes`, {
             title: this.titleInput,
             content: newContent,
           })
@@ -477,7 +477,7 @@ export default {
         this.titleInput != this.currentNote.title
       ) {
         api
-          .patch(`/api/notes/${encodeURIComponent(this.currentNote.title)}`, {
+          .patch(`${window.flatnotesRootPath}/api/notes/${encodeURIComponent(this.currentNote.title)}`, {
             newTitle: this.titleInput,
             newContent: newContent,
           })
@@ -578,7 +578,7 @@ export default {
           if (response == true) {
             api
               .delete(
-                `/api/notes/${encodeURIComponent(parent.currentNote.title)}`
+                `${window.flatnotesRootPath}/api/notes/${encodeURIComponent(parent.currentNote.title)}`
               )
               .then(function () {
                 parent.$emit("note-deleted");
@@ -611,7 +611,8 @@ export default {
       // Upload the image then use the callback to insert the URL into the editor
       this.postAttachment(file).then(function (success) {
         if (success === true) {
-          callback(`/attachments/${encodeURIComponent(file.name)}`, altText);
+          // Use relative path so that the attachment URL stored in the note's markdown file works with any flatnotesRootPath.
+          callback(`../attachments/${encodeURIComponent(file.name)}`, altText);
         }
       });
     },
@@ -633,7 +634,7 @@ export default {
       const formData = new FormData();
       formData.append("file", file);
       return api
-        .post("/api/attachments", formData, {
+        .post(`${window.flatnotesRootPath}/api/attachments`, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },

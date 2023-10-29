@@ -4,7 +4,7 @@ import shutil
 from typing import List, Literal, Union
 
 import pyotp
-from fastapi import Depends, FastAPI, HTTPException, UploadFile
+from fastapi import APIRouter, Depends, FastAPI, HTTPException, UploadFile
 from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from qrcode import QRCode
@@ -32,7 +32,7 @@ from models import (
 ATTACHMENTS_DIR = os.path.join(config.data_path, "attachments")
 os.makedirs(ATTACHMENTS_DIR, exist_ok=True)
 
-app = FastAPI()
+router = APIRouter()
 flatnotes = Flatnotes(config.data_path)
 
 totp = (
@@ -59,7 +59,7 @@ if config.auth_type == AuthType.TOTP:
 
 if config.auth_type not in [AuthType.NONE, AuthType.READ_ONLY]:
 
-    @app.post("/api/token", response_model=TokenModel)
+    @router.post("/api/token", response_model=TokenModel)
     def token(data: LoginModel):
         global last_used_totp
 
@@ -94,20 +94,21 @@ if config.auth_type not in [AuthType.NONE, AuthType.READ_ONLY]:
         return TokenModel(access_token=access_token)
 
 
-@app.get("/", include_in_schema=False)
-@app.get("/login", include_in_schema=False)
-@app.get("/search", include_in_schema=False)
-@app.get("/new", include_in_schema=False)
-@app.get("/note/{title}", include_in_schema=False)
+@router.get("" if config.root_path else "/", include_in_schema=False)
+@router.get("/login", include_in_schema=False)
+@router.get("/search", include_in_schema=False)
+@router.get("/new", include_in_schema=False)
+@router.get("/note/{title}", include_in_schema=False)
 def root(title: str = ""):
     with open("flatnotes/dist/index.html", "r", encoding="utf-8") as f:
         html = f.read()
+    html = html.replace("FLATNOTES_ROOT_PATH", config.root_path)
     return HTMLResponse(content=html)
 
 
 if config.auth_type != AuthType.READ_ONLY:
 
-    @app.post(
+    @router.post(
         "/api/notes",
         dependencies=[Depends(authenticate)],
         response_model=NoteContentResponseModel,
@@ -124,7 +125,7 @@ if config.auth_type != AuthType.READ_ONLY:
             return filename_exists_response
 
 
-@app.get(
+@router.get(
     "/api/notes/{title}",
     dependencies=[Depends(authenticate)],
     response_model=Union[NoteContentResponseModel, NoteResponseModel],
@@ -148,7 +149,7 @@ def get_note(
 
 if config.auth_type != AuthType.READ_ONLY:
 
-    @app.patch(
+    @router.patch(
         "/api/notes/{title}",
         dependencies=[Depends(authenticate)],
         response_model=NoteContentResponseModel,
@@ -171,7 +172,7 @@ if config.auth_type != AuthType.READ_ONLY:
 
 if config.auth_type != AuthType.READ_ONLY:
 
-    @app.delete(
+    @router.delete(
         "/api/notes/{title}",
         dependencies=[Depends(authenticate)],
         response_model=None,
@@ -186,7 +187,7 @@ if config.auth_type != AuthType.READ_ONLY:
             return note_not_found_response
 
 
-@app.get(
+@router.get(
     "/api/tags",
     dependencies=[Depends(authenticate)],
     response_model=List[str],
@@ -196,7 +197,7 @@ def get_tags():
     return flatnotes.get_tags()
 
 
-@app.get(
+@router.get(
     "/api/search",
     dependencies=[Depends(authenticate)],
     response_model=List[SearchResultModel],
@@ -218,7 +219,7 @@ def search(
     ]
 
 
-@app.get("/api/config", response_model=ConfigModel)
+@router.get("/api/config", response_model=ConfigModel)
 def get_config():
     """Retrieve server-side config required for the UI."""
     return ConfigModel.model_validate(config)
@@ -226,7 +227,7 @@ def get_config():
 
 if config.auth_type != AuthType.READ_ONLY:
 
-    @app.post(
+    @router.post(
         "/api/attachments",
         dependencies=[Depends(authenticate)],
         response_model=None,
@@ -242,7 +243,7 @@ if config.auth_type != AuthType.READ_ONLY:
             shutil.copyfileobj(file.file, f)
 
 
-@app.get(
+@router.get(
     "/attachments/{filename}",
     dependencies=[Depends(authenticate)],
     include_in_schema=False,
@@ -257,4 +258,10 @@ def get_attachment(filename: str):
     return FileResponse(filepath)
 
 
-app.mount("/", StaticFiles(directory="flatnotes/dist"), name="dist")
+app = FastAPI(
+    docs_url=f"{config.root_path}/docs",
+    openapi_url=f"{config.root_path}/openapi.json",
+)
+app.router.redirect_slashes = False
+app.include_router(router, prefix=config.root_path)
+app.mount(config.root_path, StaticFiles(directory="flatnotes/dist"), name="dist")

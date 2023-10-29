@@ -209,7 +209,7 @@ export default {
       this.searchFailed = false;
       this.searchResultsIncludeHighlights = false;
       api
-        .get("/api/search", { params: { term: this.searchTerm } })
+        .get(`${window.flatnotesRootPath}/api/search`, { params: { term: this.searchTerm } })
         .then(function (response) {
           parent.searchResults = [];
           if (response.data.length == 0) {

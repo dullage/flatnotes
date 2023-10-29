@@ -129,7 +129,7 @@ export default {
     login: function () {
       let parent = this;
       api
-        .post("/api/token", {
+        .post(`${window.flatnotesRootPath}/api/token`, {
           username: this.usernameInput,
           password:
             this.authType == constants.authTypes.totp

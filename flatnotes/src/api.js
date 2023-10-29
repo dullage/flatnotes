@@ -8,7 +8,7 @@ const api = axios.create();
 
 api.interceptors.request.use(
   function (config) {
-    if (config.url !== "/api/token") {
+    if (config.url !== `${window.flatnotesRootPath}/api/token`) {
       const token = getToken();
       config.headers.Authorization = `Bearer ${token}`;
     }

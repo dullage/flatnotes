@@ -61,7 +61,7 @@ export default {
     loadConfig: function () {
       let parent = this;
       api
-        .get("/api/config")
+        .get(`${window.flatnotesRootPath}/api/config`)
         .then(function (response) {
           parent.authType = response.data.authType;
         })
@@ -74,7 +74,8 @@ export default {
 
     route: function () {
       let path = window.location.pathname.split("/");
-      let basePath = `/${path[1]}`;
+      let rootPathParts = window.flatnotesRootPath.split("/").length;
+      let basePath = `${window.flatnotesRootPath}/${path[rootPathParts]}`;
 
       this.$bvModal.hide("search-modal");
 
@@ -102,7 +103,7 @@ export default {
 
       // Note
       else if (basePath == constants.basePaths.note) {
-        this.noteTitle = decodeURIComponent(path[2]);
+        this.noteTitle = decodeURIComponent(path[rootPathParts + 1]);
         this.updateDocumentTitle(this.noteTitle);
         this.currentView = this.views.note;
       }

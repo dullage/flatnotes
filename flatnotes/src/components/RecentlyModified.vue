@@ -68,7 +68,7 @@ export default {
       let parent = this;
       this.loadingFailed = false;
       api
-        .get("/api/search", {
+        .get(`${window.flatnotesRootPath}/api/search`, {
           params: {
             term: "*",
             sort: "lastModified",

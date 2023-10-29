@@ -1,10 +1,10 @@
 // Base Paths
 export const basePaths = {
-  home: "/",
-  login: "/login",
-  note: "/note",
-  search: "/search",
-  new: "/new",
+  home: `${window.flatnotesRootPath}/`,
+  login: `${window.flatnotesRootPath}/login`,
+  note: `${window.flatnotesRootPath}/note`,
+  search: `${window.flatnotesRootPath}/search`,
+  new: `${window.flatnotesRootPath}/new`,
 };
 
 // Params
