@@ -42,7 +42,7 @@
             v-b-tooltip.hover
             title="Keyboard Shortcut: e"
           >
-            <b-icon icon="pencil-square"></b-icon> Edit
+            <b-icon icon="pencil-square"></b-icon><span>Edit</span>
           </button>
 
           <!-- Delete -->
@@ -52,7 +52,7 @@
             class="bttn"
             @click="deleteNote"
           >
-            <b-icon icon="trash"></b-icon> Delete
+            <b-icon icon="trash"></b-icon><span>Delete</span>
           </button>
 
           <!-- Cancel -->
@@ -62,7 +62,7 @@
             class="bttn"
             @click="confirmCancelNote"
           >
-            <b-icon icon="arrow-return-left"></b-icon> Cancel
+            <b-icon icon="arrow-return-left"></b-icon><span>Cancel</span>
           </button>
 
           <!-- Save -->
@@ -72,7 +72,7 @@
             class="bttn"
             @click="saveNote"
           >
-            <b-icon icon="check-square"></b-icon> Save
+            <b-icon icon="check-square"></b-icon><span>Save</span>
           </button>
         </div>
       </div>

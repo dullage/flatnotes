@@ -68,7 +68,7 @@
 
         <!-- Button -->
         <button type="submit" class="bttn">
-          <b-icon icon="box-arrow-in-right"></b-icon> Log In
+          <b-icon icon="box-arrow-in-right"></b-icon><span>Log In</span>
         </button>
       </form>
     </div>

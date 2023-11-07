@@ -10,69 +10,102 @@
 
     <!-- Buttons -->
     <div class="d-flex">
-      <!-- Log Out -->
-      <button
-        v-if="showLogOutButton"
-        type="button"
-        class="bttn"
-        @click="$emit('logout')"
-      >
-        <b-icon icon="box-arrow-right"></b-icon> Log Out
-      </button>
-
       <!-- New Note -->
       <a
         v-if="showNewButton"
         :href="constants.basePaths.new"
         class="bttn"
         @click.prevent="navigate(constants.basePaths.new, $event)"
-        v-b-tooltip.hover
-        title="Create a New Note"
       >
-        <b-icon icon="plus-circle"></b-icon> New
+        <b-icon icon="plus-circle"></b-icon><span>New Note</span>
       </a>
 
-      <!-- Theme Toggle -->
-      <button
-        type="button"
-        id="theme-button"
-        class="bttn"
-        @click="$emit('toggleTheme')"
-        v-b-tooltip.hover
-        title="Toggle Theme"
+      <!-- Menu -->
+      <b-dropdown
+        menu-class="menu"
+        toggle-class="bttn text-decoration-none"
+        size="md"
+        variant="link"
+        offset="-10px"
+        no-caret
+        right
       >
-        <b-icon :icon="darkTheme ? 'sun' : 'moon'"></b-icon>
-      </button>
+        <template #button-content>
+          <b-icon icon="list"></b-icon><span>Menu</span>
+        </template>
 
-      <!-- A-Z -->
-      <a
-        :href="azHref"
-        class="bttn"
-        @click.prevent="navigate(azHref, $event)"
-        v-b-tooltip.hover
-        title="Show All Notes"
-        >A-Z</a
-      >
+        <!-- Search -->
+        <!-- Note: We use .capture.native.stop here to prevent button from gaining focus after the menu is closed. -->
+        <b-dropdown-item-button
+          button-class="bttn d-flex align-items-center"
+          @click.capture.native.stop="$emit('search')"
+        >
+          <b-icon icon="search" font-scale="0.8" class="mr-2"></b-icon>
+          <span class="mr-3">Search</span>
+          <span class="keyboard-shortcut" title="Keyboard Shortcut">/</span>
+        </b-dropdown-item-button>
 
-      <!-- Search -->
-      <button
-        type="button"
-        id="search-button"
-        class="bttn"
-        @click="$emit('search')"
-        v-b-tooltip.hover
-        title="Search (Keyboard Shortcut: /)"
-      >
-        <b-icon icon="search"></b-icon>
-      </button>
+        <!-- All Notes -->
+        <b-dropdown-item
+          link-class="bttn d-flex align-items-center"
+          :href="azHref"
+          @click.prevent="navigate(azHref, $event)"
+        >
+          <b-icon icon="files" font-scale="0.8" class="mr-2"></b-icon>
+          <span>All Notes</span>
+        </b-dropdown-item>
+
+        <!-- Toggle Theme -->
+        <b-dropdown-item-button
+          button-class="bttn d-flex align-items-center"
+          @click="$emit('toggleTheme')"
+        >
+          <b-icon
+            :icon="darkTheme ? 'sun' : 'moon'"
+            font-scale="0.8"
+            class="mr-2"
+          >
+          </b-icon>
+          <span>Toggle Theme</span>
+        </b-dropdown-item-button>
+
+        <!-- Log Out -->
+        <b-dropdown-divider v-if="showLogOutButton"></b-dropdown-divider>
+        <b-dropdown-item-button
+          v-if="showLogOutButton"
+          button-class="bttn d-flex align-items-center"
+          @click="$emit('logout')"
+        >
+          <b-icon icon="box-arrow-right" font-scale="0.8" class="mr-2"></b-icon>
+          <span>Log Out</span>
+        </b-dropdown-item-button>
+      </b-dropdown>
     </div>
   </div>
 </template>
 
-<style lang="scss" scoped>
+<style lang="scss">
 // Use visibility hidden instead of v-show to maintain consistent height
 .invisible {
   visibility: hidden;
+}
+
+.menu {
+  background-color: var(--colour-background);
+  color: var(--colour-text);
+  border: 1px solid var(--colour-border);
+
+  hr {
+    border-top: 1px solid var(--colour-border);
+  }
+}
+
+.keyboard-shortcut {
+  background-color: var(--colour-background-elevated);
+  padding: 0.1em 0.75em;
+  border: 1px solid var(--colour-border);
+  border-radius: 4px;
+  font-size: 0.75em;
 }
 </style>
 
