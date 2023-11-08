@@ -26,7 +26,6 @@
         toggle-class="bttn text-decoration-none"
         size="md"
         variant="link"
-        offset="-10px"
         no-caret
         right
       >
