@@ -26,13 +26,13 @@
         <input
           v-else
           type="text"
-          class="h2 title-input flex-grow-1"
+          class="h2 title-input flex-grow-1 mb-0"
           v-model="titleInput"
           placeholder="Title"
         />
 
         <!-- Buttons -->
-        <div class="d-flex">
+        <div class="d-flex flex-grow-1 justify-content-end">
           <!-- Edit -->
           <button
             v-if="canModify && editMode == false && noteLoadFailed == false"
@@ -118,6 +118,7 @@
   background-color: transparent;
   color: var(--colour-text);
   padding: 0;
+  min-width:0;
 
   &:focus {
     outline: none;
