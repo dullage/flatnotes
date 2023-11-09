@@ -1,6 +1,6 @@
 {
   "name": "flatnotes",
-  "version": "3.4.0",
+  "version": "3.5.0",
   "description": "A database-less note taking web app that utilises a flat folder of markdown files for storage.",
   "main": "flatnotes/src/index.html",
   "scripts": {
