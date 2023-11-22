@@ -1,3 +1,5 @@
+import { basePaths } from "./constants";
+
 function parseWikiLink(source) {
   const matched = source.matchAll(/\[\[(.*)\]\]/g);
   if (matched) {
@@ -5,7 +7,7 @@ function parseWikiLink(source) {
       const text = match[1];
       return {
         text,
-        url: encodeURI(`/note/${text.trim()}`),
+        url: encodeURI(`${basePaths.note}/${text.trim()}`),
         range: [match.index, match.index + match[0].length - 1],
       };
     });
@@ -24,10 +26,10 @@ export function extendedAutolinks(source) {
 
 /*
  * Sourced from toast-ui. There autolink options are
- * either override their built in functionality or 
+ * either override their built in functionality or
  * use their built in functionality. We'd like to have
  * both so this is the source of their parsers.
-*/
+ */
 const DOMAIN = '(?:[w-]+.)*[A-Za-z0-9-]+.[A-Za-z0-9-]+';
 const PATH = '[^<\\s]*[^<?!.,:*_?~\\s]';
 const EMAIL = '[\\w.+-]+@(?:[\\w-]+\\.)+[\\w-]+';
