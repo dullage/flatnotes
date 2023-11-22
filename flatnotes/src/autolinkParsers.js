@@ -1,13 +1,13 @@
 function parseWikiLink(source) {
   const matched = source.matchAll(/\[\[(.*)\]\]/g);
   if (matched) {
-    return Array.from(matched).map(match => {
+    return Array.from(matched).map((match) => {
       const text = match[1];
       return {
         text,
-        url: encodeURI(`/note/${text}`),
-        range: [match.index, match.index + match[0].length - 1]
-      }
+        url: encodeURI(`/note/${text.trim()}`),
+        range: [match.index, match.index + match[0].length - 1],
+      };
     });
   }
 
@@ -15,9 +15,11 @@ function parseWikiLink(source) {
 }
 
 export function extendedAutolinks(source) {
-  return [...parseUrlLink(source), ...parseEmailLink(source), ...parseWikiLink(source)].sort(
-    (a, b) => a.range[0] - b.range[0]
-  );
+  return [
+    ...parseUrlLink(source),
+    ...parseEmailLink(source),
+    ...parseWikiLink(source),
+  ].sort((a, b) => a.range[0] - b.range[0]);
 }
 
 /*
