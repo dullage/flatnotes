@@ -49,9 +49,12 @@ class Note:
         self._title = title.strip()
         if not is_valid_filename(self._title):
             raise InvalidTitleError
-        if new and os.path.exists(self.filepath):
+        exists = os.path.exists(self.filepath)
+        if new and exists:
             raise FileExistsError
-        elif new:
+        if not new and not exists:
+            raise FileNotFoundError
+        if new:
             open(self.filepath, "w").close()
 
     @property
