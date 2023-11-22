@@ -185,6 +185,7 @@ import { Note } from "../classes";
 import { Viewer } from "@toast-ui/vue-editor";
 import api from "../api";
 import codeSyntaxHighlight from "@toast-ui/editor-plugin-code-syntax-highlight/dist/toastui-editor-plugin-code-syntax-highlight-all.js";
+import { extendedAutolinks } from '../autolinkParsers';
 
 const reservedFilenameCharacters = /[<>:"/\\|?*]/;
 
@@ -234,7 +235,7 @@ export default {
       viewerOptions: {
         customHTMLRenderer: customHTMLRenderer,
         plugins: [codeSyntaxHighlight],
-        extendedAutolinks: true,
+        extendedAutolinks,
       },
       editorOptions: {
         customHTMLRenderer: customHTMLRenderer,
