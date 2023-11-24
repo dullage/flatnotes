@@ -131,7 +131,7 @@
 }
 
 .note {
-  background-color: var(--colour-background-elevated);
+  background-color: var(--colour-background);
   box-shadow: 0 0 10px var(--colour-shadow);
 }
 </style>

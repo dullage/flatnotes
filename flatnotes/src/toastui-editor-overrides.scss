@@ -61,11 +61,11 @@
 }
 
 .toastui-editor-main {
-  background-color: var(--colour-background-elevated);
+  background-color: var(--colour-background);
 }
 
 .toastui-editor-ww-container {
-  background-color: var(--colour-background-elevated);
+  background-color: var(--colour-background);
 }
 
 .toastui-editor-contents ul,
@@ -110,26 +110,26 @@
 
 // Toolbar
 .toastui-editor-defaultUI-toolbar {
-  background-color: var(--colour-background-elevated);
+  background-color: var(--colour-background);
   border-bottom-color: var(--colour-border);
 }
 
 .toastui-editor-defaultUI .toastui-editor-md-tab-container {
-  background-color: var(--colour-background-elevated);
+  background-color: var(--colour-background);
   border-bottom-color: var(--colour-border);
 }
 
 .toastui-editor-mode-switch {
-  background-color: var(--colour-background-elevated);
+  background-color: var(--colour-background);
   border-color: var(--colour-border);
 }
 
 .toastui-editor-defaultUI-toolbar button {
-  border: 1px solid var(--colour-background-elevated);
+  border: 1px solid var(--colour-background);
 }
 
 .toastui-editor-defaultUI .tab-item.active {
-  background-color: var(--colour-background-elevated);
+  background-color: var(--colour-background);
   color: var(--colour-text);
   border-color: var(--colour-border);
 }
@@ -155,7 +155,7 @@
 
 .toastui-editor-defaultUI-toolbar button:not(:disabled):hover {
   background-color: var(--colour-background-tint);
-  border: 1px solid var(--colour-background-elevated);
+  border: 1px solid var(--colour-background);
 }
 
 .toastui-editor-md-block-quote .toastui-editor-md-marked-text {
@@ -168,7 +168,7 @@
 }
 
 .toastui-editor-popup {
-  background-color: var(--colour-background-elevated);
+  background-color: var(--colour-background);
   border: 1px solid var(--colour-border);
 }
 
@@ -177,14 +177,14 @@
     color: var(--colour-text);
   }
   input {
-    background-color: var(--colour-background-elevated);
+    background-color: var(--colour-background);
     border: 1px solid var(--colour-border);
   }
 }
 
 .toastui-editor-popup-add-table .toastui-editor-table-cell,
 .toastui-editor-popup-add-table .toastui-editor-table-cell.header {
-  background-color: var(--colour-background-elevated);
+  background-color: var(--colour-background);
   border-color: var(--colour-border);
 }
 
@@ -194,7 +194,7 @@
 
 .toastui-editor-popup-add-image .toastui-editor-tabs .tab-item {
   color: var(--colour-text);
-  background-color: var(--colour-background-elevated);
+  background-color: var(--colour-background);
   border-color: var(--colour-border);
 }
 
@@ -204,11 +204,11 @@
 
 .toastui-editor-popup-body input[type="text"] {
   color: var(--colour-text);
-  background-color: var(--colour-background-elevated);
+  background-color: var(--colour-background);
 }
 
 .toastui-editor-dropdown-toolbar {
-  background-color: var(--colour-background-elevated);
+  background-color: var(--colour-background);
   border-color: var(--colour-border);
 }
 
