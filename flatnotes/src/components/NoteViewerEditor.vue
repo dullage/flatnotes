@@ -98,7 +98,12 @@
   </div>
 </template>
 
-<style lang="scss" scoped>
+<style lang="scss">
+@import "@toast-ui/editor/dist/toastui-editor.css";
+@import "prismjs/themes/prism.css";
+@import "@toast-ui/editor-plugin-code-syntax-highlight/dist/toastui-editor-plugin-code-syntax-highlight.css";
+
+@import "../toastui-editor-overrides.scss";
 @import "../colours";
 @import "../mixins";
 
@@ -124,53 +129,10 @@
     outline: none;
   }
 }
-</style>
 
-<style lang="scss">
-// Toast UI Markdown Editor
-@import "@toast-ui/editor/dist/toastui-editor.css";
-@import "prismjs/themes/prism.css";
-@import "@toast-ui/editor-plugin-code-syntax-highlight/dist/toastui-editor-plugin-code-syntax-highlight.css";
-
-@import "../colours";
-@import "../mixins";
-@import "../toastui-editor-theme.scss";
-
-.ProseMirror {
-  font-family: "Inter", sans-serif;
-}
-
-.toastui-editor-contents {
-  font-family: "Inter", sans-serif;
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    border-bottom: none;
-  }
-  @include note-padding;
-}
-
-.toastui-editor-defaultUI .ProseMirror {
-  @include note-padding;
-}
-
-// Override the default font-family for code blocks as some of the fallbacks are not monospace
-.toastui-editor-contents code,
-.toastui-editor-contents pre,
-.toastui-editor-md-code,
-.toastui-editor-md-code-block {
-  font-family: Consolas, "Lucida Console", Monaco, "Andale Mono", monospace;
-}
-
-// Disable checkboxes in view mode. See https://github.com/nhn/tui.editor/issues/1087.
-.note-viewer li.task-list-item {
-  pointer-events: none;
-  a {
-    pointer-events: auto;
-  }
+.note {
+  background-color: var(--colour-background-elevated);
+  box-shadow: 0 0 10px var(--colour-shadow);
 }
 </style>
 
