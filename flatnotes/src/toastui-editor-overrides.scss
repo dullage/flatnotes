@@ -1,5 +1,4 @@
 @import "../colours";
-@import "../mixins";
 
 .ProseMirror {
   font-family: "Inter", sans-serif;
@@ -15,11 +14,10 @@
   h6 {
     border-bottom: none;
   }
-  @include note-padding;
 }
 
 .toastui-editor-defaultUI .ProseMirror {
-  @include note-padding;
+  padding: 1rem 0 0 0;
 }
 
 // Override the default font-family for code blocks as some of the fallbacks are not monospace

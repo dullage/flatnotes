@@ -105,7 +105,6 @@
 
 @import "../toastui-editor-overrides.scss";
 @import "../colours";
-@import "../mixins";
 
 .title {
   min-width: 300px;
@@ -132,7 +131,6 @@
 
 .note {
   background-color: var(--colour-background);
-  box-shadow: 0 0 10px var(--colour-shadow);
 }
 </style>
 
