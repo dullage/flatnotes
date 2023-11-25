@@ -79,6 +79,11 @@
   background-color: var(--colour-background-tint);
 }
 
+.dark-theme .toastui-editor-contents pre,
+.dark-theme .toastui-editor-md-code-block-line-background {
+  background-color: var(--colour-background-elevated);
+}
+
 .token.operator,
 .token.entity,
 .token.url,
@@ -163,6 +168,11 @@
 .toastui-editor-md-code,
 .toastui-editor-contents code {
   background-color: var(--colour-background-tint);
+}
+
+.dark-theme .toastui-editor-md-code,
+.dark-theme .toastui-editor-contents code {
+  background-color: var(--colour-background-elevated);
 }
 
 .toastui-editor-popup {
