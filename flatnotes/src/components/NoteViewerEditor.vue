@@ -107,7 +107,7 @@
 
 .title,
 .title-input {
-  font-size: 2.25rem;
+  font-size: 1.75rem;
   font-weight: bold;
   line-height: 1.4;
 }
