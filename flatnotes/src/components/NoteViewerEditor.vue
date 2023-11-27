@@ -15,9 +15,8 @@
 
     <!-- Loaded -->
     <div v-else class="d-flex flex-column h-100">
-      <!-- Buttons -->
       <div
-        class="d-flex justify-content-between flex-wrap align-items-end mb-3"
+        class="d-flex justify-content-between flex-wrap-reverse align-items-start mb-3"
       >
         <!-- Title -->
         <h2 v-if="editMode == false" class="title" :title="currentNote.title">
@@ -26,7 +25,7 @@
         <input
           v-else
           type="text"
-          class="h2 title-input flex-grow-1 mb-0"
+          class="title-input flex-grow-1 mb-0"
           v-model="titleInput"
           placeholder="Title"
         />
