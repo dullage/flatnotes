@@ -106,6 +106,13 @@
 @import "../toastui-editor-overrides.scss";
 @import "../colours";
 
+.title,
+.title-input {
+  font-size: 2.25rem;
+  font-weight: bold;
+  line-height: 1.4;
+}
+
 .title {
   min-width: 300px;
   white-space: nowrap;
@@ -122,15 +129,11 @@
   background-color: transparent;
   color: var(--colour-text);
   padding: 0;
-  min-width:0;
+  min-width: 0;
 
   &:focus {
     outline: none;
   }
-}
-
-.note {
-  background-color: var(--colour-background);
 }
 </style>
 
@@ -145,7 +148,7 @@ import { Note } from "../classes";
 import { Viewer } from "@toast-ui/vue-editor";
 import api from "../api";
 import codeSyntaxHighlight from "@toast-ui/editor-plugin-code-syntax-highlight/dist/toastui-editor-plugin-code-syntax-highlight-all.js";
-import { extendedAutolinks } from '../autolinkParsers';
+import { extendedAutolinks } from "../autolinkParsers";
 
 const reservedFilenameCharacters = /[<>:"/\\|?*]/;
 

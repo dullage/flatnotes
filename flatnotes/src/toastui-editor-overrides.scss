@@ -1,21 +1,79 @@
 @import "../colours";
 
-.ProseMirror {
-  font-family: "Inter", sans-serif;
-}
-
-.toastui-editor-contents {
-  font-family: "Inter", sans-serif;
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    border-bottom: none;
+// Disable checkboxes in view mode. See https://github.com/nhn/tui.editor/issues/1087.
+.note-viewer li.task-list-item {
+  pointer-events: none;
+  a {
+    pointer-events: auto;
   }
 }
 
+// Typography
+.ProseMirror,
+.toastui-editor-contents {
+  font-family: "Open Sans", sans-serif;
+  font-size: 1rem;
+}
+
+.toastui-editor-contents,
+.ProseMirror {
+  h1,
+  h1:first-of-type,
+  .toastui-editor-md-heading1,
+  h2,
+  .toastui-editor-md-heading2,
+  h3,
+  .toastui-editor-md-heading3,
+  h4,
+  .toastui-editor-md-heading4,
+  h5,
+  .toastui-editor-md-heading5,
+  h6,
+  .toastui-editor-md-heading6 {
+    font-weight: bold;
+    line-height: 1.6rem;
+    margin: 1em 0 0.5em 0;
+    padding: 0;
+    border-bottom: none;
+  }
+
+  h1,
+  .toastui-editor-md-heading1 {
+    font-size: 2.25rem;
+  }
+
+  h2,
+  .toastui-editor-md-heading2 {
+    font-size: 2rem;
+  }
+
+  h3,
+  .toastui-editor-md-heading3 {
+    font-size: 1.75rem;
+  }
+
+  h4,
+  .toastui-editor-md-heading4 {
+    font-size: 1.5rem;
+  }
+
+  h5,
+  .toastui-editor-md-heading5 {
+    font-size: 1.25rem;
+  }
+
+  h6,
+  .toastui-editor-md-heading6 {
+    font-size: 1rem;
+  }
+
+  p {
+    line-height: 1.6rem;
+    margin: 0 0 1rem 0;
+  }
+}
+
+.ProseMirror,
 .toastui-editor-defaultUI .ProseMirror {
   padding: 1rem 0 0 0;
 }
@@ -26,14 +84,6 @@
 .toastui-editor-md-code,
 .toastui-editor-md-code-block {
   font-family: Consolas, "Lucida Console", Monaco, "Andale Mono", monospace;
-}
-
-// Disable checkboxes in view mode. See https://github.com/nhn/tui.editor/issues/1087.
-.note-viewer li.task-list-item {
-  pointer-events: none;
-  a {
-    pointer-events: auto;
-  }
 }
 
 // Colours
