@@ -16,7 +16,7 @@
     <!-- Loaded -->
     <div v-else class="d-flex flex-column h-100">
       <div
-        class="d-flex justify-content-between flex-wrap-reverse align-items-start mb-3"
+        class="d-flex justify-content-between flex-wrap-reverse align-items-start mb-4"
       >
         <!-- Title -->
         <h2 v-if="editMode == false" class="title" :title="currentNote.title">
