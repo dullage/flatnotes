@@ -16,7 +16,7 @@
     <!-- Loaded -->
     <div v-else class="d-flex flex-column h-100">
       <div
-        class="d-flex justify-content-between flex-wrap-reverse align-items-start mb-4"
+        class="d-flex justify-content-between flex-wrap-reverse align-items-start mb-2 mb-md-4"
       >
         <!-- Title -->
         <h2 v-if="editMode == false" class="title" :title="currentNote.title">
@@ -107,7 +107,7 @@
 
 .title,
 .title-input {
-  font-size: 1.75rem;
+  font-size: 2rem;
   font-weight: bold;
   line-height: 1.4;
 }
