@@ -8,6 +8,16 @@
   }
 }
 
+.ProseMirror,
+.toastui-editor-defaultUI .ProseMirror,
+.toastui-editor-md-container .toastui-editor-md-preview {
+  padding: 1rem 0 0 0;
+}
+
+.ProseMirror {
+  height: 100%;
+}
+
 // Typography
 .ProseMirror,
 .toastui-editor-contents {
@@ -71,12 +81,6 @@
     line-height: 1.6rem;
     margin: 0 0 1rem 0;
   }
-}
-
-.ProseMirror,
-.toastui-editor-defaultUI .ProseMirror,
-.toastui-editor-md-container .toastui-editor-md-preview {
-  padding: 1rem 0 0 0;
 }
 
 // Override the default font-family for code blocks as some of the fallbacks are not monospace
