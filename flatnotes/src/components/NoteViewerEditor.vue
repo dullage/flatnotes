@@ -134,6 +134,13 @@
     outline: none;
   }
 }
+
+// Prism overrides
+code[class*="language-"],
+pre[class*="language-"] {
+  // See #138
+  text-shadow: none;
+}
 </style>
 
 <script>
