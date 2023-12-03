@@ -16,16 +16,16 @@
     <!-- Loaded -->
     <div v-else class="d-flex flex-column h-100">
       <div
-        class="d-flex justify-content-between flex-wrap-reverse align-items-start mb-2 mb-md-4"
+        class="d-flex justify-content-between flex-wrap-reverse align-items-start mb-2"
       >
         <!-- Title -->
-        <h2 v-if="editMode == false" class="title" :title="currentNote.title">
+        <h1 v-if="editMode == false" class="title" :title="currentNote.title">
           {{ currentNote.title }}
-        </h2>
+        </h1>
         <input
           v-else
           type="text"
-          class="title-input flex-grow-1 mb-0"
+          class="title-input flex-grow-1"
           v-model="titleInput"
           placeholder="Title"
         />
@@ -76,6 +76,9 @@
         </div>
       </div>
 
+      <!-- Horizontal Rule -->
+      <hr v-show="editMode == false" class="hr" />
+
       <!-- Viewer -->
       <div v-if="editMode == false" class="note note-viewer">
         <viewer :initialValue="currentNote.content" :options="viewerOptions" />
@@ -109,7 +112,7 @@
 .title-input {
   font-size: 2rem;
   font-weight: bold;
-  line-height: 1.4;
+  line-height: 1.6;
 }
 
 .title {
@@ -140,6 +143,12 @@ code[class*="language-"],
 pre[class*="language-"] {
   // See #138
   text-shadow: none;
+}
+
+.hr {
+  width: 100%;
+  border-color: var(--colour-border);
+  margin: 0 0 1.25rem 0;
 }
 </style>
 
