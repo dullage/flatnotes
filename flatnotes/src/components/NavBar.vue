@@ -30,7 +30,7 @@
         right
       >
         <template #button-content>
-          <b-icon icon="list"></b-icon><span>Menu</span>
+          <b-icon icon="list" class="align-middle"></b-icon><span>Menu</span>
         </template>
 
         <!-- Search -->
