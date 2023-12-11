@@ -18,6 +18,11 @@
   height: 100%;
 }
 
+.toastui-editor-contents ul > li::before {
+  // Vertically center the bullet point
+	margin-top: 0.7rem;
+}
+
 // Typography
 .ProseMirror,
 .toastui-editor-contents {
