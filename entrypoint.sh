@@ -10,7 +10,7 @@ echo "  - The note directory inside the Docker container has moved from /app/dat
 flatnotes_command="python -m \
                   uvicorn \
                   main:app \
-                  --app-dir flatnotes \
+                  --app-dir server \
                   --host 0.0.0.0 \
                   --port 8080 \
                   --proxy-headers \

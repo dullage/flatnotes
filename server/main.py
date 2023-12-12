@@ -100,7 +100,7 @@ if config.auth_type not in [AuthType.NONE, AuthType.READ_ONLY]:
 @app.get("/new", include_in_schema=False)
 @app.get("/note/{title}", include_in_schema=False)
 def root(title: str = ""):
-    with open("flatnotes/dist/index.html", "r", encoding="utf-8") as f:
+    with open("client/dist/index.html", "r", encoding="utf-8") as f:
         html = f.read()
     return HTMLResponse(content=html)
 
@@ -257,4 +257,4 @@ def get_attachment(filename: str):
     return FileResponse(filepath)
 
 
-app.mount("/", StaticFiles(directory="flatnotes/dist"), name="dist")
+app.mount("/", StaticFiles(directory="client/dist"), name="dist")
