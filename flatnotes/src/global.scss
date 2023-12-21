@@ -8,6 +8,15 @@
 // Colours
 @import "./colours";
 
+// Fonts
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("./assets/fonts/Poppins/Poppins-Regular.ttf");
+}
+
 // Elements & Classes
 body {
   background-color: var(--colour-background);
