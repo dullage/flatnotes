@@ -24,7 +24,6 @@ INDEX_SCHEMA_VERSION = "4"
 
 StemmingFoldingAnalyzer = StemmingAnalyzer() | CharsetFilter(accent_map)
 
-
 class IndexSchema(SchemaClass):
     filename = ID(unique=True, stored=True)
     last_modified = DATETIME(stored=True, sortable=True)
@@ -43,8 +42,7 @@ class InvalidTitleError(Exception):
 
 class Note:
     def __init__(
-        self, flatnotes: "Flatnotes", title: str, new: bool = False
-    ) -> None:
+            self, flatnotes: "Flatnotes", title: str, new: bool = False) -> None:
         self._flatnotes = flatnotes
         self._title = title.strip()
         if not is_valid_filename(self._title):
@@ -59,7 +57,15 @@ class Note:
 
     @property
     def filepath(self):
-        return os.path.join(self._flatnotes.dir, self.filename)
+        filepath = os.path.join(
+                self._flatnotes.dir, self._title + MARKDOWN_EXT)
+        dirlist = glob.glob(os.path.join(
+            self._flatnotes.dir, "**/*" + MARKDOWN_EXT),
+                            recursive=True)
+        for file in dirlist:
+            if self.filename in file:
+                filepath = file
+        return filepath
 
     @property
     def filename(self):
@@ -79,8 +85,10 @@ class Note:
         new_title = new_title.strip()
         if not is_valid_filename(new_title):
             raise InvalidTitleError
+        old_filepath = self.filepath
+        path = os.path.split(old_filepath)[0]
         new_filepath = os.path.join(
-            self._flatnotes.dir, new_title + MARKDOWN_EXT
+            path, new_title + MARKDOWN_EXT
         )
         os.rename(self.filepath, new_filepath)
         self._title = new_title
@@ -228,12 +236,13 @@ class Flatnotes(object):
     def _get_notes(self) -> List[Note]:
         """Return a list containing a Note object for every file in the notes
         directory."""
-        return [
-            Note(self, strip_ext(os.path.split(filepath)[1]))
-            for filepath in glob.glob(
-                os.path.join(self.dir, "*" + MARKDOWN_EXT)
-            )
-        ]
+        notes = []
+        for filepath in glob.glob(os.path.join(self.dir, "**/*" + MARKDOWN_EXT), recursive=True):
+            name = strip_ext(os.path.split(filepath)[1])
+            name = str(name)
+            note = Note(self, name)
+            notes.append(note)
+        return notes
 
     def update_index(self, clean: bool = False) -> None:
         """Synchronize the index with the notes directory.
