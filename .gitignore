@@ -244,8 +244,7 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-
 # Custom
 .vscode/
 data/
-notes/
+/notes/

@@ -13,7 +13,7 @@ RUN apt update && apt install -y npm
 COPY package.json package-lock.json .htmlnanorc ./
 RUN npm ci
 
-COPY flatnotes/src ./flatnotes/src
+COPY client ./client
 RUN npm run build
 
 # Runtime Container
@@ -40,8 +40,8 @@ WORKDIR ${APP_PATH}
 COPY LICENSE Pipfile Pipfile.lock ./
 RUN pipenv install --deploy --ignore-pipfile --system
 
-COPY flatnotes ./flatnotes
-COPY --from=build ${BUILD_DIR}/flatnotes/dist ./flatnotes/dist
+COPY server ./server
+COPY --from=build ${BUILD_DIR}/client/dist ./client/dist
 
 VOLUME /data
 EXPOSE 8080/tcp

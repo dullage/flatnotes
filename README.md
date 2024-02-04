@@ -97,7 +97,7 @@ services:
     restart: unless-stopped
 ```
 
-See the [Environment Variables](https://github.com/Dullage/flatnotes/wiki/Environment-Variables) article in the wiki for a full list of configuration options.
+See the [Environment Variables](https://github.com/dullage/flatnotes/wiki/Environment-Variables) article in the wiki for a full list of configuration options.
 
 
 ## Roadmap

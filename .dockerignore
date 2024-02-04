@@ -7,6 +7,7 @@
 !Pipfile.lock
 !package.json
 !package-lock.json
-!flatnotes/**
+!client/**
+!server/**
 !entrypoint.sh
 !.htmlnanorc
