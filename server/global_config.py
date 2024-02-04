@@ -24,9 +24,7 @@ class GlobalConfig:
         return FileSystemNotes()
 
     def load_attachment_storage(self):
-        from attachments.file_system import (
-            FileSystemAttachments,
-        )
+        from attachments.file_system import FileSystemAttachments
 
         return FileSystemAttachments()
 
