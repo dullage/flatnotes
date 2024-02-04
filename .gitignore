@@ -247,4 +247,4 @@ dist
 # Custom
 .vscode/
 data/
-notes/
+/notes/

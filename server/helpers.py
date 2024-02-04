@@ -1,11 +1,9 @@
 import os
-import re
-import shutil
-from typing import List, Tuple
+import sys
 
+from pydantic import BaseModel
 
-def strip_ext(filename):
-    return os.path.splitext(filename)[0]
+from logger import logger
 
 
 def camel_case(snake_case_str: str) -> str:
@@ -14,27 +12,44 @@ def camel_case(snake_case_str: str) -> str:
     return parts[0] + "".join(part.title() for part in parts[1:])
 
 
-def empty_dir(path):
-    for item in os.listdir(path):
-        item_path = os.path.join(path, item)
-        if os.path.isfile(item_path):
-            os.remove(item_path)
-        elif os.path.isdir(item_path):
-            shutil.rmtree(item_path)
-
-
-def re_extract(pattern, string) -> Tuple[str, List[str]]:
-    """Similar to re.sub but returns a tuple of:
-
-    - `string` with matches removed
-    - list of matches"""
-    matches = []
-    text = re.sub(pattern, lambda tag: matches.append(tag.group()), string)
-    return (text, matches)
-
-
-def is_valid_filename(filename):
-    r"""Return False if the declared filename contains any of the following
-    characters: <>:"/\|?*"""
+def is_valid_filename(value):
+    """Raise ValueError if the declared string contains any of the following
+    characters: <>:"/\\|?*"""
     invalid_chars = r'<>:"/\|?*'
-    return not any(invalid_char in filename for invalid_char in invalid_chars)
+    if any(invalid_char in value for invalid_char in invalid_chars):
+        raise ValueError(
+            "title cannot include any of the following characters: "
+            + invalid_chars
+        )
+    return value
+
+
+def strip_whitespace(value):
+    """Return the declared string with leading and trailing whitespace
+    removed."""
+    return value.strip()
+
+
+def get_env(key, mandatory=False, default=None, cast_int=False):
+    """Get an environment variable. If `mandatory` is True and environment
+    variable isn't set, exit the program"""
+    value = os.environ.get(key)
+    if mandatory and not value:
+        logger.error(f"Environment variable {key} must be set.")
+        sys.exit(1)
+    if not mandatory and not value:
+        return default
+    if cast_int:
+        try:
+            value = int(value)
+        except (TypeError, ValueError):
+            logger.error(f"Invalid value '{value}' for {key}.")
+            sys.exit(1)
+    return value
+
+
+class CustomBaseModel(BaseModel):
+    class Config:
+        alias_generator = camel_case
+        populate_by_name = True
+        from_attributes = True

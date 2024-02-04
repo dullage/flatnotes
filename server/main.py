@@ -1,99 +1,26 @@
-import os
-import secrets
-import shutil
-from typing import List, Literal, Union
+from typing import List, Literal
 
-import pyotp
 from fastapi import Depends, FastAPI, HTTPException, UploadFile
-from fastapi.responses import FileResponse, HTMLResponse
+from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
-from qrcode import QRCode
 
-from auth import create_access_token, no_auth, validate_token
-from config import AuthType, config
-from error_responses import (
-    filename_exists_response,
-    invalid_filename_response,
-    note_not_found_response,
-)
-from flatnotes import Flatnotes, InvalidTitleError, Note
-from helpers import is_valid_filename
-from models import (
-    ConfigModel,
-    LoginModel,
-    NoteContentResponseModel,
-    NotePatchModel,
-    NotePostModel,
-    NoteResponseModel,
-    SearchResultModel,
-    TokenModel,
-)
+import api_messages
+from attachments.base import BaseAttachments
+from auth.base import BaseAuth
+from auth.models import Login, Token
+from global_config import AuthType, GlobalConfig, GlobalConfigResponseModel
+from notes.base import BaseNotes
+from notes.models import Note, NoteCreate, NoteUpdate, SearchResult
 
-ATTACHMENTS_DIR = os.path.join(config.data_path, "attachments")
-os.makedirs(ATTACHMENTS_DIR, exist_ok=True)
-
+global_config = GlobalConfig()
+auth: BaseAuth = global_config.load_auth()
+note_storage: BaseNotes = global_config.load_note_storage()
+attachment_storage: BaseAttachments = global_config.load_attachment_storage()
+auth_deps = [Depends(auth.authenticate)] if auth else []
 app = FastAPI()
-flatnotes = Flatnotes(config.data_path)
-
-totp = (
-    pyotp.TOTP(config.totp_key) if config.auth_type == AuthType.TOTP else None
-)
-last_used_totp = None
-
-if config.auth_type in [AuthType.NONE, AuthType.READ_ONLY]:
-    authenticate = no_auth
-else:
-    authenticate = validate_token
-
-# Display TOTP QR code
-if config.auth_type == AuthType.TOTP:
-    uri = totp.provisioning_uri(issuer_name="flatnotes", name=config.username)
-    qr = QRCode()
-    qr.add_data(uri)
-    print(
-        "\nScan this QR code with your TOTP app of choice",
-        "e.g. Authy or Google Authenticator:",
-    )
-    qr.print_ascii()
-    print(f"Or manually enter this key: {totp.secret.decode('utf-8')}\n")
-
-if config.auth_type not in [AuthType.NONE, AuthType.READ_ONLY]:
-
-    @app.post("/api/token", response_model=TokenModel)
-    def token(data: LoginModel):
-        global last_used_totp
-
-        username_correct = secrets.compare_digest(
-            config.username.lower(), data.username.lower()
-        )
-
-        expected_password = config.password
-        if config.auth_type == AuthType.TOTP:
-            current_totp = totp.now()
-            expected_password += current_totp
-        password_correct = secrets.compare_digest(
-            expected_password, data.password
-        )
-
-        if not (
-            username_correct
-            and password_correct
-            # Prevent TOTP from being reused
-            and (
-                config.auth_type != AuthType.TOTP
-                or current_totp != last_used_totp
-            )
-        ):
-            raise HTTPException(
-                status_code=400, detail="Incorrect login credentials."
-            )
-
-        access_token = create_access_token(data={"sub": config.username})
-        if config.auth_type == AuthType.TOTP:
-            last_used_totp = current_totp
-        return TokenModel(access_token=access_token)
 
 
+# region UI
 @app.get("/", include_in_schema=False)
 @app.get("/login", include_in_schema=False)
 @app.get("/search", include_in_schema=False)
@@ -105,101 +32,113 @@ def root(title: str = ""):
     return HTMLResponse(content=html)
 
 
-if config.auth_type != AuthType.READ_ONLY:
+# endregion
 
-    @app.post(
-        "/api/notes",
-        dependencies=[Depends(authenticate)],
-        response_model=NoteContentResponseModel,
-    )
-    def post_note(data: NotePostModel):
-        """Create a new note."""
+
+# region Login
+if global_config.auth_type not in [AuthType.NONE, AuthType.READ_ONLY]:
+
+    @app.post("/api/token", response_model=Token)
+    def token(data: Login):
         try:
-            note = Note(flatnotes, data.title, new=True)
-            note.content = data.content
-            return NoteContentResponseModel.model_validate(note)
-        except InvalidTitleError:
-            return invalid_filename_response
-        except FileExistsError:
-            return filename_exists_response
+            return auth.login(data)
+        except ValueError:
+            raise HTTPException(
+                status_code=401, detail=api_messages.login_failed
+            )
 
 
+# endregion
+
+
+# region Notes
+# Get Note
 @app.get(
     "/api/notes/{title}",
-    dependencies=[Depends(authenticate)],
-    response_model=Union[NoteContentResponseModel, NoteResponseModel],
+    dependencies=auth_deps,
+    response_model=Note,
 )
-def get_note(
-    title: str,
-    include_content: bool = True,
-):
+def get_note(title: str):
     """Get a specific note."""
     try:
-        note = Note(flatnotes, title)
-        if include_content:
-            return NoteContentResponseModel.model_validate(note)
-        else:
-            return NoteResponseModel.model_validate(note)
-    except InvalidTitleError:
-        return invalid_filename_response
+        return note_storage.get(title)
+    except ValueError:
+        raise HTTPException(
+            status_code=400, detail=api_messages.invalid_note_title
+        )
     except FileNotFoundError:
-        return note_not_found_response
+        raise HTTPException(404, api_messages.note_not_found)
 
 
-if config.auth_type != AuthType.READ_ONLY:
+if global_config.auth_type != AuthType.READ_ONLY:
 
+    # Create Note
+    @app.post(
+        "/api/notes",
+        dependencies=auth_deps,
+        response_model=Note,
+    )
+    def post_note(note: NoteCreate):
+        """Create a new note."""
+        try:
+            return note_storage.create(note)
+        except ValueError:
+            raise HTTPException(
+                status_code=400,
+                detail=api_messages.invalid_note_title,
+            )
+        except FileExistsError:
+            raise HTTPException(
+                status_code=409, detail=api_messages.note_exists
+            )
+
+    # Update Note
     @app.patch(
         "/api/notes/{title}",
-        dependencies=[Depends(authenticate)],
-        response_model=NoteContentResponseModel,
+        dependencies=auth_deps,
+        response_model=Note,
     )
-    def patch_note(title: str, new_data: NotePatchModel):
+    def patch_note(title: str, data: NoteUpdate):
         try:
-            note = Note(flatnotes, title)
-            if new_data.new_title is not None:
-                note.title = new_data.new_title
-            if new_data.new_content is not None:
-                note.content = new_data.new_content
-            return NoteContentResponseModel.model_validate(note)
-        except InvalidTitleError:
-            return invalid_filename_response
+            return note_storage.update(title, data)
+        except ValueError:
+            raise HTTPException(
+                status_code=400,
+                detail=api_messages.invalid_note_title,
+            )
         except FileExistsError:
-            return filename_exists_response
+            raise HTTPException(
+                status_code=409, detail=api_messages.note_exists
+            )
         except FileNotFoundError:
-            return note_not_found_response
+            raise HTTPException(404, api_messages.note_not_found)
 
-
-if config.auth_type != AuthType.READ_ONLY:
-
+    # Delete Note
     @app.delete(
         "/api/notes/{title}",
-        dependencies=[Depends(authenticate)],
+        dependencies=auth_deps,
         response_model=None,
     )
     def delete_note(title: str):
         try:
-            note = Note(flatnotes, title)
-            note.delete()
-        except InvalidTitleError:
-            return invalid_filename_response
+            note_storage.delete(title)
+        except ValueError:
+            raise HTTPException(
+                status_code=400,
+                detail=api_messages.invalid_note_title,
+            )
         except FileNotFoundError:
-            return note_not_found_response
+            raise HTTPException(404, api_messages.note_not_found)
 
 
-@app.get(
-    "/api/tags",
-    dependencies=[Depends(authenticate)],
-    response_model=List[str],
-)
-def get_tags():
-    """Get a list of all indexed tags."""
-    return flatnotes.get_tags()
+# endregion
 
 
+# region Search
 @app.get(
     "/api/search",
-    dependencies=[Depends(authenticate)],
-    response_model=List[SearchResultModel],
+    dependencies=auth_deps,
+    response_model=List[SearchResult],
 )
 def search(
     term: str,
@@ -210,51 +149,75 @@ def search(
     """Perform a full text search on all notes."""
     if sort == "lastModified":
         sort = "last_modified"
-    return [
-        SearchResultModel.model_validate(note_hit)
-        for note_hit in flatnotes.search(
-            term, sort=sort, order=order, limit=limit
-        )
-    ]
-
-
-@app.get("/api/config", response_model=ConfigModel)
-def get_config():
-    """Retrieve server-side config required for the UI."""
-    return ConfigModel.model_validate(config)
-
-
-if config.auth_type != AuthType.READ_ONLY:
-
-    @app.post(
-        "/api/attachments",
-        dependencies=[Depends(authenticate)],
-        response_model=None,
-    )
-    def post_attachment(file: UploadFile):
-        """Upload an attachment."""
-        if not is_valid_filename(file.filename):
-            return invalid_filename_response
-        filepath = os.path.join(ATTACHMENTS_DIR, file.filename)
-        if os.path.exists(filepath):
-            return filename_exists_response
-        with open(filepath, "wb") as f:
-            shutil.copyfileobj(file.file, f)
+    return note_storage.search(term, sort=sort, order=order, limit=limit)
 
 
 @app.get(
+    "/api/tags",
+    dependencies=auth_deps,
+    response_model=List[str],
+)
+def get_tags():
+    """Get a list of all indexed tags."""
+    return note_storage.get_tags()
+
+
+# endregion
+
+
+# region Config
+@app.get("/api/config", response_model=GlobalConfigResponseModel)
+def get_config():
+    """Retrieve server-side config required for the UI."""
+    return GlobalConfigResponseModel(auth_type=global_config.auth_type)
+
+
+# endregion
+
+
+# region Attachments
+# Get Attachment
+@app.get(
     "/attachments/{filename}",
-    dependencies=[Depends(authenticate)],
+    dependencies=auth_deps,
     include_in_schema=False,
 )
 def get_attachment(filename: str):
     """Download an attachment."""
-    if not is_valid_filename(filename):
-        raise HTTPException(status_code=400, detail="Invalid filename.")
-    filepath = os.path.join(ATTACHMENTS_DIR, filename)
-    if not os.path.isfile(filepath):
-        raise HTTPException(status_code=404, detail="File not found.")
-    return FileResponse(filepath)
+    try:
+        return attachment_storage.get(filename)
+    except ValueError:
+        raise HTTPException(
+            status_code=400,
+            detail=api_messages.invalid_attachment_filename,
+        )
+    except FileNotFoundError:
+        raise HTTPException(
+            status_code=404, detail=api_messages.attachment_not_found
+        )
 
+
+if global_config.auth_type != AuthType.READ_ONLY:
+
+    # Create Attachment
+    @app.post(
+        "/api/attachments",
+        dependencies=auth_deps,
+        response_model=None,
+    )
+    def post_attachment(file: UploadFile):
+        """Upload an attachment."""
+        try:
+            return attachment_storage.create(file)
+        except ValueError:
+            raise HTTPException(
+                status_code=400,
+                detail=api_messages.invalid_attachment_filename,
+            )
+        except FileExistsError:
+            raise HTTPException(409, api_messages.attachment_exists)
+
+
+# endregion
 
 app.mount("/", StaticFiles(directory="client/dist"), name="dist")
