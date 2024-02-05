@@ -232,7 +232,7 @@ export default {
         .catch(function (error) {
           if (!error.handled) {
             parent.searchFailed = true;
-            EventBus.$emit("unhandledServerError");
+            EventBus.$emit("unhandledServerErrorToast");
           }
         });
     },

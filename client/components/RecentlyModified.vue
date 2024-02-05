@@ -92,7 +92,7 @@ export default {
         .catch(function (error) {
           parent.loadingFailed = true;
           if (!error.handled) {
-            EventBus.$emit("unhandledServerError");
+            EventBus.$emit("unhandledServerErrorToast");
           }
         });
     },

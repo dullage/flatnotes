@@ -148,13 +148,9 @@ export default {
             typeof error.response !== "undefined" &&
             error.response.status == 401
           ) {
-            parent.$bvToast.toast("Incorrect login credentials ✘", {
-              variant: "danger",
-              noCloseButton: true,
-              toaster: "b-toaster-bottom-right",
-            });
+            EventBus.$emit("showToast", "danger", "Incorrect login credentials ✘")
           } else {
-            EventBus.$emit("unhandledServerError");
+            EventBus.$emit("unhandledServerErrorToast");
           }
         })
         .finally(function () {

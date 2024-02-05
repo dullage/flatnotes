@@ -61,7 +61,7 @@
       class="flex-grow-1"
       :titleToLoad="noteTitle"
       :auth-type="authType"
-      @note-deleted="noteDeletedToast"
+      @note-deleted="showToast('success', 'Note deleted ✓')"
     ></NoteViewerEditor>
   </div>
 </template>

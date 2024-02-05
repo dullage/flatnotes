@@ -134,12 +134,16 @@ export default {
       this.navigate(constants.basePaths.login);
     },
 
-    noteDeletedToast: function () {
-      this.$bvToast.toast("Note deleted ✓", {
-        variant: "success",
+    showToast: function (variant, message, title = null) {
+      const options = {
+        variant: variant,
         noCloseButton: true,
         toaster: "b-toaster-bottom-right",
-      });
+      };
+      if (title != null) {
+        options.title = title;
+      }
+      this.$bvToast.toast(message, options);
     },
 
     focusSearchInput: function () {
@@ -158,14 +162,10 @@ export default {
     },
 
     unhandledServerErrorToast: function () {
-      this.$bvToast.toast(
+      this.showToast(
+        "danger",
         "Unknown error communicating with the server. Please try again.",
-        {
-          title: "Unknown Error",
-          variant: "danger",
-          noCloseButton: true,
-          toaster: "b-toaster-bottom-right",
-        }
+        "Unknown Error"
       );
     },
 
@@ -186,7 +186,8 @@ export default {
     this.constants = constants;
 
     EventBus.$on("navigate", this.navigate);
-    EventBus.$on("unhandledServerError", this.unhandledServerErrorToast);
+    EventBus.$on("showToast", this.showToast);
+    EventBus.$on("unhandledServerErrorToast", this.unhandledServerErrorToast);
     EventBus.$on("updateNoteTitle", this.updateNoteTitle);
 
     Mousetrap.bind("/", function () {

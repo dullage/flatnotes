@@ -93,11 +93,7 @@ export default {
           }=${encodeURIComponent(this.searchTermInput)}`
         );
       } else {
-        this.$bvToast.toast("Please enter a search term ✘", {
-          variant: "danger",
-          noCloseButton: true,
-          toaster: "b-toaster-bottom-right",
-        });
+        EventBus.$emit("showToast", "danger", "Please enter a search term ✘");
       }
     },
 

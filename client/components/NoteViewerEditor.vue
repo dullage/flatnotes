@@ -243,13 +243,10 @@ export default {
 
   methods: {
     badFilenameToast: function (invalidItem) {
-      this.$bvToast.toast(
-        `Invalid ${invalidItem}. Due to filename restrictions, the following characters are not allowed: <>:"/\\|?*`,
-        {
-          variant: "danger",
-          noCloseButton: true,
-          toaster: "b-toaster-bottom-right",
-        }
+      EventBus.$emit(
+        "showToast",
+        "danger",
+        `Invalid ${invalidItem}. Due to filename restrictions, the following characters are not allowed: <>:"/\\|?*`
       );
     },
 
@@ -276,7 +273,7 @@ export default {
             parent.noteLoadFailedMessage = "Note not found";
             parent.noteLoadFailed = true;
           } else {
-            EventBus.$emit("unhandledServerError");
+            EventBus.$emit("unhandledServerErrorToast");
             parent.noteLoadFailed = true;
           }
         });
@@ -392,26 +389,20 @@ export default {
     },
 
     existingTitleToast: function () {
-      this.$bvToast.toast(
+      EventBus.$emit(
+        "showToast",
+        "danger",
         "A note with this title already exists. Please try again with a new title.",
-        {
-          title: "Duplicate ✘",
-          variant: "danger",
-          noCloseButton: true,
-          toaster: "b-toaster-bottom-right",
-        }
+        "Duplicate ✘"
       );
     },
 
     entityTooLargeToast: function (entityName) {
-      this.$bvToast.toast(
+      EventBus.$emit(
+        "showToast",
+        "danger",
         `This ${entityName.toLowerCase()} is too large. Please try again with a smaller ${entityName.toLowerCase()} or adjust your server configuration.`,
-        {
-          title: `${entityName} Too Large ✘`,
-          variant: "danger",
-          noCloseButton: true,
-          toaster: "b-toaster-bottom-right",
-        }
+        `${entityName} Too Large ✘`
       );
     },
 
@@ -426,11 +417,11 @@ export default {
         this.titleInput = this.titleInput.trim();
       }
       if (!this.titleInput) {
-        this.$bvToast.toast("Cannot save note without a title ✘", {
-          variant: "danger",
-          noCloseButton: true,
-          toaster: "b-toaster-bottom-right",
-        });
+        EventBus.$emit(
+          "showToast",
+          "danger",
+          "Cannot save note without a title ✘"
+        );
         return;
       }
 
@@ -455,7 +446,7 @@ export default {
             } else if (error.response?.status == 413) {
               this.entityTooLargeToast("Note");
             } else {
-              EventBus.$emit("unhandledServerError");
+              EventBus.$emit("unhandledServerErrorToast");
             }
           });
       }
@@ -480,7 +471,7 @@ export default {
             ) {
               parent.existingTitleToast();
             } else {
-              EventBus.$emit("unhandledServerError");
+              EventBus.$emit("unhandledServerErrorToast");
             }
           });
       }
@@ -507,11 +498,7 @@ export default {
     },
 
     noteSavedToast: function () {
-      this.$bvToast.toast("Note saved ✓", {
-        variant: "success",
-        noCloseButton: true,
-        toaster: "b-toaster-bottom-right",
-      });
+      EventBus.$emit("showToast", "success", "Note saved ✓");
     },
 
     cancelNote: function () {
@@ -575,7 +562,7 @@ export default {
               })
               .catch(function (error) {
                 if (!error.handled) {
-                  EventBus.$emit("unhandledServerError");
+                  EventBus.$emit("unhandledServerErrorToast");
                 }
               });
           }
@@ -613,11 +600,7 @@ export default {
         return false;
       }
 
-      this.$bvToast.toast("Uploading attachment...", {
-        variant: "success",
-        noCloseButton: true,
-        toaster: "b-toaster-bottom-right",
-      });
+      EventBus.$emit("showToast", "success", "Uploading attachment...");
 
       const formData = new FormData();
       formData.append("file", file);
@@ -628,31 +611,24 @@ export default {
           },
         })
         .then(function () {
-          parent.$bvToast.toast("Attachment uploaded ✓", {
-            variant: "success",
-            noCloseButton: true,
-            toaster: "b-toaster-bottom-right",
-          });
+          EventBus.$emit("showToast", "success", "Attachment uploaded ✓");
           return true;
         })
         .catch(function (error) {
           if (error.response?.status == 409) {
-            parent.$bvToast.toast(
-              "An attachment with this filename already exists ✘",
-              {
-                variant: "danger",
-                noCloseButton: true,
-                toaster: "b-toaster-bottom-right",
-              }
+            EventBus.$emit(
+              "showToast",
+              "danger",
+              "An attachment with this filename already exists ✘"
             );
           } else if (error.response?.status == 413) {
             this.entityTooLargeToast("Attachment");
           } else {
-            parent.$bvToast.toast("Failed to upload attachment ✘", {
-              variant: "danger",
-              noCloseButton: true,
-              toaster: "b-toaster-bottom-right",
-            });
+            EventBus.$emit(
+              "showToast",
+              "danger",
+              "Failed to upload attachment ✘"
+            );
           }
           return false;
         });
