@@ -264,7 +264,6 @@ export default {
             response.data.lastModified,
             response.data.content
           );
-          // EventBus.$emit("updateDocumentTitle", parent.currentNote.title);
         })
         .catch(function (error) {
           if (error.handled) {
@@ -404,6 +403,18 @@ export default {
       );
     },
 
+    entityTooLargeToast: function (entityName) {
+      this.$bvToast.toast(
+        `This ${entityName.toLowerCase()} is too large. Please try again with a smaller ${entityName.toLowerCase()} or adjust your server configuration.`,
+        {
+          title: `${entityName} Too Large ✘`,
+          variant: "danger",
+          noCloseButton: true,
+          toaster: "b-toaster-bottom-right",
+        }
+      );
+    },
+
     saveNote: function () {
       let parent = this;
       let newContent = this.getEditorContent();
@@ -439,11 +450,10 @@ export default {
           .catch(function (error) {
             if (error.handled) {
               return;
-            } else if (
-              typeof error.response !== "undefined" &&
-              error.response.status == 409
-            ) {
+            } else if (error.response?.status == 409) {
               parent.existingTitleToast();
+            } else if (error.response?.status == 413) {
+              this.entityTooLargeToast("Note");
             } else {
               EventBus.$emit("unhandledServerError");
             }
@@ -635,6 +645,8 @@ export default {
                 toaster: "b-toaster-bottom-right",
               }
             );
+          } else if (error.response?.status == 413) {
+            this.entityTooLargeToast("Attachment");
           } else {
             parent.$bvToast.toast("Failed to upload attachment ✘", {
               variant: "danger",
