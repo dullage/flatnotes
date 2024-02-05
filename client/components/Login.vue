@@ -146,7 +146,7 @@ export default {
             return;
           } else if (
             typeof error.response !== "undefined" &&
-            [400, 422].includes(error.response.status)
+            error.response.status == 401
           ) {
             parent.$bvToast.toast("Incorrect login credentials ✘", {
               variant: "danger",

@@ -26,7 +26,8 @@ api.interceptors.response.use(
   function (error) {
     if (
       typeof error.response !== "undefined" &&
-      error.response.status === 401
+      error.response.status === 401 &&
+      error.response.config.url !== "/api/token"
     ) {
       EventBus.$emit(
         "navigate",
