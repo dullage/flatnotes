@@ -116,7 +116,7 @@ class FileSystemNotes(BaseNotes):
                 query = Every()
             else:
                 parser = MultifieldParser(
-                    ["title", "content", "tags"], self.index.schema
+                    self._fieldnames_for_term(term), self.index.schema
                 )
                 parser.add_plugin(DateParserPlugin())
                 query = parser.parse(term)
@@ -338,6 +338,16 @@ class FileSystemNotes(BaseNotes):
             content_highlights=content_highlights,
             tag_matches=tag_matches,
         )
+
+    def _fieldnames_for_term(self, term: str) -> List[str]:
+        """Return a list of field names to search based on the given term. If
+        the term includes a phrase then only search title and content. If the
+        term does not include a phrase then also search tags."""
+        fields = ["title", "content"]
+        if '"' not in term:
+            # If the term does not include a phrase then also search tags
+            fields.append("tags")
+        return fields
 
     @staticmethod
     def _get_matched_fields(matched_terms):
