@@ -8,7 +8,7 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from qrcode import QRCode
 
-from global_config import GlobalConfig
+from global_config import AuthType, GlobalConfig
 from helpers import get_env
 
 from ..base import BaseAuth
@@ -30,7 +30,8 @@ class LocalAuth(BaseAuth):
         )
 
         # TOTP
-        if global_config.auth_type == "totp":
+        self.is_totp_enabled = False
+        if global_config.auth_type == AuthType.TOTP:
             self.is_totp_enabled = True
             self.totp_key = get_env("FLATNOTES_TOTP_KEY", mandatory=True)
             self.totp_key = b32encode(self.totp_key.encode("utf-8"))
