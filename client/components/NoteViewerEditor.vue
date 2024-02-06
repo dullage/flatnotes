@@ -570,34 +570,24 @@ export default {
     },
 
     uploadImageHook(file, callback) {
-      // image.png is the default name given to images copied from the clipboard. To avoid conflicts we'll append a timestamp.
-      if (file.name == "image.png") {
-        const currentDateString = new Date().toISOString().replace(/:/g, "-");
-        file = new File([file], `image-${currentDateString}.png`, {
-          type: file.type,
-        });
-      }
-
-      // If the user has entered an alt text, use it. Otherwise, use the filename.
       const altTextInputValue = document.getElementById(
         "toastuiAltTextInput"
       )?.value;
-      const altText = altTextInputValue ? altTextInputValue : file.name;
 
       // Upload the image then use the callback to insert the URL into the editor
-      this.postAttachment(file).then(function (success) {
-        if (success === true) {
-          callback(`/attachments/${encodeURIComponent(file.name)}`, altText);
+      this.postAttachment(file).then(function (data) {
+        if (data) {
+          // If the user has entered an alt text, use it. Otherwise, use the filename returned by the API.
+          const altText = altTextInputValue ? altTextInputValue : data.filename;
+          callback(data.url, altText);
         }
       });
     },
 
     postAttachment(file) {
-      let parent = this;
-
       if (reservedFilenameCharacters.test(file.name)) {
         this.badFilenameToast("filename");
-        return false;
+        return;
       }
 
       EventBus.$emit("showToast", "success", "Uploading attachment...");
@@ -610,9 +600,9 @@ export default {
             "Content-Type": "multipart/form-data",
           },
         })
-        .then(function () {
+        .then(function (response) {
           EventBus.$emit("showToast", "success", "Attachment uploaded ✓");
-          return true;
+          return response.data;
         })
         .catch(function (error) {
           if (error.response?.status == 409) {
@@ -630,7 +620,7 @@ export default {
               "Failed to upload attachment ✘"
             );
           }
-          return false;
+          return;
         });
     },
 

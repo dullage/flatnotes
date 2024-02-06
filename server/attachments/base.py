@@ -3,10 +3,12 @@ from abc import ABC, abstractmethod
 from fastapi import UploadFile
 from fastapi.responses import FileResponse
 
+from .models import AttachmentCreateResponse
+
 
 class BaseAttachments(ABC):
     @abstractmethod
-    def create(self, file: UploadFile) -> None:
+    def create(self, file: UploadFile) -> AttachmentCreateResponse:
         """Create a new attachment."""
         pass
 

@@ -6,6 +6,7 @@ from fastapi.staticfiles import StaticFiles
 
 import api_messages
 from attachments.base import BaseAttachments
+from attachments.models import AttachmentCreateResponse
 from auth.base import BaseAuth
 from auth.models import Login, Token
 from global_config import AuthType, GlobalConfig, GlobalConfigResponseModel
@@ -203,7 +204,7 @@ if global_config.auth_type != AuthType.READ_ONLY:
     @app.post(
         "/api/attachments",
         dependencies=auth_deps,
-        response_model=None,
+        response_model=AttachmentCreateResponse,
     )
     def post_attachment(file: UploadFile):
         """Upload an attachment."""
