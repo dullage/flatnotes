@@ -179,6 +179,12 @@ def get_config():
 # region Attachments
 # Get Attachment
 @app.get(
+    "/api/attachments/{filename}",
+    dependencies=auth_deps,
+)
+# Include a secondary route used to create relative URLs that can be used
+# outside the context of flatnotes (e.g. "/attachments/image.jpg").
+@app.get(
     "/attachments/{filename}",
     dependencies=auth_deps,
     include_in_schema=False,
