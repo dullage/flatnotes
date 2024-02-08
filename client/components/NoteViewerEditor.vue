@@ -585,6 +585,8 @@ export default {
     },
 
     postAttachment(file) {
+      let parent = this;
+
       if (reservedFilenameCharacters.test(file.name)) {
         this.badFilenameToast("filename");
         return;
@@ -612,7 +614,7 @@ export default {
               "An attachment with this filename already exists ✘"
             );
           } else if (error.response?.status == 413) {
-            this.entityTooLargeToast("Attachment");
+            parent.entityTooLargeToast("Attachment");
           } else {
             EventBus.$emit(
               "showToast",
