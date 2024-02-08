@@ -444,7 +444,7 @@ export default {
             } else if (error.response?.status == 409) {
               parent.existingTitleToast();
             } else if (error.response?.status == 413) {
-              this.entityTooLargeToast("Note");
+              parent.entityTooLargeToast("Note");
             } else {
               EventBus.$emit("unhandledServerErrorToast");
             }
