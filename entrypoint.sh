@@ -2,6 +2,21 @@
 
 set -e
 
+echo "\
+======================================
+======== Welcome to flatnotes ========
+======================================
+
+If you enjoy using flatnotes, please
+consider sponsoring the project at:
+
+https://sponsor.flatnotes.io
+
+It would really make my day 🙏.
+
+──────────────────────────────────────
+"
+
 flatnotes_command="python -m \
                   uvicorn \
                   main:app \
