@@ -30,7 +30,9 @@ ENV FLATNOTES_PATH=/data
 RUN mkdir -p ${APP_PATH}
 RUN mkdir -p ${FLATNOTES_PATH}
 
-RUN apt update && apt install -y gosu \
+RUN apt update && apt install -y \
+    curl \
+    gosu \
     && rm -rf /var/lib/apt/lists/*
 
 RUN pip install pipenv
@@ -45,6 +47,7 @@ COPY --from=build ${BUILD_DIR}/client/dist ./client/dist
 
 VOLUME /data
 EXPOSE 8080/tcp
+HEALTHCHECK --interval=60s --timeout=10s CMD curl -f http://localhost:8080/health || exit 1
 
 COPY entrypoint.sh /
 RUN chmod +x /entrypoint.sh

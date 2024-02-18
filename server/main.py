@@ -227,4 +227,15 @@ if global_config.auth_type != AuthType.READ_ONLY:
 
 # endregion
 
+
+# region Healthcheck
+@app.get("/health")
+def healthcheck() -> str:
+    """A lightweight endpoint that simply returns 'OK' to indicate the server
+    is running."""
+    return "OK"
+
+
+# endregion
+
 app.mount("/", StaticFiles(directory="client/dist"), name="dist")
