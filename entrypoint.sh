@@ -2,11 +2,6 @@
 
 set -e
 
-echo "WARNING: Breaking changes introduced in version 3.x:"
-echo "  - The port flatnotes uses inside the Docker container has been changed to 8080 (previously 80)."
-echo "  - To accompany the above change, support for the PORT environment variable has been removed."
-echo "  - The note directory inside the Docker container has moved from /app/data to simply /data."
-
 flatnotes_command="python -m \
                   uvicorn \
                   main:app \
