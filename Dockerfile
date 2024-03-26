@@ -17,7 +17,7 @@ COPY client ./client
 RUN npm run build
 
 # Runtime Container
-FROM python:3.11-slim-bullseye
+FROM python:3.11-alpine3.19
 
 ARG BUILD_DIR
 
@@ -30,17 +30,15 @@ ENV FLATNOTES_PATH=/data
 RUN mkdir -p ${APP_PATH}
 RUN mkdir -p ${FLATNOTES_PATH}
 
-RUN apt update && apt install -y \
-    curl \
-    gosu \
-    && rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache su-exec curl
 
-RUN pip install pipenv
+RUN pip install --no-cache-dir pipenv
 
 WORKDIR ${APP_PATH}
 
 COPY LICENSE Pipfile Pipfile.lock ./
-RUN pipenv install --deploy --ignore-pipfile --system
+RUN pipenv install --deploy --ignore-pipfile --system && \
+    pipenv --clear
 
 COPY server ./server
 COPY --from=build ${BUILD_DIR}/client/dist ./client/dist
