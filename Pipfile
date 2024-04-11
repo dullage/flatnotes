@@ -10,14 +10,14 @@ rope = "*"
 isort = "*"
 
 [packages]
-whoosh = "2.7.4"
-fastapi = "0.102.0"
-uvicorn = {extras = ["standard"], version = "0.23.2"}
-aiofiles = "23.2.0"
-python-jose = {extras = ["cryptography"], version = "3.3.0"}
-pyotp = "2.8.0"
-qrcode = "7.4.2"
-python-multipart = "0.0.6"
+whoosh = "==2.7.4"
+fastapi = "==0.110.1"
+uvicorn = {extras = ["standard"], version = "==0.29.0"}
+aiofiles = "==23.2.1"
+python-jose = {extras = ["cryptography"], version = "==3.3.0"}
+pyotp = "==2.9.0"
+qrcode = "==7.4.2"
+python-multipart = "==0.0.9"
 
 [requires]
 python_version = "3.11"
