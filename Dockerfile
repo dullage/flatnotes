@@ -1,16 +1,14 @@
 ARG BUILD_DIR=/build
 
 # Build Container
-FROM --platform=$BUILDPLATFORM python:3.11-slim-bullseye AS build
+FROM --platform=$BUILDPLATFORM node:20-alpine AS build
 
 ARG BUILD_DIR
 
 RUN mkdir ${BUILD_DIR}
 WORKDIR ${BUILD_DIR}
 
-RUN apt update && apt install -y npm
-
-COPY package.json package-lock.json .htmlnanorc ./
+COPY package.json package-lock.json vite.config.js .htmlnanorc ./
 RUN npm ci
 
 COPY client ./client

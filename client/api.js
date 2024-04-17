@@ -1,8 +1,8 @@
-import * as constants from "./constants";
+import * as constants from "./constants.js";
 
-import EventBus from "./eventBus";
+import EventBus from "./eventBus.js";
 import axios from "axios";
-import { getToken } from "./tokenStorage";
+import { getToken } from "./tokenStorage.js";
 
 const api = axios.create();
 

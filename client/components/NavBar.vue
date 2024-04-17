@@ -109,10 +109,10 @@
 </style>
 
 <script>
-import * as constants from "../constants";
+import * as constants from "../constants.js";
 
-import EventBus from "../eventBus";
-import Logo from "./Logo";
+import EventBus from "../eventBus.js";
+import Logo from "./Logo.vue";
 
 export default {
   components: {

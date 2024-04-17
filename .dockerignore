@@ -11,3 +11,4 @@
 !server/**
 !entrypoint.sh
 !.htmlnanorc
+!vite.config.js

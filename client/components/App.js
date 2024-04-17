@@ -1,19 +1,19 @@
-import * as constants from "../constants";
-import * as helpers from "../helpers";
+import * as constants from "../constants.js";
+import * as helpers from "../helpers.js";
 
-import { clearToken, loadToken } from "../tokenStorage";
+import { clearToken, loadToken } from "../tokenStorage.js";
 
-import EventBus from "../eventBus";
-import LoadingIndicator from "./LoadingIndicator";
-import Login from "./Login";
-import Logo from "./Logo";
+import EventBus from "../eventBus.js";
+import LoadingIndicator from "./LoadingIndicator.vue";
+import Login from "./Login.vue";
+import Logo from "./Logo.vue";
 import Mousetrap from "mousetrap";
-import NavBar from "./NavBar";
-import NoteViewerEditor from "./NoteViewerEditor";
-import RecentlyModified from "./RecentlyModified";
-import SearchInput from "./SearchInput";
-import SearchResults from "./SearchResults";
-import api from "../api";
+import NavBar from "./NavBar.vue";
+import NoteViewerEditor from "./NoteViewerEditor.vue";
+import RecentlyModified from "./RecentlyModified.vue";
+import SearchInput from "./SearchInput.vue";
+import SearchResults from "./SearchResults.vue";
+import api from "../api.js";
 
 export default {
   name: "App",

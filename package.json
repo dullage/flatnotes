@@ -5,21 +5,18 @@
   "main": "client/index.html",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "parcel build client/index.html --out-dir client/dist",
-    "watch": "parcel client/index.html --out-dir client/dist"
+    "build": "vite build",
+    "watch": "vite build --watch"
   },
   "author": "Adam Dullage",
   "license": "MIT",
   "devDependencies": {
     "@toast-ui/editor-plugin-code-syntax-highlight": "3.1.0",
     "@toast-ui/vue-editor": "3.2.3",
-    "@vue/component-compiler-utils": "3.3.0",
+    "@vitejs/plugin-vue2": "^2.3.1",
     "axios": "1.6.8",
     "bootstrap-vue": "2.23.1",
     "mousetrap": "1.6.5",
-    "parcel-bundler": "1.12.5",
-    "sass": "1.74.1",
-    "vue-hot-reload-api": "2.3.4",
-    "vue-template-compiler": "2.7.14"
+    "vite": "^5.2.9"
   }
 }

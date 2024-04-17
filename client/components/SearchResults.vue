@@ -138,14 +138,14 @@
 </style>
 
 <script>
-import * as constants from "../constants";
-import * as helpers from "../helpers";
+import * as constants from "../constants.js";
+import * as helpers from "../helpers.js";
 
-import EventBus from "../eventBus";
-import LoadingIndicator from "./LoadingIndicator";
-import SearchInput from "./SearchInput";
-import { SearchResult } from "../classes";
-import api from "../api";
+import EventBus from "../eventBus.js";
+import LoadingIndicator from "./LoadingIndicator.vue";
+import SearchInput from "./SearchInput.vue";
+import { SearchResult } from "../classes.js";
+import api from "../api.js";
 
 export default {
   components: {

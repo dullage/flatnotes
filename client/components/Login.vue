@@ -86,13 +86,13 @@
 </style>
 
 <script>
-import * as constants from "../constants";
-import * as helpers from "../helpers";
-import { setToken } from "../tokenStorage";
+import * as constants from "../constants.js";
+import * as helpers from "../helpers.js";
+import { setToken } from "../tokenStorage.js";
 
-import EventBus from "../eventBus";
-import Logo from "./Logo";
-import api from "../api";
+import EventBus from "../eventBus.js";
+import Logo from "./Logo.vue";
+import api from "../api.js";
 
 export default {
   components: {

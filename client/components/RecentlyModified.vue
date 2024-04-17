@@ -40,10 +40,10 @@
 </style>
 
 <script>
-import EventBus from "../eventBus";
+import EventBus from "../eventBus.js";
 import LoadingIndicator from "./LoadingIndicator.vue";
-import { SearchResult } from "../classes";
-import api from "../api";
+import { SearchResult } from "../classes.js";
+import api from "../api.js";
 
 export default {
   components: {

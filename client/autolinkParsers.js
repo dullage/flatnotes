@@ -1,4 +1,4 @@
-import { basePaths } from "./constants";
+import { basePaths } from "./constants.js";
 
 function parseWikiLink(source) {
   const matched = source.matchAll(/\[\[(.*)\]\]/g);

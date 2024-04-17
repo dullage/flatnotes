@@ -60,9 +60,9 @@
 </style>
 
 <script>
-import * as constants from "../constants";
+import * as constants from "../constants.js";
 
-import EventBus from "../eventBus";
+import EventBus from "../eventBus.js";
 
 export default {
   props: { initialValue: { type: String } },

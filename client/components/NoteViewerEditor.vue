@@ -153,17 +153,17 @@ pre[class*="language-"] {
 </style>
 
 <script>
-import * as constants from "../constants";
+import * as constants from "../constants.js";
 
 import { Editor } from "@toast-ui/vue-editor";
-import EventBus from "../eventBus";
-import LoadingIndicator from "./LoadingIndicator";
+import EventBus from "../eventBus.js";
+import LoadingIndicator from "./LoadingIndicator.vue";
 import Mousetrap from "mousetrap";
-import { Note } from "../classes";
+import { Note } from "../classes.js";
 import { Viewer } from "@toast-ui/vue-editor";
-import api from "../api";
+import api from "../api.js";
 import codeSyntaxHighlight from "@toast-ui/editor-plugin-code-syntax-highlight/dist/toastui-editor-plugin-code-syntax-highlight-all.js";
-import { extendedAutolinks } from "../autolinkParsers";
+import { extendedAutolinks } from "../autolinkParsers.js";
 
 const reservedFilenameCharacters = /[<>:"/\\|?*]/;
 
