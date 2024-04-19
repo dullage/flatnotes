@@ -22,7 +22,7 @@ flatnotes_command="python -m \
                   main:app \
                   --app-dir server \
                   --host 0.0.0.0 \
-                  --port 8080 \
+                  --port ${FLATNOTES_PORT} \
                   --proxy-headers \
                   --forwarded-allow-ips '*'"
 
@@ -32,7 +32,7 @@ if [ `id -u` -eq 0 ] && [ `id -g` -eq 0 ]; then
 
     echo Starting flatnotes as user ${PUID}...
     exec ${EXEC_TOOL} ${PUID}:${PGID} ${flatnotes_command}
-      
+
 else
     echo "A user was set by docker, skipping file permission changes."
     echo Starting flatnotes as user $(id -u)...

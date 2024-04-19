@@ -2,13 +2,14 @@
 **
 
 # Include the following
+!.htmlnanorc
 !LICENSE
 !Pipfile
 !Pipfile.lock
-!package.json
-!package-lock.json
 !client/**
-!server/**
 !entrypoint.sh
-!.htmlnanorc
+!healthcheck.sh
+!package-lock.json
+!package.json
+!server/**
 !vite.config.js
