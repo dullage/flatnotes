@@ -1,3 +1,37 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+    body {
+        --theme-brand: 248 166 107;
+
+        --theme-background: 255 255 255;
+        --theme-background-elevated: 255 255 255;
+        --theme-background-tint: 243 244 245;
+        --theme-background-highlight: 239 243 255;
+
+        --theme-text: 44 49 57;
+        --theme-text-muted: 136 145 161;
+        --theme-text-very-muted: 193 199 208;
+
+        --theme-shadow: 236 238 240;
+        --theme-border: 236 238 240;
+    }
+
+    body.dark-theme {
+        /* --theme-brand: 248 166 107; */
+
+        --theme-background: 34 38 44;
+        --theme-background-elevated: 44 49 57;
+        --theme-background-tint: 34 38 44;
+        --theme-background-highlight: 136 145 161;
+
+        --theme-text: 193 199 208;
+        --theme-text-muted: 136 145 161;
+        --theme-text-very-muted: 94 107 128;
+
+        --theme-shadow: none;
+        --theme-border: 94 107 128;
+    }
+}
