@@ -1,14 +1,7 @@
-import "./global.scss"
+import App from "/App.vue";
+import { createApp } from "vue";
+import router from "/router.js";
 
-import { BootstrapVue, IconsPlugin } from "bootstrap-vue";
-
-import App from "./components/App.vue";
-import Vue from "vue";
-
-Vue.use(BootstrapVue);
-Vue.use(IconsPlugin);
-
-new Vue({
-  el: "#app",
-  render: (h) => h(App),
-});
+const app = createApp(App);
+app.use(router);
+app.mount("#app");
