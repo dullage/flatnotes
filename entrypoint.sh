@@ -1,5 +1,8 @@
 #!/bin/sh
 
+[ "$EXEC_TOOL" ] || EXEC_TOOL=gosu
+[ "$FLATNOTES_PORT" ] || FLATNOTES_PORT=8080
+
 set -e
 
 echo "\
