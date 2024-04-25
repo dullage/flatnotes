@@ -3,6 +3,9 @@
 module.exports = {
   content: ["client/**/*.{html,js,vue}"],
   theme: {
+    fontFamily: {
+      sans: ["Poppins", "sans-serif"],
+    },
     screens: {
       sm: "640px",
       md: "768px",
@@ -18,6 +21,8 @@ module.exports = {
           "rgb(var(--theme-background-tint) / <alpha-value>)",
         "theme-background-highlight":
           "rgb(var(--theme-background-highlight) / <alpha-value>)",
+        "theme-background-hover":
+          "rgb(var(--theme-background-hover) / <alpha-value>)",
         "theme-text": "rgb(var(--theme-text) / <alpha-value>)",
         "theme-text-muted": "rgb(var(--theme-text-muted) / <alpha-value>)",
         "theme-text-very-muted":

@@ -3,6 +3,14 @@
 @tailwind utilities;
 
 @layer base {
+    @font-face {
+        font-family: "Poppins";
+        font-style: normal;
+        font-weight: 400;
+        font-display: swap;
+        src: url("/assets/fonts/Poppins/Poppins-Regular.ttf");
+    }
+
     body {
         --theme-brand: 248 166 107;
 
@@ -10,6 +18,7 @@
         --theme-background-elevated: 255 255 255;
         --theme-background-tint: 243 244 245;
         --theme-background-highlight: 239 243 255;
+        --theme-background-hover: var(--theme-background-tint);
 
         --theme-text: 44 49 57;
         --theme-text-muted: 136 145 161;
@@ -26,6 +35,7 @@
         --theme-background-elevated: 44 49 57;
         --theme-background-tint: 34 38 44;
         --theme-background-highlight: 136 145 161;
+        --theme-background-hover: var(--theme-background-elevated);
 
         --theme-text: 193 199 208;
         --theme-text-muted: 136 145 161;
