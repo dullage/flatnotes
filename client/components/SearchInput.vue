@@ -1,23 +1,24 @@
 <template>
-  <form class="flex" v-on:submit.prevent="search">
+  <form class="flex w-full max-w-[500px]" v-on:submit.prevent="search">
     <input
       type="text"
-      class="rounded rounded-r-none border border-theme-border bg-theme-background-elevated px-3 py-2"
+      class="rounded rounded-r-none border border-theme-border bg-theme-background-elevated px-3 py-2 w-full focus:outline-none focus:ring-1"
       placeholder="Search"
     />
-    <Button
+    <ButtonComponent
       :iconPath="mdilMagnify"
       iconSize="1.75em"
-      class="rounded-l-none border border-l-0 border-theme-border"
+      class="rounded-l-none border border-l-0 border-theme-border focus:outline-none focus:ring-1"
     />
   </form>
 </template>
 
 <script setup>
-import Button from "./Button.vue";
 import { mdilMagnify } from "@mdi/light-js";
 
+import ButtonComponent from "./ButtonComponent.vue";
+
 function search() {
-  console.log("searching...");
+  console.log("searching...");  // TODO: Implement search functionality
 }
 </script>

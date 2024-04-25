@@ -1,21 +1,28 @@
 <template>
   <nav class="flex justify-between">
-    <Logo></Logo>
+    <RouterLink to="/">
+      <Logo :class="{ invisible: hideLogo }"></Logo>
+    </RouterLink>
     <div>
-      <Button
+      <ButtonComponent
         :iconPath="mdilPlusCircle"
         label="New Note"
         @click="toggleTheme"
-      ></Button>
+      />
     </div>
   </nav>
 </template>
 
 <script setup>
 import { mdilPlusCircle } from "@mdi/light-js";
+import { RouterLink } from "vue-router";
 
-import Button from "/components/Button.vue";
-import Logo from "/components/Logo.vue";
+import ButtonComponent from "../components/ButtonComponent.vue";
+import Logo from "../components/Logo.vue";
+
+defineProps({
+  hideLogo: Boolean
+});
 
 function toggleTheme() {
   document.body.classList.toggle("dark-theme");
