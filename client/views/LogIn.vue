@@ -14,7 +14,7 @@
         />
         <label for="remember-me">Remember Me</label>
       </div>
-      <ButtonComponent :iconPath="mdilLogin" label="Log In" />
+      <CustomButton :iconPath="mdilLogin" label="Log In" />
     </form>
   </div>
 </template>
@@ -23,7 +23,7 @@
 import { mdilLogin } from "@mdi/light-js";
 import { ref } from "vue";
 
-import ButtonComponent from "../components/ButtonComponent.vue";
+import CustomButton from "../components/CustomButton.vue";
 import Logo from "../components/Logo.vue";
 import TextInput from "../components/TextInput.vue";
 

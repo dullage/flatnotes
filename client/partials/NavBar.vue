@@ -4,7 +4,7 @@
       <Logo :class="{ invisible: hideLogo }"></Logo>
     </RouterLink>
     <div>
-      <ButtonComponent
+      <CustomButton
         :iconPath="mdilPlusCircle"
         label="New Note"
         @click="toggleTheme"
@@ -17,11 +17,11 @@
 import { mdilPlusCircle } from "@mdi/light-js";
 import { RouterLink } from "vue-router";
 
-import ButtonComponent from "../components/ButtonComponent.vue";
+import CustomButton from "../components/CustomButton.vue";
 import Logo from "../components/Logo.vue";
 
 defineProps({
-  hideLogo: Boolean
+  hideLogo: Boolean,
 });
 
 function toggleTheme() {
