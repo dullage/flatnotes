@@ -22,7 +22,7 @@
 <script setup>
 import { mdilLogin } from "@mdi/light-js";
 import { ref } from "vue";
-import { RouterLink, useRouter } from "vue-router";
+import { useRouter } from "vue-router";
 
 import CustomButton from "../components/CustomButton.vue";
 import Logo from "../components/Logo.vue";
