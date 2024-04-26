@@ -22,14 +22,17 @@
 <script setup>
 import { mdilLogin } from "@mdi/light-js";
 import { ref } from "vue";
+import { RouterLink, useRouter } from "vue-router";
 
 import CustomButton from "../components/CustomButton.vue";
 import Logo from "../components/Logo.vue";
 import TextInput from "../components/TextInput.vue";
 
+const router = useRouter();
 const rememberMe = ref(false);
 
 function login() {
-  console.log("logging in..."); // TODO: Implement login functionality
+  router.push({ name: "home" });
+  // TODO: Implement login functionality
 }
 </script>
