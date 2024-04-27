@@ -4,7 +4,7 @@ function getCookieString(token) {
   return `${tokenStorageKey}=${token}; path=/attachments; SameSite=Strict`;
 }
 
-export function setToken(token, persist = false) {
+export function storeToken(token, persist = false) {
   document.cookie = getCookieString(token);
   sessionStorage.setItem(tokenStorageKey, token);
   if (persist === true) {
@@ -12,18 +12,18 @@ export function setToken(token, persist = false) {
   }
 }
 
-export function getToken() {
+export function getStoredToken() {
   return sessionStorage.getItem(tokenStorageKey);
 }
 
-export function loadToken() {
+export function loadStoredToken() {
   const token = localStorage.getItem(tokenStorageKey);
   if (token != null) {
-    setToken(token, false);
+    storeToken(token, false);
   }
 }
 
-export function clearToken() {
+export function clearStoredToken() {
   sessionStorage.removeItem(tokenStorageKey);
   localStorage.removeItem(tokenStorageKey);
   document.cookie =

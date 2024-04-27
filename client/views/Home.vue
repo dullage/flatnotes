@@ -2,12 +2,31 @@
   <div class="h-full">
     <div class="flex h-full flex-col items-center justify-center">
       <Logo class="mb-5" />
-      <SearchInput class="shadow-[0_0_20px] shadow-theme-shadow" />
+      <SearchInput class="mb-5 shadow-[0_0_20px] shadow-theme-shadow" />
+      <div class="flex flex-col items-center min-h-56">
+        <p
+          v-if="notes.length > 0"
+          class="mb-2 text-xs font-bold text-theme-text-very-muted"
+        >
+          RECENTLY MODIFIED
+        </p>
+        <CustomButton v-for="note in notes" :label="note.title" />
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
+import { ref } from "vue";
+
+import { getNotes } from "../api.js";
+import CustomButton from "../components/CustomButton.vue";
 import Logo from "../components/Logo.vue";
 import SearchInput from "../partials/SearchInput.vue";
+
+const notes = ref([]);
+
+getNotes("*", "lastModified", "desc", 5).then((response) => {
+  notes.value = response.data;
+});
 </script>

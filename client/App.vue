@@ -12,6 +12,7 @@ import { RouterView, useRoute } from "vue-router";
 import NavBar from "./partials/NavBar.vue";
 import { getConfig } from "./api.js";
 import { useGlobalStore } from "./globalStore.js";
+import { loadStoredToken } from "./tokenStorage.js";
 
 const globalStore = useGlobalStore();
 const route = useRoute();
@@ -27,6 +28,7 @@ onBeforeMount(() => {
         console.error(error);
       }
     });
+  loadStoredToken();
 });
 
 const showNavBar = computed(() => {

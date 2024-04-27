@@ -1,7 +1,7 @@
 import * as constants from "./constants.js";
 
 import axios from "axios";
-import { getToken } from "./tokenStorage.js";
+import { getStoredToken } from "./tokenStorage.js";
 import router from "./router.js";
 
 const api = axios.create();
@@ -10,7 +10,7 @@ api.interceptors.request.use(
   // If the request is not for the token endpoint, add the token to the headers.
   function (config) {
     if (config.url !== "/api/token") {
-      const token = getToken();
+      const token = getStoredToken();
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
@@ -42,4 +42,22 @@ api.interceptors.response.use(
 
 export function getConfig() {
   return api.get("/api/config");
+}
+
+export function getToken(username, password, totp) {
+  return api.post("/api/token", {
+    username: username,
+    password: totp ? password + totp : password,
+  });
+}
+
+export function getNotes(term, sort, order, limit) {
+  return api.get("/api/search", {
+    params: {
+      term: term,
+      sort: sort,
+      order: order,
+      limit: limit,
+    },
+  });
 }
