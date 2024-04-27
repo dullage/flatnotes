@@ -20,6 +20,7 @@ import { RouterLink, useRouter } from "vue-router";
 
 import CustomButton from "../components/CustomButton.vue";
 import Logo from "../components/Logo.vue";
+import { clearStoredToken } from "../tokenStorage.js"
 
 const router = useRouter();
 
@@ -32,7 +33,7 @@ function toggleTheme() {
 }
 
 function logOut() {
+  clearStoredToken();
   router.push({ name: "login" });
-  // TODO: Implement log out functionality
 }
 </script>
