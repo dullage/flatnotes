@@ -16,6 +16,7 @@
     "@mdi/light-js": "0.2.63",
     "axios": "1.6.8",
     "mousetrap": "1.6.5",
+    "pinia": "2.1.7",
     "vue": "3.4.24",
     "vue-router": "4.3.2"
   },
