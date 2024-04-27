@@ -1,17 +1,20 @@
 <template>
   <div class="container mx-auto flex h-screen flex-col px-2 py-4">
+    <NavBar v-if="showNavBar" :hide-logo="!showNavBarLogo" />
     <RouterView />
   </div>
 </template>
 
 <script setup>
-import { onBeforeMount } from "vue";
-import { RouterView } from "vue-router";
+import { onBeforeMount, computed } from "vue";
+import { RouterView, useRoute } from "vue-router";
 
+import NavBar from "./partials/NavBar.vue";
 import { getConfig } from "./api.js";
 import { useGlobalStore } from "./globalStore.js";
 
 const globalStore = useGlobalStore();
+const route = useRoute();
 
 onBeforeMount(() => {
   getConfig()
@@ -24,5 +27,13 @@ onBeforeMount(() => {
         console.error(error);
       }
     });
+});
+
+const showNavBar = computed(() => {
+  return route.name !== "login";
+});
+
+const showNavBarLogo = computed(() => {
+  return route.name !== "home";
 });
 </script>
