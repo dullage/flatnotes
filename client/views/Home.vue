@@ -3,7 +3,7 @@
     <div class="flex h-full flex-col items-center justify-center">
       <Logo class="mb-5" />
       <SearchInput class="mb-5 shadow-[0_0_20px] shadow-theme-shadow" />
-      <div class="flex flex-col items-center min-h-56">
+      <div class="flex min-h-56 flex-col items-center">
         <p
           v-if="notes.length > 0"
           class="mb-2 text-xs font-bold text-theme-text-very-muted"

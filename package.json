@@ -17,6 +17,7 @@
     "axios": "1.6.8",
     "mousetrap": "1.6.5",
     "pinia": "2.1.7",
+    "primevue": "3.52.0",
     "vue": "3.4.24",
     "vue-router": "4.3.2"
   },

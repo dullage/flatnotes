@@ -40,6 +40,7 @@
 import { mdilLogin } from "@mdi/light-js";
 import { ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
+import { useToast } from "primevue/usetoast";
 
 import { getToken } from "../api.js";
 import CustomButton from "../components/CustomButton.vue";
@@ -50,9 +51,10 @@ import { useGlobalStore } from "../globalStore.js";
 import { storeToken } from "../tokenStorage.js";
 import * as constants from "../constants.js";
 
+const globalStore = useGlobalStore();
 const router = useRouter();
 const route = useRoute();
-const globalStore = useGlobalStore();
+const toast = useToast();
 
 const username = ref("");
 const password = ref("");
@@ -71,8 +73,19 @@ function logIn() {
       }
     })
     .catch((error) => {
-      console.error(error);
-      // TODO: Trigger error toast
+      username.value = "";
+      password.value = "";
+      totp.value = "";
+
+      if (error.response?.status === 401) {
+        toast.add({
+          summary: "Login Failed",
+          detail: "Please check your credentials and try again.",
+          closable: false,
+          life: 5000,
+        });
+        // TODO: Trigger unknown error toast
+      }
     });
 }
 </script>
