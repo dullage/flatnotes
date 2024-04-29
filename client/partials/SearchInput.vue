@@ -1,6 +1,6 @@
 <template>
   <form class="flex w-full max-w-[500px]" @submit.prevent="search">
-    <TextInput placeholder="Search" class="rounded-r-none" />
+    <TextInput v-model="searchTerm" placeholder="Search" class="rounded-r-none" />
     <CustomButton
       :iconPath="mdilMagnify"
       iconSize="1.75em"
@@ -11,11 +11,20 @@
 
 <script setup>
 import { mdilMagnify } from "@mdi/light-js";
+import { useRouter } from "vue-router";
+import { ref } from "vue";
+import * as constants from "../constants";
 
 import CustomButton from "../components/CustomButton.vue";
 import TextInput from "../components/TextInput.vue";
 
+const router = useRouter();
+const searchTerm = ref("");
+
 function search() {
-  console.log("searching..."); // TODO: Implement search functionality
+  router.push({
+    name: "search",
+    query: { [constants.params.searchTerm]: searchTerm.value },
+  });
 }
 </script>

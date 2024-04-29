@@ -14,13 +14,21 @@ const router = createRouter({
       path: "/login",
       name: "login",
       component: () => import("./views/LogIn.vue"),
-      props: (route) => ({ [constants.params.redirect]: route.query.redirect }),
+      props: (route) => ({ redirect: route.query[constants.params.redirect] }),
     },
     {
       path: "/note/:title",
       name: "note",
       component: () => import("./views/Note.vue"),
       props: true,
+    },
+    {
+      path: "/search",
+      name: "search",
+      component: () => import("./views/Search.vue"),
+      props: (route) => ({
+        searchTerm: route.query[constants.params.searchTerm],
+      }),
     },
   ],
 });
