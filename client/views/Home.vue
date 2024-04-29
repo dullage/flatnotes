@@ -10,7 +10,9 @@
         >
           RECENTLY MODIFIED
         </p>
-        <CustomButton v-for="note in notes" :label="note.title" />
+        <RouterLink v-for="note in notes" :to="note.href">
+          <CustomButton :label="note.title" />
+        </RouterLink>
       </div>
     </div>
   </div>
@@ -23,10 +25,11 @@ import { getNotes } from "../api.js";
 import CustomButton from "../components/CustomButton.vue";
 import Logo from "../components/Logo.vue";
 import SearchInput from "../partials/SearchInput.vue";
+import { RouterLink } from "vue-router";
 
 const notes = ref([]);
 
-getNotes("*", "lastModified", "desc", 5).then((response) => {
-  notes.value = response.data;
+getNotes("*", "lastModified", "desc", 5).then((data) => {
+  notes.value = data;
 });
 </script>

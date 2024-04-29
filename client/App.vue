@@ -21,8 +21,8 @@ const route = useRoute();
 
 onBeforeMount(() => {
   getConfig()
-    .then((response) => {
-      globalStore.authType = response.data.authType;
+    .then((data) => {
+      globalStore.authType = data.authType;
     })
     .catch(function (error) {
       if (!error.handled) {

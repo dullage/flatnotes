@@ -1,9 +1,9 @@
 <template>
-  <nav class="flex justify-between">
-    <RouterLink to="/">
-      <Logo :class="{ invisible: hideLogo }"></Logo>
+  <nav class="mb-4 flex justify-between align-top">
+    <RouterLink to="/" v-if="!hideLogo">
+      <Logo></Logo>
     </RouterLink>
-    <div class="flex">
+    <div class="flex grow items-start justify-end">
       <CustomButton
         :iconPath="mdilPlusCircle"
         label="New Note"
@@ -20,7 +20,7 @@ import { RouterLink, useRouter } from "vue-router";
 
 import CustomButton from "../components/CustomButton.vue";
 import Logo from "../components/Logo.vue";
-import { clearStoredToken } from "../tokenStorage.js"
+import { clearStoredToken } from "../tokenStorage.js";
 
 const router = useRouter();
 

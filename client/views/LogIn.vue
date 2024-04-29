@@ -49,7 +49,8 @@ import TextInput from "../components/TextInput.vue";
 import { authTypes } from "../constants.js";
 import { useGlobalStore } from "../globalStore.js";
 import { storeToken } from "../tokenStorage.js";
-import * as constants from "../constants.js";
+
+const props = defineProps({ redirect: String });
 
 const globalStore = useGlobalStore();
 const router = useRouter();
@@ -63,24 +64,24 @@ const rememberMe = ref(false);
 
 function logIn() {
   getToken(username.value, password.value, totp.value)
-    .then((response) => {
-      storeToken(response.data.access_token, rememberMe.value);
-      const redirectPath = route.query[constants.params.redirect];
-      if (redirectPath) {
-        router.push(redirectPath);
+    .then((access_token) => {
+      storeToken(access_token, rememberMe.value);
+      if (props.redirect) {
+        router.push(props.redirect);
       } else {
         router.push({ name: "home" });
       }
     })
-    .catch((error) => {
+    .catch((response) => {
       username.value = "";
       password.value = "";
       totp.value = "";
 
-      if (error.response?.status === 401) {
+      if (response.response?.status === 401) {
         toast.add({
           summary: "Login Failed",
           detail: "Please check your credentials and try again.",
+          severity: "error",
           closable: false,
           life: 5000,
         });

@@ -1,5 +1,6 @@
 import * as constants from "./constants.js";
 
+import { Note } from "./classes.js";
 import axios from "axios";
 import { getStoredToken } from "./tokenStorage.js";
 import router from "./router.js";
@@ -40,24 +41,41 @@ api.interceptors.response.use(
   },
 );
 
-export function getConfig() {
-  return api.get("/api/config");
+export async function getConfig() {
+  try {
+    const response = await api.get("/api/config");
+    return response.data;
+  } catch (error) {
+    return Promise.reject(error);
+  }
 }
 
-export function getToken(username, password, totp) {
-  return api.post("/api/token", {
-    username: username,
-    password: totp ? password + totp : password,
-  });
+export async function getToken(username, password, totp) {
+  try {
+    const response = await api.post("/api/token", {
+      username: username,
+      password: totp ? password + totp : password,
+    });
+    return response.data.access_token;
+  } catch (response) {
+    return Promise.reject(response);
+  }
 }
 
-export function getNotes(term, sort, order, limit) {
-  return api.get("/api/search", {
-    params: {
-      term: term,
-      sort: sort,
-      order: order,
-      limit: limit,
-    },
-  });
+export async function getNotes(term, sort, order, limit) {
+  try {
+    const response = await api.get("/api/search", {
+      params: {
+        term: term,
+        sort: sort,
+        order: order,
+        limit: limit,
+      },
+    });
+    return response.data.map(
+      (note) => new Note(note.title, note.lastModified, note.content),
+    );
+  } catch (response) {
+    return Promise.reject(response);
+  }
 }

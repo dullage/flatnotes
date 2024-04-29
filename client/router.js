@@ -1,3 +1,5 @@
+import * as constants from "./constants.js";
+
 import { createRouter, createWebHistory } from "vue-router";
 
 const router = createRouter({
@@ -12,6 +14,13 @@ const router = createRouter({
       path: "/login",
       name: "login",
       component: () => import("./views/LogIn.vue"),
+      props: (route) => ({ [constants.params.redirect]: route.query.redirect }),
+    },
+    {
+      path: "/note/:title",
+      name: "note",
+      component: () => import("./views/Note.vue"),
+      props: true,
     },
   ],
 });
