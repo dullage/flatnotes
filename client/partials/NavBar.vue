@@ -29,7 +29,7 @@ defineProps({
 });
 
 function toggleTheme() {
-  document.body.classList.toggle("dark-theme");
+  document.body.classList.toggle("dark");
 }
 
 function logOut() {

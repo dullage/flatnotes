@@ -1,6 +1,6 @@
 <template>
   <button
-    class="hover:bg-theme-background-hover flex items-center rounded px-2 py-1 text-theme-text-muted"
+    class="hover:bg-theme-background-tint hover:dark:bg-theme-background-elevated flex items-center rounded px-2 py-1 text-theme-text-muted"
   >
     <SvgIcon
       v-if="iconPath"
