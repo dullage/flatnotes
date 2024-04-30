@@ -17,7 +17,7 @@ const router = createRouter({
       props: (route) => ({ redirect: route.query[constants.params.redirect] }),
     },
     {
-      path: "/note/:title",
+      path: "/note/:title?",
       name: "note",
       component: () => import("./views/Note.vue"),
       props: true,
