@@ -7,7 +7,7 @@
 </template>
 
 <script setup>
-import { computed, onBeforeMount } from "vue";
+import { computed } from "vue";
 import { RouterView, useRoute } from "vue-router";
 
 import { getConfig } from "./api.js";
@@ -19,19 +19,17 @@ import PrimeToast from "./components/PrimeToast.vue";
 const globalStore = useGlobalStore();
 const route = useRoute();
 
-onBeforeMount(() => {
-  getConfig()
-    .then((data) => {
-      globalStore.authType = data.authType;
-    })
-    .catch(function (error) {
-      if (!error.handled) {
-        // TODO: Trigger unknown error toast
-        console.error(error);
-      }
-    });
-  loadStoredToken();
-});
+getConfig()
+  .then((data) => {
+    globalStore.authType = data.authType;
+  })
+  .catch(function (error) {
+    if (!error.handled) {
+      // TODO: Trigger unknown error toast
+      console.error(error);
+    }
+  });
+loadStoredToken();
 
 const showNavBar = computed(() => {
   return route.name !== "login";
