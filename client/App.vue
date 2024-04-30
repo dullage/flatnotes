@@ -1,13 +1,12 @@
 <template>
   <div class="container mx-auto flex h-screen flex-col px-2 py-4">
-    <Toast position="bottom-right" />
+    <PrimeToast />
     <NavBar v-if="showNavBar" :hide-logo="!showNavBarLogo" />
     <RouterView />
   </div>
 </template>
 
 <script setup>
-import Toast from "primevue/toast";
 import { computed, onBeforeMount } from "vue";
 import { RouterView, useRoute } from "vue-router";
 
@@ -15,6 +14,7 @@ import { getConfig } from "./api.js";
 import { useGlobalStore } from "./globalStore.js";
 import NavBar from "./partials/NavBar.vue";
 import { loadStoredToken } from "./tokenStorage.js";
+import PrimeToast from "./components/PrimeToast.vue";
 
 const globalStore = useGlobalStore();
 const route = useRoute();
