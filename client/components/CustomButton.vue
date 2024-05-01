@@ -1,27 +1,17 @@
 <template>
   <button
-    class="hover:bg-theme-background-tint hover:dark:bg-theme-background-elevated flex items-center rounded px-2 py-1 text-theme-text-muted"
+    class="rounded px-2 py-1 text-theme-text-muted hover:bg-theme-background-tint hover:dark:bg-theme-background-elevated"
   >
-    <SvgIcon
-      v-if="iconPath"
-      type="mdi"
-      :path="iconPath"
-      :size="iconSize"
-      :class="{ 'mr-1': label }"
-    ></SvgIcon>
-    <span v-if="label">{{ label }}</span>
+    <IconLabel :iconPath="iconPath" :iconSize="iconSize" :label="label" />
   </button>
 </template>
 
 <script setup>
-import SvgIcon from "@jamescoyle/vue-icon";
+import IconLabel from "./IconLabel.vue";
 
 defineProps({
   iconPath: String,
-  iconSize: {
-    type: String,
-    default: "1.25em",
-  },
+  iconSize: String,
   label: String,
 });
 </script>
