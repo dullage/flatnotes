@@ -6,14 +6,14 @@
       <div v-show="!editMode" class="flex-1 text-3xl">{{ note.title }}</div>
       <div v-show="!editMode">
         <CustomButton
-        :iconPath="mdilDelete"
-        label="Delete"
-        @click="deleteHandler"
+          :iconPath="mdilDelete"
+          label="Delete"
+          @click="deleteHandler"
         />
         <CustomButton
-        :iconPath="mdilPencil"
-        label="Edit"
-        @click="editHandler"
+          :iconPath="mdilPencil"
+          label="Edit"
+          @click="editHandler"
         />
       </div>
 
@@ -107,13 +107,5 @@ function saveHandler() {
   editMode.value = false;
 }
 
-watch(
-  () => props.title,
-  () => {
-    init();
-  },
-  {
-    immediate: true,
-  },
-);
+watch(() => props.title, init, { immediate: true });
 </script>
