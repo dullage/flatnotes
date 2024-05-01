@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- Header -->
-    <div class="mt-8 flex items-end">
+    <div class="flex items-end">
       <!-- View -->
       <div v-show="!editMode" class="flex-1 text-3xl">{{ note.title }}</div>
       <div v-show="!editMode">

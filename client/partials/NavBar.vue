@@ -1,7 +1,7 @@
 <template>
-  <nav class="mb-4 flex justify-between align-top">
+  <nav class="mb-12 flex justify-between align-top">
     <RouterLink to="/" v-if="!hideLogo">
-      <Logo></Logo>
+      <Logo responsive></Logo>
     </RouterLink>
     <div class="flex grow items-start justify-end">
       <!-- New Note -->
