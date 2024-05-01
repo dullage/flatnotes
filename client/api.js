@@ -79,3 +79,16 @@ export async function getNotes(term, sort, order, limit) {
     return Promise.reject(response);
   }
 }
+
+export async function getNote(title) {
+  try {
+    const response = await api.get(`/api/notes/${title}`);
+    return new Note(
+      response.data.title,
+      response.data.lastModified,
+      response.data.content,
+    );
+  } catch (response) {
+    return Promise.reject(response);
+  }
+}
