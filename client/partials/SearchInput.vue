@@ -1,6 +1,10 @@
 <template>
   <form class="flex w-full max-w-[500px]" @submit.prevent="search">
-    <TextInput v-model="searchTerm" placeholder="Search" class="rounded-r-none" />
+    <TextInput
+      v-model="searchTerm"
+      placeholder="Search"
+      class="rounded-r-none"
+    />
     <CustomButton
       :iconPath="mdilMagnify"
       iconSize="1.75em"
@@ -11,20 +15,27 @@
 
 <script setup>
 import { mdilMagnify } from "@mdi/light-js";
-import { useRouter } from "vue-router";
+import { useToast } from "primevue/usetoast";
 import { ref } from "vue";
+import { useRouter } from "vue-router";
 import * as constants from "../constants";
 
 import CustomButton from "../components/CustomButton.vue";
 import TextInput from "../components/TextInput.vue";
+import { getToastOptions } from "../helpers.js";
 
 const router = useRouter();
 const searchTerm = ref("");
+const toast = useToast();
 
 function search() {
-  router.push({
-    name: "search",
-    query: { [constants.params.searchTerm]: searchTerm.value },
-  });
+  if (searchTerm.value) {
+    router.push({
+      name: "search",
+      query: { [constants.params.searchTerm]: searchTerm.value },
+    });
+  } else {
+    toast.add(getToastOptions("Error", "Please enter a search term", true));
+  }
 }
 </script>
