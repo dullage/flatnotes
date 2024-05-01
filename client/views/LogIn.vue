@@ -49,12 +49,15 @@ import TextInput from "../components/TextInput.vue";
 import { authTypes } from "../constants.js";
 import { useGlobalStore } from "../globalStore.js";
 import { storeToken } from "../tokenStorage.js";
+import {
+  getToastOptions,
+  getUnknownServerErrorToastOptions,
+} from "../helpers.js";
 
 const props = defineProps({ redirect: String });
 
 const globalStore = useGlobalStore();
 const router = useRouter();
-const route = useRoute();
 const toast = useToast();
 
 const username = ref("");
@@ -78,14 +81,15 @@ function logIn() {
       totp.value = "";
 
       if (response.response?.status === 401) {
-        toast.add({
-          summary: "Login Failed",
-          detail: "Please check your credentials and try again.",
-          severity: "error",
-          closable: false,
-          life: 5000,
-        });
-        // TODO: Trigger unknown error toast
+        toast.add(
+          getToastOptions(
+            "Login Failed",
+            "Please check your credentials and try again.",
+            true,
+          ),
+        );
+      } else {
+        toast.add(getUnknownServerErrorToastOptions());
       }
     });
 }

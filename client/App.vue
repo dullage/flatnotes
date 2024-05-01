@@ -9,25 +9,25 @@
 <script setup>
 import { computed } from "vue";
 import { RouterView, useRoute } from "vue-router";
+import { useToast } from "primevue/usetoast";
 
 import { getConfig } from "./api.js";
 import { useGlobalStore } from "./globalStore.js";
 import NavBar from "./partials/NavBar.vue";
 import { loadStoredToken } from "./tokenStorage.js";
 import PrimeToast from "./components/PrimeToast.vue";
+import { getUnknownServerErrorToastOptions } from "./helpers.js";
 
 const globalStore = useGlobalStore();
 const route = useRoute();
+const toast = useToast();
 
 getConfig()
   .then((data) => {
     globalStore.authType = data.authType;
   })
-  .catch(function (error) {
-    if (!error.handled) {
-      // TODO: Trigger unknown error toast
-      console.error(error);
-    }
+  .catch(() => {
+    toast.add(getUnknownServerErrorToastOptions());
   });
 loadStoredToken();
 
