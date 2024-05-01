@@ -10,7 +10,7 @@ const style = {
   container: ({ props }) => ({
     class: [
       "mt-2 px-3 py-2 rounded-lg max-w-96",
-      "bg-theme-background-elevated border border-l-2 border-theme-border",
+      "bg-theme-background-elevated border border-l-2 border-theme-border shadow-md",
       {
         "border-l-theme-success": props.message.severity == "success",
         "border-l-theme-failure": props.message.severity == "error",
