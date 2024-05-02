@@ -1,6 +1,7 @@
 import * as constants from "./constants.js";
 
-import { Note } from "./classes.js";
+import { Note, SearchResult } from "./classes.js";
+
 import axios from "axios";
 import { getStoredToken } from "./tokenStorage.js";
 import router from "./router.js";
@@ -73,7 +74,7 @@ export async function getNotes(term, sort, order, limit) {
       },
     });
     return response.data.map(
-      (note) => new Note(note.title, note.lastModified, note.content),
+      (note) => new SearchResult(note),
     );
   } catch (response) {
     return Promise.reject(response);
