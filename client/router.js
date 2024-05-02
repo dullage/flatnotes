@@ -25,7 +25,7 @@ const router = createRouter({
     {
       path: "/search",
       name: "search",
-      component: () => import("./views/Search.vue"),
+      component: () => import("./views/SearchResults.vue"),
       props: (route) => ({
         searchTerm: route.query[constants.params.searchTerm],
       }),
