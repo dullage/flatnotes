@@ -1,5 +1,5 @@
 <template>
-  <form class="flex w-full max-w-[500px]" @submit.prevent="search">
+  <form class="flex w-full" @submit.prevent="search">
     <TextInput
       v-model="searchTerm"
       placeholder="Search"
@@ -24,8 +24,10 @@ import CustomButton from "../components/CustomButton.vue";
 import TextInput from "../components/TextInput.vue";
 import { getToastOptions } from "../helpers.js";
 
+const props = defineProps({ initialSearchTerm: String });
+
 const router = useRouter();
-const searchTerm = ref("");
+const searchTerm = ref(props.initialSearchTerm);
 const toast = useToast();
 
 function search() {
