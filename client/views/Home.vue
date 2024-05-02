@@ -1,6 +1,6 @@
 <template>
-  <div class="h-full">
-    <div class="flex h-full flex-col items-center justify-center">
+  <div class="flex h-full items-center justify-center">
+    <div class="flex max-w-[500px] flex-1 flex-col items-center">
       <Logo class="mb-5" />
       <SearchInput class="mb-5 shadow-[0_0_20px] shadow-theme-shadow" />
       <div class="flex min-h-56 flex-col items-center">
