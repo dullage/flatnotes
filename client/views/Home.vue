@@ -19,17 +19,24 @@
 </template>
 
 <script setup>
+import { useToast } from "primevue/usetoast";
 import { ref } from "vue";
+import { RouterLink } from "vue-router";
 
 import { getNotes } from "../api.js";
 import CustomButton from "../components/CustomButton.vue";
 import Logo from "../components/Logo.vue";
+import { getUnknownServerErrorToastOptions } from "../helpers.js";
 import SearchInput from "../partials/SearchInput.vue";
-import { RouterLink } from "vue-router";
 
 const notes = ref([]);
+const toast = useToast();
 
-getNotes("*", "lastModified", "desc", 5).then((data) => {
-  notes.value = data;
-});
+getNotes("*", "lastModified", "desc", 5)
+  .then((data) => {
+    notes.value = data;
+  })
+  .catch((error) => {
+    toast.add(getUnknownServerErrorToastOptions(error));
+  });
 </script>
