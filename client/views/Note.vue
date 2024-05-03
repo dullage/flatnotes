@@ -65,6 +65,7 @@ import { deleteNote, getNote } from "../api.js";
 import ConfirmModal from "../components/ConfirmModal.vue";
 import CustomButton from "../components/CustomButton.vue";
 import { getUnknownServerErrorToastOptions } from "../helpers.js";
+import { Note } from "../classes.js";
 
 const props = defineProps({
   title: String,
@@ -89,7 +90,7 @@ function init() {
       });
   } else {
     editMode.value = true;
-    note.value = {};
+    note.value = new Note();
   }
 }
 
