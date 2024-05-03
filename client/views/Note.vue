@@ -19,10 +19,10 @@
       />
 
       <!-- Header -->
-      <div class="flex items-end">
+      <div class="flex items-start flex-wrap-reverse">
         <!-- Title -->
         <div class="flex flex-1 text-3xl leading-[1.6em]">
-          <span v-show="!editMode" class="flex-1">{{ note.title }}</span>
+          <span v-show="!editMode" class="flex-1 text-nowrap">{{ note.title }}</span>
           <input
             v-show="editMode"
             v-model="noteUpdate.title"
