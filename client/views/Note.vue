@@ -8,7 +8,7 @@
     />
 
     <!-- Loaded -->
-    <div v-else>
+    <div v-else class="flex h-full flex-col">
       <!-- Confirm Deletion Modal -->
       <ConfirmModal
         ref="deleteConfirmModal"
@@ -19,10 +19,12 @@
       />
 
       <!-- Header -->
-      <div class="flex items-start flex-wrap-reverse">
+      <div class="flex flex-wrap-reverse items-start">
         <!-- Title -->
         <div class="flex flex-1 text-3xl leading-[1.6em]">
-          <span v-show="!editMode" class="flex-1 text-nowrap">{{ note.title }}</span>
+          <span v-show="!editMode" class="flex-1 text-nowrap">{{
+            note.title
+          }}</span>
           <input
             v-show="editMode"
             v-model="noteUpdate.title"
@@ -58,10 +60,13 @@
         </div>
       </div>
 
-      <hr class="my-4 border-theme-border" />
+      <hr v-if="!editMode" class="my-4 border-theme-border" />
 
       <!-- Content -->
-      <ToastViewer v-if="!editMode" :initialValue="note.content" />
+      <div class="flex-1">
+        <ToastViewer v-if="!editMode" :initialValue="note.content" />
+        <ToastEditor v-if="editMode" :initialValue="note.content" />
+      </div>
     </div>
   </div>
 </template>
@@ -83,6 +88,7 @@ import { Note } from "../classes.js";
 import ConfirmModal from "../components/ConfirmModal.vue";
 import CustomButton from "../components/CustomButton.vue";
 import LoadingIndicator from "../components/LoadingIndicator.vue";
+import ToastEditor from "../components/Toast/ToastEditor.vue";
 import ToastViewer from "../components/Toast/ToastViewer.vue";
 import { getUnknownServerErrorToastOptions } from "../helpers.js";
 
