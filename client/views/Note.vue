@@ -94,7 +94,10 @@ import CustomButton from "../components/CustomButton.vue";
 import LoadingIndicator from "../components/LoadingIndicator.vue";
 import ToastEditor from "../components/toastui/ToastEditor.vue";
 import ToastViewer from "../components/toastui/ToastViewer.vue";
-import { getUnknownServerErrorToastOptions } from "../helpers.js";
+import {
+  getUnknownServerErrorToastOptions,
+  getToastOptions,
+} from "../helpers.js";
 
 const props = defineProps({
   title: String,
@@ -182,17 +185,15 @@ function saveNew(newTitle, newContent) {
     .then((data) => {
       note.value = data;
       router.push({ name: "note", params: { title: note.value.title } });
-      editMode.value = false;
+      noteSaveSuccess();
     })
-    .catch(() => {
-      toast.add(getUnknownServerErrorToastOptions());
-    });
+    .catch(noteSaveFailure);
 }
 
 function saveExisting(newTitle, newContent) {
   // Return if no changes
   if (newTitle == note.value.title && newContent == note.value.content) {
-    editMode.value = false;
+    noteSaveSuccess();
     return;
   }
 
@@ -200,11 +201,28 @@ function saveExisting(newTitle, newContent) {
     .then((data) => {
       note.value = data;
       router.replace({ name: "note", params: { title: note.value.title } });
-      editMode.value = false;
+      noteSaveSuccess();
     })
-    .catch(() => {
-      toast.add(getUnknownServerErrorToastOptions());
-    });
+    .catch(noteSaveFailure);
+}
+
+function noteSaveFailure(error) {
+  if (error.response.status === 409) {
+    toast.add(
+      getToastOptions(
+        "Duplicate",
+        "A note with this title already exists. Please try again with a new title.",
+        true,
+      ),
+    );
+  } else {
+    toast.add(getUnknownServerErrorToastOptions());
+  }
+}
+
+function noteSaveSuccess() {
+  editMode.value = false;
+  toast.add(getToastOptions("Success", "Note saved successfully."));
 }
 
 watch(() => props.title, init, { immediate: true });
