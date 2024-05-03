@@ -12,15 +12,22 @@ const props = defineProps({
 });
 
 const editorElement = ref();
+let toastEditor;
 
 onMounted(() => {
-  new Editor({
+  toastEditor = new Editor({
     el: editorElement.value,
     height: "100%",
     initialValue: props.initialValue,
     plugins: [codeSyntaxHighlight],
   });
 });
+
+function getMarkdown() {
+  return toastEditor.getMarkdown();
+}
+
+defineExpose({ getMarkdown });
 </script>
 
 <style>

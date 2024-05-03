@@ -27,8 +27,8 @@
           }}</span>
           <input
             v-show="editMode"
-            v-model="noteUpdate.title"
-            class="flex-1 outline-none"
+            v-model="newTitle"
+            class="flex-1 bg-theme-background outline-none"
             placeholder="Title"
           />
         </div>
@@ -65,7 +65,11 @@
       <!-- Content -->
       <div class="flex-1">
         <ToastViewer v-if="!editMode" :initialValue="note.content" />
-        <ToastEditor v-if="editMode" :initialValue="note.content" />
+        <ToastEditor
+          v-if="editMode"
+          ref="toastEditor"
+          :initialValue="note.content"
+        />
       </div>
     </div>
   </div>
@@ -80,10 +84,10 @@ import {
   mdilPencil,
 } from "@mdi/light-js";
 import { useToast } from "primevue/usetoast";
-import { ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 
-import { deleteNote, getNote } from "../api.js";
+import { createNote, deleteNote, getNote, updateNote } from "../api.js";
 import { Note } from "../classes.js";
 import ConfirmModal from "../components/ConfirmModal.vue";
 import CustomButton from "../components/CustomButton.vue";
@@ -98,14 +102,21 @@ const props = defineProps({
 
 const editMode = ref(false);
 const deleteConfirmModal = ref();
+const isNewNote = computed(() => !props.title);
 const loadingIndicator = ref();
 const note = ref({});
-const noteUpdate = ref({});
 const router = useRouter();
 const showLoadingIndicator = ref(true);
+const newTitle = ref();
 const toast = useToast();
+const toastEditor = ref();
 
 function init() {
+  // Return if we already have the note
+  if (props.title == note.value.title) {
+    return;
+  }
+
   showLoadingIndicator.value = true;
   if (props.title) {
     getNote(props.title)
@@ -122,14 +133,15 @@ function init() {
         }
       });
   } else {
-    editMode.value = true;
+    newTitle.value = "";
     note.value = new Note();
+    editMode.value = true;
     showLoadingIndicator.value = false;
   }
 }
 
 function editHandler() {
-  noteUpdate.value = { ...note.value };
+  newTitle.value = note.value.title;
   editMode.value = true;
 }
 
@@ -157,7 +169,42 @@ function cancelHandler() {
 }
 
 function saveHandler() {
-  editMode.value = false;
+  let newContent = toastEditor.value.getMarkdown();
+  if (isNewNote.value) {
+    saveNew(newTitle.value, newContent);
+  } else {
+    saveExisting(newTitle.value, newContent);
+  }
+}
+
+function saveNew(newTitle, newContent) {
+  createNote(newTitle, newContent)
+    .then((data) => {
+      note.value = data;
+      router.push({ name: "note", params: { title: note.value.title } });
+      editMode.value = false;
+    })
+    .catch(() => {
+      toast.add(getUnknownServerErrorToastOptions());
+    });
+}
+
+function saveExisting(newTitle, newContent) {
+  // Return if no changes
+  if (newTitle == note.value.title && newContent == note.value.content) {
+    editMode.value = false;
+    return;
+  }
+
+  updateNote(note.value.title, newTitle, newContent)
+    .then((data) => {
+      note.value = data;
+      router.replace({ name: "note", params: { title: note.value.title } });
+      editMode.value = false;
+    })
+    .catch(() => {
+      toast.add(getUnknownServerErrorToastOptions());
+    });
 }
 
 watch(() => props.title, init, { immediate: true });
