@@ -88,8 +88,8 @@ import { Note } from "../classes.js";
 import ConfirmModal from "../components/ConfirmModal.vue";
 import CustomButton from "../components/CustomButton.vue";
 import LoadingIndicator from "../components/LoadingIndicator.vue";
-import ToastEditor from "../components/Toast/ToastEditor.vue";
-import ToastViewer from "../components/Toast/ToastViewer.vue";
+import ToastEditor from "../components/toasteditor/ToastEditor.vue";
+import ToastViewer from "../components/toasteditor/ToastViewer.vue";
 import { getUnknownServerErrorToastOptions } from "../helpers.js";
 
 const props = defineProps({
