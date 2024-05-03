@@ -16,7 +16,7 @@
 <script setup>
 import SvgIcon from "@jamescoyle/vue-icon";
 import { mdiTrafficCone } from "@mdi/js";
-import { defineExpose, ref } from "vue";
+import { ref } from "vue";
 
 defineProps({ hideLoader: Boolean });
 

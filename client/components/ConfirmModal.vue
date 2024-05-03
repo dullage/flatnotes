@@ -23,7 +23,7 @@
 </template>
 
 <script setup>
-import { defineExpose, ref } from "vue";
+import { ref } from "vue";
 
 import CustomButton from "./CustomButton.vue";
 
