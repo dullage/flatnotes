@@ -20,8 +20,18 @@
 
       <!-- Header -->
       <div class="flex items-end">
-        <!-- View -->
-        <div v-show="!editMode" class="flex-1 text-3xl">{{ note.title }}</div>
+        <!-- Title -->
+        <div class="flex flex-1 text-3xl leading-[1.6em]">
+          <span v-show="!editMode" class="flex-1">{{ note.title }}</span>
+          <input
+            v-show="editMode"
+            v-model="noteUpdate.title"
+            class="flex-1 outline-none"
+            placeholder="Title"
+          />
+        </div>
+
+        <!-- Buttons -->
         <div v-show="!editMode">
           <CustomButton
             :iconPath="mdilDelete"
@@ -34,14 +44,6 @@
             @click="editHandler"
           />
         </div>
-
-        <!-- Edit -->
-        <input
-          v-show="editMode"
-          v-model="noteUpdate.title"
-          class="flex-1 text-3xl"
-          placeholder="Title"
-        />
         <div v-show="editMode">
           <CustomButton
             :iconPath="mdilArrowLeft"
