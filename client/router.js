@@ -33,4 +33,16 @@ const router = createRouter({
   ],
 });
 
+router.afterEach((to) => {
+  let title = "flatnotes";
+  if (to.name === "note") {
+    if (to.params.title) {
+      title = `${to.params.title} - ${title}`;
+    } else {
+      title = "New Note - " + title;
+    }
+  }
+  document.title = title;
+});
+
 export default router;
