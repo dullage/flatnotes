@@ -1,10 +1,10 @@
 import router from "./router.js";
 
 class Note {
-  constructor(title, lastModified, content) {
-    this.title = title;
-    this.lastModified = lastModified;
-    this.content = content;
+  constructor(note) {
+    this.title = note?.title;
+    this.lastModified = note?.lastModified;
+    this.content = note?.content;
   }
 
   get href() {
@@ -22,7 +22,7 @@ class Note {
 
 class SearchResult extends Note {
   constructor(searchResult) {
-    super(searchResult.title, searchResult.lastModified);
+    super(searchResult);
     this.score = searchResult.score;
     this.titleHighlights = searchResult.titleHighlights;
     this.contentHighlights = searchResult.contentHighlights;

@@ -79,14 +79,34 @@ export async function getNotes(term, sort, order, limit) {
   }
 }
 
+export async function createNote(title, content) {
+  try {
+    const response = await api.post("/api/notes", {
+      title: title,
+      content: content,
+    });
+    return new Note(response.data);
+  } catch (response) {
+    return Promise.reject(response);
+  }
+}
+
 export async function getNote(title) {
   try {
     const response = await api.get(`/api/notes/${title}`);
-    return new Note(
-      response.data.title,
-      response.data.lastModified,
-      response.data.content,
-    );
+    return new Note(response.data);
+  } catch (response) {
+    return Promise.reject(response);
+  }
+}
+
+export async function updateNote(title, newTitle, newContent) {
+  try {
+    const response = await api.patch(`/api/notes/${title}`, {
+      newTitle: newTitle,
+      newContent: newContent,
+    });
+    return new Note(response.data);
   } catch (response) {
     return Promise.reject(response);
   }
