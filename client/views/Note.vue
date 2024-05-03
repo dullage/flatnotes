@@ -1,56 +1,65 @@
 <template>
-  <div>
-    <ConfirmModal
-      ref="deleteConfirmModal"
-      title="Confirm Deletion"
-      :message="`Are you sure you want to delete the note '${note.title}'?`"
-      isDanger
-      @confirm="deleteConfirmedHandler"
+  <div class="h-full">
+    <LoadingIndicator
+      v-if="showLoadingIndicator"
+      ref="loadingIndicator"
+      class="flex h-full items-center justify-center"
     />
-    <!-- Header -->
-    <div class="flex items-end">
-      <!-- View -->
-      <div v-show="!editMode" class="flex-1 text-3xl">{{ note.title }}</div>
-      <div v-show="!editMode">
-        <CustomButton
-          :iconPath="mdilDelete"
-          label="Delete"
-          @click="deleteHandler"
-        />
-        <CustomButton
-          :iconPath="mdilPencil"
-          label="Edit"
-          @click="editHandler"
-        />
-      </div>
 
-      <!-- Edit -->
-      <input
-        v-show="editMode"
-        v-model="noteUpdate.title"
-        class="flex-1 text-3xl"
-        placeholder="Title"
+    <div v-else>
+      <ConfirmModal
+        ref="deleteConfirmModal"
+        title="Confirm Deletion"
+        :message="`Are you sure you want to delete the note '${note.title}'?`"
+        isDanger
+        @confirm="deleteConfirmedHandler"
       />
-      <div v-show="editMode">
-        <CustomButton
-          :iconPath="mdilArrowLeft"
-          label="Cancel"
-          @click="cancelHandler"
+      <!-- Header -->
+      <div class="flex items-end">
+        <!-- View -->
+        <div v-show="!editMode" class="flex-1 text-3xl">{{ note.title }}</div>
+        <div v-show="!editMode">
+          <CustomButton
+            :iconPath="mdilDelete"
+            label="Delete"
+            @click="deleteHandler"
+          />
+          <CustomButton
+            :iconPath="mdilPencil"
+            label="Edit"
+            @click="editHandler"
+          />
+        </div>
+
+        <!-- Edit -->
+        <input
+          v-show="editMode"
+          v-model="noteUpdate.title"
+          class="flex-1 text-3xl"
+          placeholder="Title"
         />
-        <CustomButton
-          :iconPath="mdilContentSave"
-          label="Save"
-          @click="saveHandler"
-        />
+        <div v-show="editMode">
+          <CustomButton
+            :iconPath="mdilArrowLeft"
+            label="Cancel"
+            @click="cancelHandler"
+          />
+          <CustomButton
+            :iconPath="mdilContentSave"
+            label="Save"
+            @click="saveHandler"
+          />
+        </div>
       </div>
+      <hr class="my-4 border-theme-border" />
+      <!-- Content -->
+      <div v-if="note.content">{{ note.content }}</div>
     </div>
-    <hr class="my-4 border-theme-border" />
-    <!-- Content -->
-    <div v-if="note.content">{{ note.content }}</div>
   </div>
 </template>
 
 <script setup>
+import { mdiNoteOffOutline } from "@mdi/js";
 import {
   mdilArrowLeft,
   mdilContentSave,
@@ -62,10 +71,11 @@ import { ref, watch } from "vue";
 import { useRouter } from "vue-router";
 
 import { deleteNote, getNote } from "../api.js";
+import { Note } from "../classes.js";
 import ConfirmModal from "../components/ConfirmModal.vue";
 import CustomButton from "../components/CustomButton.vue";
+import LoadingIndicator from "../components/LoadingIndicator.vue";
 import { getUnknownServerErrorToastOptions } from "../helpers.js";
-import { Note } from "../classes.js";
 
 const props = defineProps({
   title: String,
@@ -73,24 +83,33 @@ const props = defineProps({
 
 const editMode = ref(false);
 const deleteConfirmModal = ref();
+const loadingIndicator = ref();
 const note = ref({});
 const noteUpdate = ref({});
 const router = useRouter();
+const showLoadingIndicator = ref(true);
 const toast = useToast();
 
 function init() {
+  showLoadingIndicator.value = true;
   if (props.title) {
     getNote(props.title)
       .then((data) => {
         note.value = data;
+        showLoadingIndicator.value = false;
       })
-      .catch(() => {
-        // TODO: 404 handling
-        toast.add(getUnknownServerErrorToastOptions());
+      .catch((error) => {
+        if (error.response.status === 404) {
+          loadingIndicator.value.setFailed("Note not found", mdiNoteOffOutline);
+        } else {
+          loadingIndicator.value.setFailed();
+          toast.add(getUnknownServerErrorToastOptions());
+        }
       });
   } else {
     editMode.value = true;
     note.value = new Note();
+    showLoadingIndicator.value = false;
   }
 }
 
