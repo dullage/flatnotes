@@ -1,12 +1,15 @@
 <template>
   <div class="h-full">
+    <!-- Loading -->
     <LoadingIndicator
       v-if="showLoadingIndicator"
       ref="loadingIndicator"
       class="flex h-full items-center justify-center"
     />
 
+    <!-- Loaded -->
     <div v-else>
+      <!-- Confirm Deletion Modal -->
       <ConfirmModal
         ref="deleteConfirmModal"
         title="Confirm Deletion"
@@ -14,6 +17,7 @@
         isDanger
         @confirm="deleteConfirmedHandler"
       />
+
       <!-- Header -->
       <div class="flex items-end">
         <!-- View -->
@@ -51,9 +55,11 @@
           />
         </div>
       </div>
+
       <hr class="my-4 border-theme-border" />
+
       <!-- Content -->
-      <div v-if="note.content">{{ note.content }}</div>
+      <ToastViewer v-if="!editMode" :initialValue="note.content" />
     </div>
   </div>
 </template>
@@ -75,6 +81,7 @@ import { Note } from "../classes.js";
 import ConfirmModal from "../components/ConfirmModal.vue";
 import CustomButton from "../components/CustomButton.vue";
 import LoadingIndicator from "../components/LoadingIndicator.vue";
+import ToastViewer from "../components/Toast/ToastViewer.vue";
 import { getUnknownServerErrorToastOptions } from "../helpers.js";
 
 const props = defineProps({
