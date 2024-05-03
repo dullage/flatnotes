@@ -15,6 +15,8 @@
     "@jamescoyle/vue-icon": "0.1.2",
     "@mdi/js": "7.4.47",
     "@mdi/light-js": "0.2.63",
+    "@toast-ui/editor": "3.2.2",
+    "@toast-ui/editor-plugin-code-syntax-highlight": "3.1.0",
     "axios": "1.6.8",
     "mousetrap": "1.6.5",
     "pinia": "2.1.7",

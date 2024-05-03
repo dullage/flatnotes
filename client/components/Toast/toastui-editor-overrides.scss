@@ -1,0 +1,292 @@
+// Disable checkboxes in view mode. See https://github.com/nhn/tui.editor/issues/1087.
+.note-viewer li.task-list-item {
+  pointer-events: none;
+  a {
+    pointer-events: auto;
+  }
+}
+
+.ProseMirror,
+.toastui-editor-defaultUI .ProseMirror,
+.toastui-editor-md-container .toastui-editor-md-preview {
+  padding: 1rem 0 0 0;
+}
+
+.ProseMirror {
+  height: 100%;
+}
+
+.toastui-editor-contents ul > li::before {
+  // Vertically center the bullet point
+  margin-top: 0.7rem;
+}
+
+// Typography
+.ProseMirror,
+.toastui-editor-contents {
+  font-family: "Poppins", sans-serif;
+  font-size: 1rem;
+}
+
+.toastui-editor-contents,
+.ProseMirror {
+  h1,
+  .toastui-editor-md-heading1,
+  h2,
+  .toastui-editor-md-heading2,
+  h3,
+  .toastui-editor-md-heading3,
+  h4,
+  .toastui-editor-md-heading4,
+  h5,
+  .toastui-editor-md-heading5,
+  h6,
+  .toastui-editor-md-heading6 {
+    font-weight: bold;
+    line-height: 1.4;
+    margin: 1em 0 0.5em 0;
+    padding: 0;
+    border-bottom: none;
+
+    &:first-of-type {
+      margin-top: 0;
+    }
+  }
+
+  h1,
+  .toastui-editor-md-heading1 {
+    font-size: 1.75rem;
+  }
+
+  h2,
+  .toastui-editor-md-heading2 {
+    font-size: 1.6rem;
+  }
+
+  h3,
+  .toastui-editor-md-heading3 {
+    font-size: 1.45rem;
+  }
+
+  h4,
+  .toastui-editor-md-heading4 {
+    font-size: 1.3rem;
+  }
+
+  h5,
+  .toastui-editor-md-heading5 {
+    font-size: 1.15rem;
+  }
+
+  h6,
+  .toastui-editor-md-heading6 {
+    font-size: 1rem;
+  }
+
+  p {
+    line-height: 1.6rem;
+    margin: 0 0 1rem 0;
+  }
+}
+
+// Override the default font-family for code blocks as some of the fallbacks are not monospace
+.toastui-editor-contents code,
+.toastui-editor-contents pre,
+.toastui-editor-md-code,
+.toastui-editor-md-code-block {
+  font-family: Consolas, "Lucida Console", Monaco, "Andale Mono", monospace;
+}
+
+// Colours
+.toastui-editor-defaultUI {
+  border: none;
+}
+
+.toastui-editor-contents {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: rgb(var(--theme-text));
+  }
+  p {
+    color: rgb(var(--theme-text));
+  }
+  pre code {
+    color: rgb(var(--theme-text));
+  }
+}
+
+.toastui-editor-main {
+  background-color: rgb(var(--theme-background));
+}
+
+.toastui-editor-ww-container {
+  background-color: rgb(var(--theme-background));
+}
+
+.toastui-editor-contents ul,
+.toastui-editor-contents menu,
+.toastui-editor-contents ol,
+.toastui-editor-contents dir {
+  color: rgb(var(--theme-text));
+}
+
+// Code Block
+.toastui-editor-contents pre,
+.toastui-editor-md-code-block-line-background {
+  background-color: rgb(var(--theme-background-tint));
+}
+
+.dark-theme .toastui-editor-contents pre,
+.dark-theme .toastui-editor-md-code-block-line-background {
+  background-color: rgb(var(--theme-background-elevated));
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string {
+  background: none;
+}
+
+// Tables
+.toastui-editor-contents table th {
+  color: rgb(var(--theme-text));
+  background-color: rgb(var(--theme-background-tint));
+}
+
+.toastui-editor-contents table {
+  color: rgb(var(--theme-text));
+}
+
+.toastui-editor-md-table .toastui-editor-md-table-cell {
+  color: rgb(var(--theme-text));
+}
+
+// Editor
+.ProseMirror {
+  color: rgb(var(--theme-text));
+}
+
+// Toolbar
+.toastui-editor-defaultUI-toolbar {
+  background-color: rgb(var(--theme-background));
+  border-bottom-color: rgb(var(--theme-border));
+}
+
+.toastui-editor-defaultUI .toastui-editor-md-tab-container {
+  background-color: rgb(var(--theme-background));
+  border-bottom-color: rgb(var(--theme-border));
+}
+
+.toastui-editor-mode-switch {
+  background-color: rgb(var(--theme-background));
+  border-color: rgb(var(--theme-border));
+}
+
+.toastui-editor-defaultUI-toolbar button {
+  border: 1px solid rgb(var(--theme-background));
+}
+
+.toastui-editor-defaultUI .tab-item.active {
+  background-color: rgb(var(--theme-background));
+  color: rgb(var(--theme-text));
+  border-color: rgb(var(--theme-border));
+}
+
+.toastui-editor-defaultUI .tab-item {
+  background-color: rgb(var(--theme-background-tint));
+  color: rgb(var(--theme-text-muted));
+  border-color: rgb(var(--theme-border));
+}
+
+.toastui-editor-md-tab-container .tab-item.active {
+  border-bottom: none;
+}
+
+.toastui-editor-toolbar-divider {
+  background-color: rgb(var(--theme-text));
+}
+
+.dark-theme .toastui-editor-toolbar-icons {
+  // Standard dark theme buttons are dark grey, this position change makes them white
+  background-position-y: -49px;
+}
+
+.toastui-editor-defaultUI-toolbar button:not(:disabled):hover {
+  background-color: rgb(var(--theme-background-tint));
+  border: 1px solid rgb(var(--theme-background));
+}
+
+.toastui-editor-md-block-quote .toastui-editor-md-marked-text {
+  color: rgb(var(--theme-text-muted));
+}
+
+.toastui-editor-md-code,
+.toastui-editor-contents code {
+  background-color: rgb(var(--theme-background-tint));
+}
+
+.dark-theme .toastui-editor-md-code,
+.dark-theme .toastui-editor-contents code {
+  background-color: rgb(var(--theme-background-elevated));
+}
+
+.toastui-editor-popup {
+  background-color: rgb(var(--theme-background));
+  border: 1px solid rgb(var(--theme-border));
+}
+
+.toastui-editor-popup-body {
+  label {
+    color: rgb(var(--theme-text));
+  }
+  input {
+    background-color: rgb(var(--theme-background));
+    border: 1px solid rgb(var(--theme-border));
+  }
+}
+
+.toastui-editor-popup-add-table .toastui-editor-table-cell,
+.toastui-editor-popup-add-table .toastui-editor-table-cell.header {
+  background-color: rgb(var(--theme-background));
+  border-color: rgb(var(--theme-border));
+}
+
+.toastui-editor-popup-add-heading ul li:hover {
+  background-color: rgb(var(--theme-background-highlight));
+}
+
+.toastui-editor-popup-add-image .toastui-editor-tabs .tab-item {
+  color: rgb(var(--theme-text));
+  background-color: rgb(var(--theme-background));
+  border-color: rgb(var(--theme-border));
+}
+
+.toastui-editor-popup-add-image .toastui-editor-file-name.has-file {
+  color: rgb(var(--theme-text));
+}
+
+.toastui-editor-popup-body input[type="text"] {
+  color: rgb(var(--theme-text));
+  background-color: rgb(var(--theme-background));
+}
+
+.toastui-editor-dropdown-toolbar {
+  background-color: rgb(var(--theme-background));
+  border-color: rgb(var(--theme-border));
+}
+
+// Tables
+.toastui-editor-contents table th,
+.toastui-editor-contents table td {
+  border-color: rgb(var(--theme-border));
+}
+
+.toastui-editor-contents th p {
+  color: rgb(var(--theme-text));
+}
