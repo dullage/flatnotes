@@ -1,5 +1,12 @@
 <template>
   <div>
+    <ConfirmModal
+      ref="deleteConfirmModal"
+      title="Confirm Deletion"
+      :message="`Are you sure you want to delete the note '${note.title}'?`"
+      isDanger
+      @confirm="deleteConfirmedHandler"
+    />
     <!-- Header -->
     <div class="flex items-end">
       <!-- View -->
@@ -54,7 +61,8 @@ import { useToast } from "primevue/usetoast";
 import { ref, watch } from "vue";
 import { useRouter } from "vue-router";
 
-import { getNote } from "../api.js";
+import { deleteNote, getNote } from "../api.js";
+import ConfirmModal from "../components/ConfirmModal.vue";
 import CustomButton from "../components/CustomButton.vue";
 import { getUnknownServerErrorToastOptions } from "../helpers.js";
 
@@ -63,6 +71,7 @@ const props = defineProps({
 });
 
 const editMode = ref(false);
+const deleteConfirmModal = ref();
 const note = ref({});
 const noteUpdate = ref({});
 const router = useRouter();
@@ -90,8 +99,17 @@ function editHandler() {
 }
 
 function deleteHandler() {
-  console.log("delete");
-  // TODO: Implement delete
+  deleteConfirmModal.value.toggle();
+}
+
+function deleteConfirmedHandler() {
+  deleteNote(note.value.title)
+    .then(() => {
+      router.push({ name: "home" });
+    })
+    .catch(() => {
+      toast.add(getUnknownServerErrorToastOptions());
+    });
 }
 
 function cancelHandler() {

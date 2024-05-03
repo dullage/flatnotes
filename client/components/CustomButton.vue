@@ -1,6 +1,10 @@
 <template>
   <button
-    class="rounded px-2 py-1 text-theme-text-muted hover:bg-theme-background-tint hover:dark:bg-theme-background-elevated"
+    class="rounded px-2 py-1 hover:bg-theme-background-tint hover:dark:bg-theme-background-elevated"
+    :class="{
+      'text-theme-text-muted': !isCta,
+      'border border-theme-border': isCta,
+    }"
   >
     <IconLabel :iconPath="iconPath" :iconSize="iconSize" :label="label" />
   </button>
@@ -13,5 +17,6 @@ defineProps({
   iconPath: String,
   iconSize: String,
   label: String,
+  isCta: Boolean,
 });
 </script>

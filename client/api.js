@@ -73,9 +73,7 @@ export async function getNotes(term, sort, order, limit) {
         limit: limit,
       },
     });
-    return response.data.map(
-      (note) => new SearchResult(note),
-    );
+    return response.data.map((note) => new SearchResult(note));
   } catch (response) {
     return Promise.reject(response);
   }
@@ -89,6 +87,14 @@ export async function getNote(title) {
       response.data.lastModified,
       response.data.content,
     );
+  } catch (response) {
+    return Promise.reject(response);
+  }
+}
+
+export async function deleteNote(title) {
+  try {
+    await api.delete(`/api/notes/${title}`);
   } catch (response) {
     return Promise.reject(response);
   }
