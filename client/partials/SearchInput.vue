@@ -37,7 +37,7 @@ function search() {
       query: { [constants.params.searchTerm]: searchTerm.value },
     });
   } else {
-    toast.add(getToastOptions("Error", "Please enter a search term", true));
+    toast.add(getToastOptions("Error", "Please enter a search term.", true));
   }
 }
 </script>
