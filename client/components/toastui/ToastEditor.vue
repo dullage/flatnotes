@@ -20,6 +20,7 @@ onMounted(() => {
     height: "100%",
     initialValue: props.initialValue,
     plugins: [codeSyntaxHighlight],
+    usageStatistics: false,
   });
 });
 

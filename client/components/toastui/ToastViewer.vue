@@ -18,6 +18,7 @@ onMounted(() => {
     el: viewerElement.value,
     initialValue: props.initialValue,
     plugins: [codeSyntaxHighlight],
+    usageStatistics: false,
   });
 });
 </script>
