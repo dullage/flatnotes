@@ -1,15 +1,13 @@
 <template>
   <nav class="mb-12 flex justify-between align-top">
-    <RouterLink to="/" v-if="!hideLogo">
+    <RouterLink :to="{ name: 'home' }" v-if="!hideLogo">
       <Logo responsive></Logo>
     </RouterLink>
     <div class="flex grow items-start justify-end">
       <!-- New Note -->
-      <CustomButton
-        :iconPath="mdilPlusCircle"
-        label="New Note"
-        @click="router.push({ name: 'note' })"
-      />
+      <RouterLink :to="{ name: 'note' }">
+        <CustomButton :iconPath="mdilPlusCircle" label="New Note" />
+      </RouterLink>
       <!-- Menu -->
       <CustomButton :iconPath="mdilMenu" label="Menu" @click="toggleMenu" />
       <PrimeMenu ref="menu" :model="menuItems" :popup="true" />
