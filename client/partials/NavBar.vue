@@ -1,5 +1,6 @@
 <template>
   <nav class="mb-12 flex justify-between align-top">
+    <SearchModal ref="searchModal" />
     <RouterLink :to="{ name: 'home' }" v-if="!hideLogo">
       <Logo responsive></Logo>
     </RouterLink>
@@ -31,9 +32,11 @@ import CustomButton from "../components/CustomButton.vue";
 import Logo from "../components/Logo.vue";
 import { clearStoredToken } from "../tokenStorage.js";
 import PrimeMenu from "../components/PrimeMenu.vue";
+import SearchModal from "./SearchModal.vue";
 
-const router = useRouter();
 const menu = ref();
+const router = useRouter();
+const searchModal = ref();
 
 defineProps({
   hideLogo: Boolean,
@@ -43,7 +46,7 @@ const menuItems = [
   {
     label: "Search",
     icon: mdilMagnify,
-    // TODO: Implement search modal
+    command: () => searchModal.value.toggle(),
   },
   {
     label: "All Notes",
