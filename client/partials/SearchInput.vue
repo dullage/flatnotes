@@ -25,6 +25,7 @@ import TextInput from "../components/TextInput.vue";
 import { getToastOptions } from "../helpers.js";
 
 const props = defineProps({ initialSearchTerm: String });
+const emit = defineEmits(["search"]);
 
 const router = useRouter();
 const searchTerm = ref(props.initialSearchTerm);
@@ -36,6 +37,7 @@ function search() {
       name: "search",
       query: { [constants.params.searchTerm]: searchTerm.value },
     });
+    emit("search");
   } else {
     toast.add(getToastOptions("Error", "Please enter a search term.", true));
   }
