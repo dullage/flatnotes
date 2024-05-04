@@ -4,6 +4,7 @@
       v-model="searchTerm"
       placeholder="Search"
       class="rounded-r-none"
+      ref="textInput"
     />
     <CustomButton
       :iconPath="mdilMagnify"
@@ -16,7 +17,7 @@
 <script setup>
 import { mdilMagnify } from "@mdi/light-js";
 import { useToast } from "primevue/usetoast";
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import * as constants from "../constants";
 
@@ -28,6 +29,7 @@ const props = defineProps({ initialSearchTerm: String });
 const emit = defineEmits(["search"]);
 
 const router = useRouter();
+const textInput = ref();
 const searchTerm = ref(props.initialSearchTerm);
 const toast = useToast();
 
@@ -42,4 +44,8 @@ function search() {
     toast.add(getToastOptions("Error", "Please enter a search term.", true));
   }
 }
+
+onMounted(() => {
+  textInput.value.focus();
+});
 </script>
