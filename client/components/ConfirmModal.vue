@@ -2,9 +2,10 @@
   <Modal
     ref="modal"
     :class="{ 'border border-l-4 border-l-theme-failure': isDanger }"
-    :title="title"
     :closeHandler="cancelHandler"
   >
+    <!-- Title -->
+    <div class="mb-6 text-xl">{{ title }}</div>
     <!-- Message -->
     <div class="mb-6">{{ message }}</div>
     <!-- Buttons -->
