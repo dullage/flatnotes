@@ -6,7 +6,7 @@
   >
     <!-- Modal -->
     <div
-      class="relative max-w-96 grow rounded-lg border border-theme-border bg-theme-background px-6 py-4 shadow-lg"
+      class="relative max-w-[500px] grow rounded-lg border border-theme-border bg-theme-background px-6 py-4 shadow-lg"
       :class="$attrs.class"
     >
       <CustomButton
