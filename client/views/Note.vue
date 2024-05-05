@@ -73,6 +73,7 @@ import {
   mdilDelete,
   mdilPencil,
 } from "@mdi/light-js";
+import Mousetrap from "mousetrap";
 import { useToast } from "primevue/usetoast";
 import { computed, ref, watch } from "vue";
 import { useRouter } from "vue-router";
@@ -102,6 +103,14 @@ const router = useRouter();
 const newTitle = ref();
 const toast = useToast();
 const toastEditor = ref();
+
+// 'e' to edit
+Mousetrap.bind("e", function () {
+  console.log("edit");
+  if (editMode.value === false) {
+    editHandler();
+  }
+});
 
 function init() {
   // Return if we already have the note
