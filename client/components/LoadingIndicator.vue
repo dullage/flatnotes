@@ -1,7 +1,13 @@
 <template>
-  <div>
-    <div v-if="!hideLoader && !failed" class="loader"></div>
-    <div v-else-if="failed" class="flex flex-col items-center">
+  <div :class="{ 'flex items-center justify-center': loadSuccessful !== true }">
+    <!-- Loading -->
+    <div
+      v-if="loadSuccessful === null && !props.hideLoader"
+      class="loader"
+    ></div>
+
+    <!-- Failed -->
+    <div v-else-if="loadSuccessful === false" class="flex flex-col items-center">
       <SvgIcon
         type="mdi"
         :path="failedIconPath"
@@ -10,6 +16,9 @@
       />
       <span class="text-lg text-theme-text-muted">{{ failedMessage }}</span>
     </div>
+
+    <!-- Loaded -->
+    <slot v-else-if="loadSuccessful"></slot>
   </div>
 </template>
 
@@ -18,19 +27,27 @@ import SvgIcon from "@jamescoyle/vue-icon";
 import { mdiTrafficCone } from "@mdi/js";
 import { ref } from "vue";
 
-defineProps({ hideLoader: Boolean });
+const props = defineProps({ hideLoader: Boolean });
 
-const failed = ref(false);
+const loadSuccessful = ref(null);
 const failedIconPath = ref("");
 const failedMessage = ref("");
 
-function setFailed(message, iconPath) {
-  failed.value = true;
-  failedMessage.value = message || "Loading Failed";
-  failedIconPath.value = iconPath || mdiTrafficCone;
+function setLoading() {
+  loadSuccessful.value = null;
 }
 
-defineExpose({ setFailed });
+function setFailed(message, iconPath) {
+  failedMessage.value = message || "Loading Failed";
+  failedIconPath.value = iconPath || mdiTrafficCone;
+  loadSuccessful.value = false;
+}
+
+function setLoaded() {
+  loadSuccessful.value = true;
+}
+
+defineExpose({ setLoading, setFailed, setLoaded });
 </script>
 
 <style scoped>

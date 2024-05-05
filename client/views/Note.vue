@@ -1,78 +1,68 @@
 <template>
-  <div class="h-full">
-    <!-- Loading -->
-    <LoadingIndicator
-      v-if="showLoadingIndicator"
-      ref="loadingIndicator"
-      class="flex h-full items-center justify-center"
-    />
+  <!-- Confirm Deletion Modal -->
+  <ConfirmModal
+    ref="deleteConfirmModal"
+    title="Confirm Deletion"
+    :message="`Are you sure you want to delete the note '${note.title}'?`"
+    isDanger
+    @confirm="deleteConfirmedHandler"
+  />
 
-    <!-- Loaded -->
-    <div v-else class="flex h-full flex-col">
-      <!-- Confirm Deletion Modal -->
-      <ConfirmModal
-        ref="deleteConfirmModal"
-        title="Confirm Deletion"
-        :message="`Are you sure you want to delete the note '${note.title}'?`"
-        isDanger
-        @confirm="deleteConfirmedHandler"
-      />
-
-      <!-- Header -->
-      <div class="flex flex-wrap-reverse items-start">
-        <!-- Title -->
-        <div class="flex flex-1 text-3xl leading-[1.6em]">
-          <span v-show="!editMode" class="flex-1 text-nowrap">{{
-            note.title
-          }}</span>
-          <input
-            v-show="editMode"
-            v-model="newTitle"
-            class="flex-1 bg-theme-background outline-none"
-            placeholder="Title"
-          />
-        </div>
-
-        <!-- Buttons -->
-        <div v-show="!editMode">
-          <CustomButton
-            :iconPath="mdilDelete"
-            label="Delete"
-            @click="deleteHandler"
-          />
-          <CustomButton
-            :iconPath="mdilPencil"
-            label="Edit"
-            @click="editHandler"
-          />
-        </div>
-        <div v-show="editMode">
-          <CustomButton
-            :iconPath="mdilArrowLeft"
-            label="Cancel"
-            @click="cancelHandler"
-          />
-          <CustomButton
-            :iconPath="mdilContentSave"
-            label="Save"
-            @click="saveHandler"
-          />
-        </div>
+  <LoadingIndicator ref="loadingIndicator" class="flex h-full flex-col">
+    <!-- Header -->
+    <div class="flex flex-wrap-reverse items-start">
+      <!-- Title -->
+      <div class="flex flex-1 text-3xl leading-[1.6em]">
+        <span v-show="!editMode" class="flex-1 text-nowrap">{{
+          note.title
+        }}</span>
+        <input
+          v-show="editMode"
+          v-model="newTitle"
+          class="flex-1 bg-theme-background outline-none"
+          placeholder="Title"
+        />
       </div>
 
-      <hr v-if="!editMode" class="my-4 border-theme-border" />
-
-      <!-- Content -->
-      <div class="flex-1">
-        <ToastViewer v-if="!editMode" :initialValue="note.content" />
-        <ToastEditor
-          v-if="editMode"
-          ref="toastEditor"
-          :initialValue="note.content"
+      <!-- Buttons -->
+      <div v-show="!editMode">
+        <CustomButton
+          :iconPath="mdilDelete"
+          label="Delete"
+          @click="deleteHandler"
+        />
+        <CustomButton
+          :iconPath="mdilPencil"
+          label="Edit"
+          @click="editHandler"
+        />
+      </div>
+      <div v-show="editMode">
+        <CustomButton
+          :iconPath="mdilArrowLeft"
+          label="Cancel"
+          @click="cancelHandler"
+        />
+        <CustomButton
+          :iconPath="mdilContentSave"
+          label="Save"
+          @click="saveHandler"
         />
       </div>
     </div>
-  </div>
+
+    <hr v-if="!editMode" class="my-4 border-theme-border" />
+
+    <!-- Content -->
+    <div class="flex-1">
+      <ToastViewer v-if="!editMode" :initialValue="note.content" />
+      <ToastEditor
+        v-if="editMode"
+        ref="toastEditor"
+        :initialValue="note.content"
+      />
+    </div>
+  </LoadingIndicator>
 </template>
 
 <script setup>
@@ -95,8 +85,8 @@ import LoadingIndicator from "../components/LoadingIndicator.vue";
 import ToastEditor from "../components/toastui/ToastEditor.vue";
 import ToastViewer from "../components/toastui/ToastViewer.vue";
 import {
-  getUnknownServerErrorToastOptions,
   getToastOptions,
+  getUnknownServerErrorToastOptions,
 } from "../helpers.js";
 
 const props = defineProps({
@@ -109,7 +99,6 @@ const isNewNote = computed(() => !props.title);
 const loadingIndicator = ref();
 const note = ref({});
 const router = useRouter();
-const showLoadingIndicator = ref(true);
 const newTitle = ref();
 const toast = useToast();
 const toastEditor = ref();
@@ -120,12 +109,12 @@ function init() {
     return;
   }
 
-  showLoadingIndicator.value = true;
+  loadingIndicator.value?.setLoading(); // #CS
   if (props.title) {
     getNote(props.title)
       .then((data) => {
         note.value = data;
-        showLoadingIndicator.value = false;
+        loadingIndicator.value.setLoaded();
       })
       .catch((error) => {
         if (error.response.status === 404) {
@@ -139,7 +128,7 @@ function init() {
     newTitle.value = "";
     note.value = new Note();
     editMode.value = true;
-    showLoadingIndicator.value = false;
+    loadingIndicator.value.setLoaded();
   }
 }
 
