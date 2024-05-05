@@ -1,5 +1,5 @@
 <template>
-  <span class="rounded-full bg-theme-brand px-1 text-xs text-white"
+  <span class="rounded-full bg-theme-brand px-2 text-xs text-white"
     >#{{ tag }}</span
   >
 </template>
