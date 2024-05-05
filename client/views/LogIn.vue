@@ -6,6 +6,7 @@
         v-model="username"
         placeholder="Username"
         class="mb-1"
+        autocomplete="username"
         required
       />
       <TextInput
@@ -13,6 +14,7 @@
         placeholder="Password"
         type="password"
         class="mb-1"
+        autocomplete="current-password"
         required
       />
       <TextInput
@@ -20,6 +22,7 @@
         v-model="totp"
         placeholder="2FA Code"
         class="mb-1"
+        autocomplete="one-time-code"
         required
       />
       <div class="mb-4 flex">
