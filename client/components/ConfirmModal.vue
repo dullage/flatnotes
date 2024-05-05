@@ -1,7 +1,7 @@
 <template>
   <Modal
     ref="modal"
-    :class="{ 'border border-l-4 border-l-theme-failure': isDanger }"
+    :class="{ 'border-l-theme-danger border border-l-4': isDanger }"
     :closeHandler="cancelHandler"
   >
     <!-- Title -->
@@ -11,7 +11,7 @@
     <!-- Buttons -->
     <div class="flex justify-end">
       <CustomButton label="Cancel" @click="cancelHandler" class="mr-2" />
-      <CustomButton label="Confirm" @click="confirmHandler" isCta />
+      <CustomButton :label="confirmButtonText" @click="confirmHandler" danger />
     </div>
   </Modal>
 </template>
@@ -25,6 +25,7 @@ import Modal from "./Modal.vue";
 const props = defineProps({
   title: { type: String, default: "Confirmation" },
   message: String,
+  confirmButtonText: { type: String, default: "Confirm" },
   isDanger: Boolean,
 });
 const emit = defineEmits(["confirm", "cancel"]);

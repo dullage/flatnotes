@@ -2,7 +2,7 @@
   <!-- Mask -->
   <div
     v-if="isVisible"
-    class="fixed left-0 top-0 z-50 flex h-dvh w-dvw items-center justify-center bg-theme-background-tint/40 backdrop-blur-sm"
+    class="fixed left-0 top-0 z-50 flex h-dvh w-dvw items-center justify-center backdrop-blur-sm"
   >
     <!-- Modal -->
     <div

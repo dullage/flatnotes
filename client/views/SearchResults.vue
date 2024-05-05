@@ -10,7 +10,7 @@
     <LoadingIndicator ref="loadingIndicator" class="max-w-[700px] flex-1">
       <div
         v-for="result in results"
-        class="mb-4 cursor-pointer rounded px-2 py-1 hover:bg-theme-background-tint dark:hover:bg-theme-background-elevated"
+        class="mb-4 cursor-pointer rounded px-2 py-1 hover:bg-theme-background-elevated"
       >
         <RouterLink :to="result.href">
           <!-- Title and Tags -->

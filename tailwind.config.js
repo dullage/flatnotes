@@ -20,10 +20,6 @@ module.exports = {
         "theme-background": "rgb(var(--theme-background) / <alpha-value>)",
         "theme-background-elevated":
           "rgb(var(--theme-background-elevated) / <alpha-value>)",
-        "theme-background-tint":
-          "rgb(var(--theme-background-tint) / <alpha-value>)",
-        "theme-background-highlight":
-          "rgb(var(--theme-background-highlight) / <alpha-value>)",
         "theme-text": "rgb(var(--theme-text) / <alpha-value>)",
         "theme-text-muted": "rgb(var(--theme-text-muted) / <alpha-value>)",
         "theme-text-very-muted":
@@ -32,7 +28,7 @@ module.exports = {
         "theme-border": "rgb(var(--theme-border) / <alpha-value>)",
         // Static
         "theme-success": colors.emerald[500],
-        "theme-failure": colors.red[500],
+        "theme-danger": colors.rose[600],
       },
     },
   },

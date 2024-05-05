@@ -137,7 +137,7 @@
 // Code Block
 .toastui-editor-contents pre,
 .toastui-editor-md-code-block-line-background {
-  background-color: rgb(var(--theme-background-tint));
+  background-color: rgb(var(--theme-background-elevated));
 }
 
 .dark-theme .toastui-editor-contents pre,
@@ -156,7 +156,7 @@
 // Tables
 .toastui-editor-contents table th {
   color: rgb(var(--theme-text));
-  background-color: rgb(var(--theme-background-tint));
+  background-color: rgb(var(--theme-background-elevated));
 }
 
 .toastui-editor-contents table {
@@ -199,7 +199,7 @@
 }
 
 .toastui-editor-defaultUI .tab-item {
-  background-color: rgb(var(--theme-background-tint));
+  background-color: rgb(var(--theme-background-elevated));
   color: rgb(var(--theme-text-muted));
   border-color: rgb(var(--theme-border));
 }
@@ -218,7 +218,7 @@
 }
 
 .toastui-editor-defaultUI-toolbar button:not(:disabled):hover {
-  background-color: rgb(var(--theme-background-tint));
+  background-color: rgb(var(--theme-background-elevated));
   border: 1px solid rgb(var(--theme-background));
 }
 
@@ -228,7 +228,7 @@
 
 .toastui-editor-md-code,
 .toastui-editor-contents code {
-  background-color: rgb(var(--theme-background-tint));
+  background-color: rgb(var(--theme-background-elevated));
 }
 
 .dark-theme .toastui-editor-md-code,
@@ -258,7 +258,7 @@
 }
 
 .toastui-editor-popup-add-heading ul li:hover {
-  background-color: rgb(var(--theme-background-highlight));
+  background-color: rgb(var(--theme-background-elevated));
 }
 
 .toastui-editor-popup-add-image .toastui-editor-tabs .tab-item {

@@ -22,9 +22,9 @@ const style = {
   menuitem: ({ context }) => ({
     class: [
       "text-theme-text-muted rounded px-2 py-1",
-      "hover:bg-theme-background-tint hover:dark:bg-theme-background-elevated hover:cursor-pointer",
+      "hover:bg-theme-background-elevated hover:cursor-pointer",
       {
-        "bg-theme-background-tint dark:bg-theme-background-elevated":
+        "bg-theme-background-elevated":
           context.focused,
       },
     ],

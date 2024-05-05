@@ -1,7 +1,7 @@
 <template>
   <input
     type="text"
-    class="w-full rounded border border-theme-border bg-theme-background-elevated px-3 py-2 focus:outline-none focus:ring-1"
+    class="w-full rounded border border-theme-border px-3 py-2 focus:outline-none focus:ring-1 dark:bg-theme-background-elevated"
     placeholder="Search"
     v-model="model"
     ref="input"

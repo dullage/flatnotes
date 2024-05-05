@@ -4,6 +4,7 @@
     ref="deleteConfirmModal"
     title="Confirm Deletion"
     :message="`Are you sure you want to delete the note '${note.title}'?`"
+    confirmButtonText="Delete"
     isDanger
     @confirm="deleteConfirmedHandler"
   />
