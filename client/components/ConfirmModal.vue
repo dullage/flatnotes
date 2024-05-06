@@ -1,11 +1,10 @@
 <template>
   <Modal
     ref="modal"
-    :class="{ 'border-l-theme-danger border border-l-4': isDanger }"
+    :title="title"
+    :class="{ 'border border-l-4 border-l-theme-danger': isDanger }"
     :closeHandler="cancelHandler"
   >
-    <!-- Title -->
-    <div class="mb-6 text-xl">{{ title }}</div>
     <!-- Message -->
     <div class="mb-6">{{ message }}</div>
     <!-- Buttons -->

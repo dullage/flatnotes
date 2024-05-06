@@ -2,7 +2,7 @@
   <!-- Mask -->
   <div
     v-if="isVisible"
-    class="fixed left-0 top-0 z-50 flex h-dvh w-dvw items-center justify-center backdrop-blur-sm"
+    class="fixed left-0 top-0 z-50 flex h-dvh w-dvw items-center justify-center bg-slate-950/40 backdrop-blur-sm"
   >
     <!-- Modal -->
     <div
@@ -10,24 +10,29 @@
       :class="$attrs.class"
     >
       <CustomButton
+        v-if="props.showClose"
         :iconPath="mdiWindowClose"
         @click="close"
         class="absolute right-1 top-1"
       />
+      <!-- Title -->
+      <div class="mb-6 text-xl">{{ title }}</div>
       <slot></slot>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
 import { mdiWindowClose } from "@mdi/js";
+import { ref } from "vue";
 
 defineOptions({
   inheritAttrs: false,
 });
 
 const props = defineProps({
+  title: { type: String, default: "Confirm" },
+  showClose: { type: Boolean },
   closeHandler: Function,
   modalClasses: String,
 });

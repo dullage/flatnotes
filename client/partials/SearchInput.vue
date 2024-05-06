@@ -2,7 +2,7 @@
   <form class="flex w-full" @submit.prevent="search">
     <TextInput
       v-model="searchTerm"
-      placeholder="Search"
+      :placeholder="props.hidePlaceholder ? '' : 'Search'"
       class="rounded-r-none"
       ref="textInput"
     />
@@ -17,7 +17,7 @@
 <script setup>
 import { mdilMagnify } from "@mdi/light-js";
 import { useToast } from "primevue/usetoast";
-import { ref, onMounted } from "vue";
+import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import * as constants from "../constants";
 
@@ -25,7 +25,10 @@ import CustomButton from "../components/CustomButton.vue";
 import TextInput from "../components/TextInput.vue";
 import { getToastOptions } from "../helpers.js";
 
-const props = defineProps({ initialSearchTerm: String });
+const props = defineProps({
+  initialSearchTerm: String,
+  hidePlaceholder: Boolean,
+});
 const emit = defineEmits(["search"]);
 
 const router = useRouter();
