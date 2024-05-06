@@ -26,6 +26,8 @@
 import { mdiWindowClose } from "@mdi/js";
 import { ref } from "vue";
 
+import CustomButton from "./CustomButton.vue";
+
 defineOptions({
   inheritAttrs: false,
 });
@@ -36,8 +38,6 @@ const props = defineProps({
   closeHandler: Function,
   modalClasses: String,
 });
-
-import CustomButton from "./CustomButton.vue";
 
 const isVisible = ref(false);
 
