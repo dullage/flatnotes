@@ -5,7 +5,7 @@
     </RouterLink>
     <div class="flex grow items-start justify-end">
       <!-- New Note -->
-      <RouterLink :to="{ name: 'note' }">
+      <RouterLink :to="{ name: 'new' }">
         <CustomButton :iconPath="mdilPlusCircle" label="New Note" />
       </RouterLink>
       <!-- Menu -->
