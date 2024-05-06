@@ -107,7 +107,6 @@ const toastEditor = ref();
 
 // 'e' to edit
 Mousetrap.bind("e", function () {
-  console.log("edit");
   if (editMode.value === false) {
     editHandler();
   }

@@ -1,26 +1,42 @@
 <template>
   <div class="container mx-auto flex h-screen flex-col px-2 py-4">
     <PrimeToast />
-    <NavBar v-if="showNavBar" :hide-logo="!showNavBarLogo" />
+    <SearchModal ref="searchModal" />
+    <NavBar
+      v-if="showNavBar"
+      ref="navBar"
+      :hide-logo="!showNavBarLogo"
+      @toggleSearchModal="toggleSearchModal"
+    />
     <RouterView />
   </div>
 </template>
 
 <script setup>
-import { computed } from "vue";
-import { RouterView, useRoute } from "vue-router";
+import Mousetrap from "mousetrap";
 import { useToast } from "primevue/usetoast";
+import { computed, ref } from "vue";
+import { RouterView, useRoute } from "vue-router";
 
 import { getConfig } from "./api.js";
-import { useGlobalStore } from "./globalStore.js";
-import NavBar from "./partials/NavBar.vue";
-import { loadStoredToken } from "./tokenStorage.js";
 import PrimeToast from "./components/PrimeToast.vue";
+import { useGlobalStore } from "./globalStore.js";
 import { getUnknownServerErrorToastOptions } from "./helpers.js";
+import NavBar from "./partials/NavBar.vue";
+import SearchModal from "./partials/SearchModal.vue";
+import { loadStoredToken } from "./tokenStorage.js";
 
 const globalStore = useGlobalStore();
+const navBar = ref();
 const route = useRoute();
+const searchModal = ref();
 const toast = useToast();
+
+// '/' to search
+Mousetrap.bind("/", function () {
+  toggleSearchModal();
+  return false;
+});
 
 getConfig()
   .then((data) => {
@@ -38,4 +54,8 @@ const showNavBar = computed(() => {
 const showNavBarLogo = computed(() => {
   return route.name !== "home";
 });
+
+function toggleSearchModal() {
+  searchModal.value.toggle();
+}
 </script>
