@@ -33,7 +33,7 @@ const searchModal = ref();
 const toast = useToast();
 
 // '/' to search
-Mousetrap.bind("/", function () {
+Mousetrap.bind("/", () => {
   if (route.name !== "login") {
     toggleSearchModal();
     return false;
