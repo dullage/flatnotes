@@ -37,7 +37,7 @@
 
 <script setup>
 import { useToast } from "primevue/usetoast";
-import { ref, watch } from "vue";
+import { onMounted, ref, watch } from "vue";
 
 import { mdiMagnify } from "@mdi/js";
 import { getNotes } from "../api.js";
@@ -53,7 +53,7 @@ const results = ref([]);
 const toast = useToast();
 
 function init() {
-  loadingIndicator.value?.setLoading(); // #CS
+  loadingIndicator.value.setLoading();
   getNotes(props.searchTerm)
     .then((data) => {
       results.value = data;
@@ -69,7 +69,8 @@ function init() {
     });
 }
 
-watch(() => props.searchTerm, init, { immediate: true });
+watch(() => props.searchTerm, init);
+onMounted(init);
 </script>
 
 <style>

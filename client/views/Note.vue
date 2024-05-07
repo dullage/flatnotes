@@ -76,7 +76,7 @@ import {
 } from "@mdi/light-js";
 import Mousetrap from "mousetrap";
 import { useToast } from "primevue/usetoast";
-import { computed, ref, watch } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 
 import { createNote, deleteNote, getNote, updateNote } from "../api.js";
@@ -114,11 +114,11 @@ Mousetrap.bind("e", function () {
 
 function init() {
   // Return if we already have the note
-  if (props.title == note.value.title) {
+  if (props.title && props.title == note.value.title) {
     return;
   }
 
-  loadingIndicator.value?.setLoading(); // #CS
+  loadingIndicator.value.setLoading();
   if (props.title) {
     getNote(props.title)
       .then((data) => {
@@ -223,5 +223,6 @@ function noteSaveSuccess() {
   toast.add(getToastOptions("Success", "Note saved successfully."));
 }
 
-watch(() => props.title, init, { immediate: true });
+watch(() => props.title, init);
+onMounted(init);
 </script>
