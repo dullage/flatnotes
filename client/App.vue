@@ -21,7 +21,7 @@ import { RouterView, useRoute } from "vue-router";
 import { getConfig } from "./api.js";
 import PrimeToast from "./components/PrimeToast.vue";
 import { useGlobalStore } from "./globalStore.js";
-import { getUnknownServerErrorToastOptions } from "./helpers.js";
+import { getUnknownServerErrorToastOptions, loadTheme } from "./helpers.js";
 import NavBar from "./partials/NavBar.vue";
 import SearchModal from "./partials/SearchModal.vue";
 import { loadStoredToken } from "./tokenStorage.js";
@@ -58,4 +58,6 @@ const showNavBarLogo = computed(() => {
 function toggleSearchModal() {
   searchModal.value.toggle();
 }
+
+loadTheme();
 </script>

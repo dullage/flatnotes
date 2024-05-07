@@ -30,11 +30,11 @@ import { RouterLink, useRouter } from "vue-router";
 import CustomButton from "../components/CustomButton.vue";
 import Logo from "../components/Logo.vue";
 import PrimeMenu from "../components/PrimeMenu.vue";
+import { toggleTheme } from "../helpers.js";
 import { clearStoredToken } from "../tokenStorage.js";
 
 const menu = ref();
 const router = useRouter();
-const searchModal = ref();
 
 defineProps({
   hideLogo: Boolean,
@@ -67,10 +67,6 @@ const menuItems = [
     command: logOut,
   },
 ];
-
-function toggleTheme() {
-  document.body.classList.toggle("dark");
-}
 
 function logOut() {
   clearStoredToken();
