@@ -8,14 +8,6 @@ export function getToastOptions(title, description, isFailure = false) {
   };
 }
 
-export function getUnknownServerErrorToastOptions() {
-  return getToastOptions(
-    "Unknown Error",
-    "Unknown error communicating with the server. Please try again.",
-    true,
-  );
-}
-
 export function setDarkThemeOn(save = true) {
   document.body.classList.add("dark");
   if (save) localStorage.setItem("darkTheme", "true");

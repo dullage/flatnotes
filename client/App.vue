@@ -18,10 +18,10 @@ import { useToast } from "primevue/usetoast";
 import { computed, ref } from "vue";
 import { RouterView, useRoute } from "vue-router";
 
-import { getConfig } from "./api.js";
+import { getConfig, apiErrorHandler } from "./api.js";
 import PrimeToast from "./components/PrimeToast.vue";
 import { useGlobalStore } from "./globalStore.js";
-import { getUnknownServerErrorToastOptions, loadTheme } from "./helpers.js";
+import { loadTheme } from "./helpers.js";
 import NavBar from "./partials/NavBar.vue";
 import SearchModal from "./partials/SearchModal.vue";
 import { loadStoredToken } from "./tokenStorage.js";
@@ -42,9 +42,10 @@ getConfig()
   .then((data) => {
     globalStore.authType = data.authType;
   })
-  .catch(() => {
-    toast.add(getUnknownServerErrorToastOptions());
+  .catch((error) => {
+    apiErrorHandler(error, toast);
   });
+
 loadStoredToken();
 
 const showNavBar = computed(() => {

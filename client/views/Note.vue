@@ -79,17 +79,20 @@ import { useToast } from "primevue/usetoast";
 import { computed, onMounted, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 
-import { createNote, deleteNote, getNote, updateNote } from "../api.js";
+import {
+  createNote,
+  deleteNote,
+  getNote,
+  updateNote,
+  apiErrorHandler,
+} from "../api.js";
 import { Note } from "../classes.js";
 import ConfirmModal from "../components/ConfirmModal.vue";
 import CustomButton from "../components/CustomButton.vue";
 import LoadingIndicator from "../components/LoadingIndicator.vue";
 import ToastEditor from "../components/toastui/ToastEditor.vue";
 import ToastViewer from "../components/toastui/ToastViewer.vue";
-import {
-  getToastOptions,
-  getUnknownServerErrorToastOptions,
-} from "../helpers.js";
+import { getToastOptions } from "../helpers.js";
 
 const props = defineProps({
   title: String,
@@ -126,11 +129,11 @@ function init() {
         loadingIndicator.value.setLoaded();
       })
       .catch((error) => {
-        if (error.response.status === 404) {
+        if (error.response?.status === 404) {
           loadingIndicator.value.setFailed("Note not found", mdiNoteOffOutline);
         } else {
           loadingIndicator.value.setFailed();
-          toast.add(getUnknownServerErrorToastOptions());
+          apiErrorHandler(error, toast);
         }
       });
   } else {
@@ -155,8 +158,8 @@ function deleteConfirmedHandler() {
     .then(() => {
       router.push({ name: "home" });
     })
-    .catch(() => {
-      toast.add(getUnknownServerErrorToastOptions());
+    .catch((error) => {
+      apiErrorHandler(error, toast);
     });
 }
 
@@ -214,7 +217,7 @@ function noteSaveFailure(error) {
       ),
     );
   } else {
-    toast.add(getUnknownServerErrorToastOptions());
+    apiErrorHandler(error, toast);
   }
 }
 

@@ -43,7 +43,6 @@ import { mdiMagnify } from "@mdi/js";
 import { getNotes } from "../api.js";
 import LoadingIndicator from "../components/LoadingIndicator.vue";
 import Tag from "../components/Tag.vue";
-import { getUnknownServerErrorToastOptions } from "../helpers.js";
 import SearchInput from "../partials/SearchInput.vue";
 
 const props = defineProps({ searchTerm: String });
@@ -63,9 +62,9 @@ function init() {
         loadingIndicator.value.setFailed("No Results", mdiMagnify);
       }
     })
-    .catch(() => {
+    .catch((error) => {
       loadingIndicator.value.setFailed();
-      toast.add(getUnknownServerErrorToastOptions());
+      apiErrorHandler(error, toast);
     });
 }
 

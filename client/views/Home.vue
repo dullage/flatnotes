@@ -23,10 +23,9 @@ import { useToast } from "primevue/usetoast";
 import { ref } from "vue";
 import { RouterLink } from "vue-router";
 
-import { getNotes } from "../api.js";
+import { getNotes, apiErrorHandler } from "../api.js";
 import CustomButton from "../components/CustomButton.vue";
 import Logo from "../components/Logo.vue";
-import { getUnknownServerErrorToastOptions } from "../helpers.js";
 import SearchInput from "../partials/SearchInput.vue";
 
 const notes = ref([]);
@@ -37,6 +36,6 @@ getNotes("*", "lastModified", "desc", 5)
     notes.value = data;
   })
   .catch((error) => {
-    toast.add(getUnknownServerErrorToastOptions(error));
+    apiErrorHandler(error, toast);
   });
 </script>

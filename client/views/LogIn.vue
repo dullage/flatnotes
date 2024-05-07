@@ -45,17 +45,14 @@ import { ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useToast } from "primevue/usetoast";
 
-import { getToken } from "../api.js";
+import { getToken, apiErrorHandler } from "../api.js";
 import CustomButton from "../components/CustomButton.vue";
 import Logo from "../components/Logo.vue";
 import TextInput from "../components/TextInput.vue";
 import { authTypes } from "../constants.js";
 import { useGlobalStore } from "../globalStore.js";
 import { storeToken } from "../tokenStorage.js";
-import {
-  getToastOptions,
-  getUnknownServerErrorToastOptions,
-} from "../helpers.js";
+import { getToastOptions } from "../helpers.js";
 
 const props = defineProps({ redirect: String });
 
@@ -78,12 +75,12 @@ function logIn() {
         router.push({ name: "home" });
       }
     })
-    .catch((response) => {
+    .catch((error) => {
       username.value = "";
       password.value = "";
       totp.value = "";
 
-      if (response.response?.status === 401) {
+      if (error.response?.status === 401) {
         toast.add(
           getToastOptions(
             "Login Failed",
@@ -92,7 +89,7 @@ function logIn() {
           ),
         );
       } else {
-        toast.add(getUnknownServerErrorToastOptions());
+        apiErrorHandler(error, toast);
       }
     });
 }

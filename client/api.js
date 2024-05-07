@@ -4,6 +4,7 @@ import { Note, SearchResult } from "./classes.js";
 
 import axios from "axios";
 import { getStoredToken } from "./tokenStorage.js";
+import { getToastOptions } from "./helpers.js";
 import router from "./router.js";
 
 const api = axios.create();
@@ -22,25 +23,43 @@ api.interceptors.request.use(
   },
 );
 
-api.interceptors.response.use(
-  function (response) {
-    return response;
-  },
-  function (error) {
-    // If the response is a 401 Unauthorized, redirect to the login page.
-    if (
-      error.response?.status === 401 &&
-      router.currentRoute.value.name !== "login"
-    ) {
-      const redirectPath = router.currentRoute.value.fullPath;
-      router.push({
-        name: "login",
-        query: { [constants.params.redirect]: redirectPath },
-      });
-    }
-    return Promise.reject(error);
-  },
-);
+// api.interceptors.response.use(
+//   function (response) {
+//     return response;
+//   },
+//   function (error) {
+//     // If the response is a 401 Unauthorized, redirect to the login page.
+//     if (
+//       error.response?.status === 401 &&
+//       router.currentRoute.value.name !== "login"
+//     ) {
+//       const redirectPath = router.currentRoute.value.fullPath;
+//       router.push({
+//         name: "login",
+//         query: { [constants.params.redirect]: redirectPath },
+//       });
+//     }
+//     return Promise.reject(error);
+//   },
+// );
+
+export function apiErrorHandler(error, toast) {
+  if (error.response?.status === 401) {
+    const redirectPath = router.currentRoute.value.fullPath;
+    router.push({
+      name: "login",
+      query: { [constants.params.redirect]: redirectPath },
+    });
+  } else {
+    toast.add(
+      getToastOptions(
+        "Unknown Error",
+        "Unknown error communicating with the server. Please try again.",
+        true,
+      ),
+    );
+  }
+}
 
 export async function getConfig() {
   try {
