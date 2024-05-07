@@ -4,8 +4,9 @@
 
 <script setup>
 import Editor from "@toast-ui/editor";
-import codeSyntaxHighlight from "@toast-ui/editor-plugin-code-syntax-highlight/dist/toastui-editor-plugin-code-syntax-highlight-all.js";
 import { onMounted, ref } from "vue";
+
+import baseOptions from "./baseOptions.js";
 
 const props = defineProps({
   initialValue: String,
@@ -16,11 +17,9 @@ let toastEditor;
 
 onMounted(() => {
   toastEditor = new Editor({
+    ...baseOptions,
     el: editorElement.value,
-    height: "100%",
     initialValue: props.initialValue,
-    plugins: [codeSyntaxHighlight],
-    usageStatistics: false,
   });
 });
 
