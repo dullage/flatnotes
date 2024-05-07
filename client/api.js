@@ -23,26 +23,6 @@ api.interceptors.request.use(
   },
 );
 
-// api.interceptors.response.use(
-//   function (response) {
-//     return response;
-//   },
-//   function (error) {
-//     // If the response is a 401 Unauthorized, redirect to the login page.
-//     if (
-//       error.response?.status === 401 &&
-//       router.currentRoute.value.name !== "login"
-//     ) {
-//       const redirectPath = router.currentRoute.value.fullPath;
-//       router.push({
-//         name: "login",
-//         query: { [constants.params.redirect]: redirectPath },
-//       });
-//     }
-//     return Promise.reject(error);
-//   },
-// );
-
 export function apiErrorHandler(error, toast) {
   if (error.response?.status === 401) {
     const redirectPath = router.currentRoute.value.fullPath;
