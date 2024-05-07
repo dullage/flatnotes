@@ -34,8 +34,10 @@ const toast = useToast();
 
 // '/' to search
 Mousetrap.bind("/", function () {
-  toggleSearchModal();
-  return false;
+  if (route.name !== "login") {
+    toggleSearchModal();
+    return false;
+  }
 });
 
 getConfig()
