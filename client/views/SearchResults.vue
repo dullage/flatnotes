@@ -40,7 +40,7 @@ import { useToast } from "primevue/usetoast";
 import { onMounted, ref, watch } from "vue";
 
 import { mdiMagnify } from "@mdi/js";
-import { getNotes } from "../api.js";
+import { getNotes, apiErrorHandler } from "../api.js";
 import LoadingIndicator from "../components/LoadingIndicator.vue";
 import Tag from "../components/Tag.vue";
 import SearchInput from "../partials/SearchInput.vue";
