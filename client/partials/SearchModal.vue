@@ -1,19 +1,14 @@
 <template>
-  <Modal v-model="isVisible" title="Search">
+  <Modal v-model="isVisible" class="px-0 py-0 border-none">
     <SearchInput
+      class="px-5 py-4"
       @search="toggleHandler"
       @keyup.esc="toggleHandler"
-      class="mb-4"
-      hidePlaceholder
     />
-    <div class="flex justify-end">
-      <CustomButton label="Close" @click="toggleHandler" />
-    </div>
   </Modal>
 </template>
 
 <script setup>
-import CustomButton from "../components/CustomButton.vue";
 import Modal from "../components/Modal.vue";
 import SearchInput from "./SearchInput.vue";
 

@@ -1,15 +1,15 @@
 <template>
-  <form class="flex w-full" @submit.prevent="search">
-    <TextInput
+  <form
+    class="flex w-full rounded-md border border-theme-border bg-theme-background px-3 py-2 dark:bg-theme-background-elevated"
+    @submit.prevent="search"
+  >
+    <IconLabel :iconPath="mdilMagnify" class="mr-2" />
+    <input
+      type="text"
       v-model="searchTerm"
       v-focus
-      :placeholder="props.hidePlaceholder ? '' : 'Search'"
-      class="rounded-r-none"
-    />
-    <CustomButton
-      :iconPath="mdilMagnify"
-      iconSize="1.75em"
-      class="rounded-l-none border border-l-0 border-theme-border focus:outline-none focus:ring-1"
+      class="w-full focus:outline-none"
+      placeholder="Search"
     />
   </form>
 </template>
@@ -21,13 +21,11 @@ import { ref } from "vue";
 import { useRouter } from "vue-router";
 import * as constants from "../constants";
 
-import CustomButton from "../components/CustomButton.vue";
-import TextInput from "../components/TextInput.vue";
+import IconLabel from "../components/IconLabel.vue";
 import { getToastOptions } from "../helpers.js";
 
 const props = defineProps({
   initialSearchTerm: String,
-  hidePlaceholder: Boolean,
 });
 const emit = defineEmits(["search"]);
 
