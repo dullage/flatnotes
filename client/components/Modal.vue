@@ -17,7 +17,7 @@
         class="absolute right-1 top-1"
       />
       <!-- Title -->
-      <div class="mb-6 text-xl">{{ title }}</div>
+      <div v-if="title" class="mb-6 text-xl">{{ title }}</div>
       <slot></slot>
     </div>
   </div>
@@ -32,7 +32,7 @@ defineOptions({
   inheritAttrs: false,
 });
 const props = defineProps({
-  title: { type: String, default: "Confirm" },
+  title: { type: String },
   showClose: { type: Boolean },
   closeHandlerOverride: Function,
 });
