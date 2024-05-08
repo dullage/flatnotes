@@ -41,18 +41,18 @@
 
 <script setup>
 import { mdilLogin } from "@mdi/light-js";
-import { ref } from "vue";
-import { useRouter, useRoute } from "vue-router";
 import { useToast } from "primevue/usetoast";
+import { ref, watch } from "vue";
+import { useRouter } from "vue-router";
 
-import { getToken, apiErrorHandler } from "../api.js";
+import { apiErrorHandler, getToken } from "../api.js";
 import CustomButton from "../components/CustomButton.vue";
 import Logo from "../components/Logo.vue";
 import TextInput from "../components/TextInput.vue";
 import { authTypes } from "../constants.js";
 import { useGlobalStore } from "../globalStore.js";
-import { storeToken } from "../tokenStorage.js";
 import { getToastOptions } from "../helpers.js";
+import { storeToken } from "../tokenStorage.js";
 
 const props = defineProps({ redirect: String });
 
@@ -93,4 +93,16 @@ function logIn() {
       }
     });
 }
+
+// Redirect to home if authentication is disabled.
+// Implemented as a watch to allow for delayed config load.
+watch(
+  () => globalStore.authType,
+  () => {
+    if (globalStore.authType === authTypes.none) {
+      router.push({ name: "home" });
+    }
+  },
+  { immediate: true },
+);
 </script>
