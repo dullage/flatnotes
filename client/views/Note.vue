@@ -1,7 +1,7 @@
 <template>
   <!-- Confirm Deletion Modal -->
   <ConfirmModal
-    ref="deleteConfirmModal"
+    v-model="isDeleteModalVisible"
     title="Confirm Deletion"
     :message="`Are you sure you want to delete the note '${note.title}'?`"
     confirmButtonText="Delete"
@@ -99,7 +99,7 @@ const props = defineProps({
 });
 
 const editMode = ref(false);
-const deleteConfirmModal = ref();
+const isDeleteModalVisible = ref(false);
 const isNewNote = computed(() => !props.title);
 const loadingIndicator = ref();
 const note = ref({});
@@ -150,7 +150,7 @@ function editHandler() {
 }
 
 function deleteHandler() {
-  deleteConfirmModal.value.toggle();
+  isDeleteModalVisible.value = true;
 }
 
 function deleteConfirmedHandler() {

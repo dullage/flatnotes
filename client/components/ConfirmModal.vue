@@ -1,6 +1,6 @@
 <template>
   <Modal
-    ref="modal"
+    v-model="isVisible"
     :title="title"
     :class="{ 'border border-l-4 border-l-theme-danger': isDanger }"
     :closeHandler="cancelHandler"
@@ -10,14 +10,17 @@
     <!-- Buttons -->
     <div class="flex justify-end">
       <CustomButton label="Cancel" @click="cancelHandler" class="mr-2" />
-      <CustomButton :label="confirmButtonText" @click="confirmHandler" danger />
+      <CustomButton
+        v-focus
+        :label="confirmButtonText"
+        @click="confirmHandler"
+        danger
+      />
     </div>
   </Modal>
 </template>
 
 <script setup>
-import { ref } from "vue";
-
 import CustomButton from "./CustomButton.vue";
 import Modal from "./Modal.vue";
 
@@ -28,22 +31,15 @@ const props = defineProps({
   isDanger: Boolean,
 });
 const emit = defineEmits(["confirm", "cancel"]);
-
-const modal = ref();
-
-function toggle() {
-  modal.value.toggle();
-}
+const isVisible = defineModel({ type: Boolean });
 
 function cancelHandler() {
-  modal.value.setVisibility(false);
+  isVisible.value = false;
   emit("cancel");
 }
 
 function confirmHandler() {
-  modal.value.setVisibility(false);
+  isVisible.value = false;
   emit("confirm");
 }
-
-defineExpose({ toggle });
 </script>

@@ -8,11 +8,12 @@
     <div
       class="relative max-w-[500px] grow rounded-lg border border-theme-border bg-theme-background px-6 py-4 shadow-lg"
       :class="$attrs.class"
+      @keyup.esc="close"
     >
       <CustomButton
         v-if="props.showClose"
         :iconPath="mdiWindowClose"
-        @click="close"
+        @click="closeHandler"
         class="absolute right-1 top-1"
       />
       <!-- Title -->
@@ -24,38 +25,24 @@
 
 <script setup>
 import { mdiWindowClose } from "@mdi/js";
-import { ref } from "vue";
 
 import CustomButton from "./CustomButton.vue";
 
 defineOptions({
   inheritAttrs: false,
 });
-
 const props = defineProps({
   title: { type: String, default: "Confirm" },
   showClose: { type: Boolean },
-  closeHandler: Function,
-  modalClasses: String,
+  closeHandlerOverride: Function,
 });
+const isVisible = defineModel({ type: Boolean });
 
-const isVisible = ref(false);
-
-function toggle() {
-  isVisible.value = !isVisible.value;
-}
-
-function setVisibility(value) {
-  isVisible.value = value;
-}
-
-function close() {
-  if (props.closeHandler) {
-    props.closeHandler();
+function closeHandler() {
+  if (props.closeHandlerOverride) {
+    props.closeHandlerOverride();
   } else {
-    setVisibility(false);
+    isVisible.value = false;
   }
 }
-
-defineExpose({ toggle, setVisibility });
 </script>
