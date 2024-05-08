@@ -25,6 +25,7 @@
 
 <script setup>
 import { mdiWindowClose } from "@mdi/js";
+import Mousetrap from "mousetrap";
 
 import CustomButton from "./CustomButton.vue";
 
@@ -37,6 +38,13 @@ const props = defineProps({
   closeHandlerOverride: Function,
 });
 const isVisible = defineModel({ type: Boolean });
+
+// 'escape' to close
+Mousetrap.bind("esc", () => {
+  if (isVisible.value) {
+    closeHandler();
+  }
+});
 
 function closeHandler() {
   if (props.closeHandlerOverride) {

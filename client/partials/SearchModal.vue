@@ -1,6 +1,11 @@
 <template>
   <Modal v-model="isVisible" title="Search">
-    <SearchInput @search="toggleHandler" class="mb-4" hidePlaceholder />
+    <SearchInput
+      @search="toggleHandler"
+      @keyup.esc="toggleHandler"
+      class="mb-4"
+      hidePlaceholder
+    />
     <div class="flex justify-end">
       <CustomButton label="Close" @click="toggleHandler" />
     </div>

@@ -109,7 +109,7 @@ const toast = useToast();
 const toastEditor = ref();
 
 // 'e' to edit
-Mousetrap.bind("e", function () {
+Mousetrap.bind("e", () => {
   if (editMode.value === false) {
     editHandler();
   }
