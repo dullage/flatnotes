@@ -3,6 +3,7 @@
   <div
     v-if="isVisible"
     class="fixed left-0 top-0 z-50 flex h-dvh w-dvw items-center justify-center bg-slate-950/40 backdrop-blur-sm"
+    @click.self="closeHandler"
   >
     <!-- Modal -->
     <div
