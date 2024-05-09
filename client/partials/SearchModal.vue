@@ -1,7 +1,7 @@
 <template>
-  <Modal v-model="isVisible">
+  <Modal v-model="isVisible" class="border-none">
     <SearchInput
-      class="px-5 py-4 border-none"
+      class="px-5 py-4"
       @search="toggleHandler"
       @keyup.esc="toggleHandler"
     />
