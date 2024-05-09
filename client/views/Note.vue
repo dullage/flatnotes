@@ -28,11 +28,13 @@
       <!-- Buttons -->
       <div v-show="!editMode">
         <CustomButton
+          v-if="canModify"
           :iconPath="mdilDelete"
           label="Delete"
           @click="deleteHandler"
         />
         <CustomButton
+          v-if="canModify"
           :iconPath="mdilPencil"
           label="Edit"
           @click="editHandler"
@@ -80,11 +82,11 @@ import { computed, onMounted, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 
 import {
+  apiErrorHandler,
   createNote,
   deleteNote,
   getNote,
   updateNote,
-  apiErrorHandler,
 } from "../api.js";
 import { Note } from "../classes.js";
 import ConfirmModal from "../components/ConfirmModal.vue";
@@ -92,13 +94,17 @@ import CustomButton from "../components/CustomButton.vue";
 import LoadingIndicator from "../components/LoadingIndicator.vue";
 import ToastEditor from "../components/toastui/ToastEditor.vue";
 import ToastViewer from "../components/toastui/ToastViewer.vue";
+import { authTypes } from "../constants.js";
+import { useGlobalStore } from "../globalStore.js";
 import { getToastOptions } from "../helpers.js";
 
 const props = defineProps({
   title: String,
 });
 
+const canModify = computed(() => globalStore.authType != authTypes.readOnly);
 const editMode = ref(false);
+const globalStore = useGlobalStore();
 const isDeleteModalVisible = ref(false);
 const isNewNote = computed(() => !props.title);
 const loadingIndicator = ref();
@@ -110,7 +116,7 @@ const toastEditor = ref();
 
 // 'e' to edit
 Mousetrap.bind("e", () => {
-  if (editMode.value === false) {
+  if (editMode.value === false && canModify.value) {
     editHandler();
   }
 });
