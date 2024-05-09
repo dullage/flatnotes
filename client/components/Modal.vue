@@ -9,30 +9,19 @@
     <div
       class="relative max-w-[500px] grow rounded-lg border border-theme-border bg-theme-background shadow-lg"
       :class="$attrs.class"
-      @keyup.esc="close"
     >
-      <CustomButton
-        v-if="props.showClose"
-        :iconPath="mdiWindowClose"
-        @click="closeHandler"
-        class="absolute right-1 top-1"
-      />
       <slot></slot>
     </div>
   </div>
 </template>
 
 <script setup>
-import { mdiWindowClose } from "@mdi/js";
 import Mousetrap from "mousetrap";
-
-import CustomButton from "./CustomButton.vue";
 
 defineOptions({
   inheritAttrs: false,
 });
 const props = defineProps({
-  showClose: { type: Boolean },
   closeHandlerOverride: Function,
 });
 const isVisible = defineModel({ type: Boolean });
