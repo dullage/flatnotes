@@ -7,14 +7,19 @@
     ></div>
 
     <!-- Failed -->
-    <div v-else-if="loadSuccessful === false" class="flex flex-col items-center">
+    <div
+      v-else-if="loadSuccessful === false"
+      class="flex flex-col items-center"
+    >
       <SvgIcon
         type="mdi"
         :path="failedIconPath"
         size="4em"
         class="mb-4 text-theme-brand"
       />
-      <span class="text-lg text-theme-text-muted">{{ failedMessage }}</span>
+      <span class="text-center text-lg text-theme-text-muted max-w-80">{{
+        failedMessage
+      }}</span>
     </div>
 
     <!-- Loaded -->

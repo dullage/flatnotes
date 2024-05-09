@@ -3,7 +3,11 @@
     <div class="flex max-w-[500px] flex-1 flex-col items-center">
       <Logo class="mb-5" />
       <SearchInput class="mb-5 shadow-[0_0_20px] shadow-theme-shadow" />
-      <div class="flex min-h-56 flex-col items-center">
+      <LoadingIndicator
+        ref="loadingIndicator"
+        class="flex min-h-56 flex-col items-center"
+        hideLoader
+      >
         <p
           v-if="notes.length > 0"
           class="mb-2 text-xs font-bold text-theme-text-very-muted"
@@ -13,29 +17,44 @@
         <RouterLink v-for="note in notes" :to="note.href" class="mb-1">
           <CustomButton :label="note.title" />
         </RouterLink>
-      </div>
+      </LoadingIndicator>
     </div>
   </div>
 </template>
 
 <script setup>
 import { useToast } from "primevue/usetoast";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { RouterLink } from "vue-router";
 
-import { getNotes, apiErrorHandler } from "../api.js";
+import { mdiPencil } from "@mdi/js";
+import { apiErrorHandler, getNotes } from "../api.js";
 import CustomButton from "../components/CustomButton.vue";
+import LoadingIndicator from "../components/LoadingIndicator.vue";
 import Logo from "../components/Logo.vue";
 import SearchInput from "../partials/SearchInput.vue";
 
+const loadingIndicator = ref();
+const noNotesMessage =
+  "Click the 'New Note' button at the top of the page to get started.";
 const notes = ref([]);
 const toast = useToast();
 
-getNotes("*", "lastModified", "desc", 5)
-  .then((data) => {
-    notes.value = data;
-  })
-  .catch((error) => {
-    apiErrorHandler(error, toast);
-  });
+function init() {
+  getNotes("*", "lastModified", "desc", 5)
+    .then((data) => {
+      notes.value = data;
+      if (notes.value.length > 0) {
+        loadingIndicator.value.setLoaded();
+      } else {
+        loadingIndicator.value.setFailed(noNotesMessage, mdiPencil);
+      }
+    })
+    .catch((error) => {
+      loadingIndicator.value.setFailed();
+      apiErrorHandler(error, toast);
+    });
+}
+
+onMounted(init);
 </script>
