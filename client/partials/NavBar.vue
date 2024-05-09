@@ -5,7 +5,7 @@
     </RouterLink>
     <div class="flex grow items-start justify-end">
       <!-- New Note -->
-      <RouterLink :to="{ name: 'new' }">
+      <RouterLink v-if="showNewButton" :to="{ name: 'new' }">
         <CustomButton :iconPath="mdilPlusCircle" label="New Note" />
       </RouterLink>
       <!-- Menu -->
@@ -24,15 +24,18 @@ import {
   mdilNoteMultiple,
   mdilPlusCircle,
 } from "@mdi/light-js";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { RouterLink, useRouter } from "vue-router";
 
 import CustomButton from "../components/CustomButton.vue";
 import Logo from "../components/Logo.vue";
 import PrimeMenu from "../components/PrimeMenu.vue";
+import { authTypes } from "../constants.js";
+import { useGlobalStore } from "../globalStore.js";
 import { toggleTheme } from "../helpers.js";
 import { clearStoredToken } from "../tokenStorage.js";
 
+const globalStore = useGlobalStore();
 const menu = ref();
 const router = useRouter();
 
@@ -60,13 +63,19 @@ const menuItems = [
   },
   {
     separator: true,
+    visible: showLogOutButton,
   },
   {
     label: "Log Out",
     icon: mdilLogout,
     command: logOut,
+    visible: showLogOutButton,
   },
 ];
+
+const showNewButton = computed(() => {
+  return globalStore.authType !== authTypes.readOnly;
+});
 
 function logOut() {
   clearStoredToken();
@@ -75,5 +84,9 @@ function logOut() {
 
 function toggleMenu(event) {
   menu.value.toggle(event);
+}
+
+function showLogOutButton() {
+  return ![authTypes.none, authTypes.readOnly].includes(globalStore.authType);
 }
 </script>
