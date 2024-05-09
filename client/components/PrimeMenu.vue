@@ -1,11 +1,14 @@
 <template>
   <Menu ref="menu" :pt="style">
     <template #item="{ item, props }">
-      <IconLabel
-        :iconPath="item.icon"
-        :label="item.label"
-        v-bind="props.action"
-      />
+      <div class="flex items-center justify-between" v-bind="props.action">
+        <IconLabel :iconPath="item.icon" :label="item.label" />
+        <span
+          v-if="item.keyboardShortcut"
+          class="ml-4 rounded bg-theme-background-elevated px-3 py-1 text-xs"
+          >{{ item.keyboardShortcut }}</span
+        >
+      </div>
     </template>
   </Menu>
 </template>
@@ -24,8 +27,7 @@ const style = {
       "text-theme-text-muted rounded px-2 py-1",
       "hover:bg-theme-background-elevated hover:cursor-pointer",
       {
-        "bg-theme-background-elevated":
-          context.focused,
+        "bg-theme-background-elevated": context.focused,
       },
     ],
   }),

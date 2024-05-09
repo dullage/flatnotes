@@ -50,6 +50,7 @@ const menuItems = [
     label: "Search",
     icon: mdilMagnify,
     command: () => emit("toggleSearchModal"),
+    keyboardShortcut: "/",
   },
   {
     label: "All Notes",
