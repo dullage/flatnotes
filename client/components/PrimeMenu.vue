@@ -1,14 +1,14 @@
 <template>
   <Menu ref="menu" :pt="style">
     <template #item="{ item, props }">
-      <div class="flex items-center justify-between" v-bind="props.action">
+      <a class="flex items-center justify-between" v-bind="props.action">
         <IconLabel :iconPath="item.icon" :label="item.label" />
         <span
           v-if="item.keyboardShortcut"
           class="ml-4 rounded bg-theme-background-elevated px-3 py-1 text-xs"
           >{{ item.keyboardShortcut }}</span
         >
-      </div>
+      </a>
     </template>
   </Menu>
 </template>
