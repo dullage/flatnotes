@@ -4,7 +4,10 @@
     :title="title"
     :class="{ 'border border-l-4 border-l-theme-danger': isDanger }"
     :closeHandler="cancelHandler"
+    class="px-6 py-4"
   >
+    <!-- Title -->
+    <div v-if="title" class="mb-6 text-xl">{{ title }}</div>
     <!-- Message -->
     <div class="mb-6">{{ message }}</div>
     <!-- Buttons -->

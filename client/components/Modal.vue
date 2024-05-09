@@ -7,7 +7,7 @@
   >
     <!-- Modal -->
     <div
-      class="relative max-w-[500px] grow rounded-lg border border-theme-border bg-theme-background px-6 py-4 shadow-lg"
+      class="relative max-w-[500px] grow rounded-lg border border-theme-border bg-theme-background shadow-lg"
       :class="$attrs.class"
       @keyup.esc="close"
     >
@@ -17,8 +17,6 @@
         @click="closeHandler"
         class="absolute right-1 top-1"
       />
-      <!-- Title -->
-      <div v-if="title" class="mb-6 text-xl">{{ title }}</div>
       <slot></slot>
     </div>
   </div>
@@ -34,7 +32,6 @@ defineOptions({
   inheritAttrs: false,
 });
 const props = defineProps({
-  title: { type: String },
   showClose: { type: Boolean },
   closeHandlerOverride: Function,
 });

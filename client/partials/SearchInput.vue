@@ -9,7 +9,7 @@
       v-model="searchTerm"
       v-focus
       class="w-full focus:outline-none"
-      placeholder="Search"
+      placeholder="Search..."
     />
   </form>
 </template>
