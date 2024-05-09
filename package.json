@@ -21,7 +21,7 @@
     "mousetrap": "1.6.5",
     "pinia": "2.1.7",
     "primevue": "3.52.0",
-    "vue": "3.4.26",
+    "vue": "3.4.27",
     "vue-router": "4.3.2"
   },
   "devDependencies": {
