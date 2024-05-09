@@ -8,7 +8,7 @@
       type="text"
       v-model="searchTerm"
       v-focus
-      class="w-full focus:outline-none"
+      class="w-full focus:outline-none bg-theme-background-elevated"
       placeholder="Search..."
     />
   </form>
