@@ -9,7 +9,12 @@
         <CustomButton :iconPath="mdilPlusCircle" label="New Note" />
       </RouterLink>
       <!-- Menu -->
-      <CustomButton :iconPath="mdilMenu" label="Menu" @click="toggleMenu" />
+      <CustomButton
+        class="ml-1"
+        :iconPath="mdilMenu"
+        label="Menu"
+        @click="toggleMenu"
+      />
       <PrimeMenu ref="menu" :model="menuItems" :popup="true" />
     </div>
   </nav>

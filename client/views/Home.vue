@@ -10,7 +10,7 @@
         >
           RECENTLY MODIFIED
         </p>
-        <RouterLink v-for="note in notes" :to="note.href">
+        <RouterLink v-for="note in notes" :to="note.href" class="mb-1">
           <CustomButton :label="note.title" />
         </RouterLink>
       </div>

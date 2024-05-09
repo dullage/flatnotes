@@ -35,6 +35,7 @@
         />
         <CustomButton
           v-if="canModify"
+          class="ml-1"
           :iconPath="mdilPencil"
           label="Edit"
           @click="editHandler"
@@ -47,6 +48,7 @@
           @click="cancelHandler"
         />
         <CustomButton
+          class="ml-1"
           :iconPath="mdilContentSave"
           label="Save"
           @click="saveHandler"
