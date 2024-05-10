@@ -111,6 +111,7 @@ const isDeleteModalVisible = ref(false);
 const isNewNote = computed(() => !props.title);
 const loadingIndicator = ref();
 const note = ref({});
+const reservedFilenameCharacters = /[<>:"/\\|?*]/;
 const router = useRouter();
 const newTitle = ref();
 const toast = useToast();
@@ -152,6 +153,26 @@ function init() {
   }
 }
 
+function entityTooLargeToast(entityName) {
+  toast.add(
+    getToastOptions(
+      "Failure",
+      `This ${entityName} is too large. Please try again with a smaller ${entityName} or adjust your server configuration.`,
+      true,
+    ),
+  );
+}
+
+function badFilenameToast(entityName) {
+  toast.add(
+    getToastOptions(
+      `Invalid ${entityName}`,
+      "Due to filename restrictions, the following characters are not allowed: <>:\"/\\|?*",
+      true,
+    ),
+  );
+}
+
 function editHandler() {
   newTitle.value = note.value.title;
   editMode.value = true;
@@ -182,6 +203,10 @@ function cancelHandler() {
 }
 
 function saveHandler() {
+  if (reservedFilenameCharacters.test(newTitle.value)) {
+    badFilenameToast("Title");
+    return;
+  }
   let newContent = toastEditor.value.getMarkdown();
   if (isNewNote.value) {
     saveNew(newTitle.value, newContent);
@@ -226,13 +251,7 @@ function noteSaveFailure(error) {
       ),
     );
   } else if (error.response?.status === 413) {
-    toast.add(
-      getToastOptions(
-        "Failure",
-        "This note is too large. Please try again with a smaller note or adjust your server configuration.",
-        true,
-      ),
-    );
+    entityTooLargeToast("note");
   } else {
     apiErrorHandler(error, toast);
   }
