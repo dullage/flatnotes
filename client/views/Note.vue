@@ -164,6 +164,7 @@ function deleteHandler() {
 function deleteConfirmedHandler() {
   deleteNote(note.value.title)
     .then(() => {
+      toast.add(getToastOptions("Success", "Note deleted."));
       router.push({ name: "home" });
     })
     .catch((error) => {
@@ -216,11 +217,19 @@ function saveExisting(newTitle, newContent) {
 }
 
 function noteSaveFailure(error) {
-  if (error.response.status === 409) {
+  if (error.response?.status === 409) {
     toast.add(
       getToastOptions(
         "Duplicate",
         "A note with this title already exists. Please try again with a new title.",
+        true,
+      ),
+    );
+  } else if (error.response?.status === 413) {
+    toast.add(
+      getToastOptions(
+        "Failure",
+        "This note is too large. Please try again with a smaller note or adjust your server configuration.",
         true,
       ),
     );
