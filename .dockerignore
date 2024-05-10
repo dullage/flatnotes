@@ -11,5 +11,7 @@
 !healthcheck.sh
 !package-lock.json
 !package.json
+!postcss.config.js
 !server/**
+!tailwind.config.js
 !vite.config.js

@@ -8,7 +8,14 @@ ARG BUILD_DIR
 RUN mkdir ${BUILD_DIR}
 WORKDIR ${BUILD_DIR}
 
-COPY package.json package-lock.json vite.config.js .htmlnanorc ./
+COPY .htmlnanorc \
+    package.json \
+    package-lock.json \
+    postcss.config.js \
+    tailwind.config.js \
+    vite.config.js \
+    ./
+
 RUN npm ci
 
 COPY client ./client
