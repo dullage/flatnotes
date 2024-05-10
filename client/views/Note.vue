@@ -9,6 +9,16 @@
     @confirm="deleteConfirmedHandler"
   />
 
+  <!-- Confirm Cancellation Modal -->
+  <ConfirmModal
+    v-model="isCancellationModalVisible"
+    title="Confirm Closure"
+    :message="`Changes have been made. Are you sure you want to close the note '${note.title}'?`"
+    confirmButtonText="Close"
+    isDanger
+    @confirm="cancelConfirmedHandler"
+  />
+
   <LoadingIndicator ref="loadingIndicator" class="flex h-full flex-col">
     <!-- Header -->
     <div class="flex flex-wrap-reverse items-start">
@@ -107,6 +117,7 @@ const props = defineProps({
 const canModify = computed(() => globalStore.authType != authTypes.readOnly);
 const editMode = ref(false);
 const globalStore = useGlobalStore();
+const isCancellationModalVisible = ref(false);
 const isDeleteModalVisible = ref(false);
 const isNewNote = computed(() => !props.title);
 const loadingIndicator = ref();
@@ -196,12 +207,13 @@ function deleteHandler() {
 }
 
 function cancelHandler() {
-  setBeforeUnloadConfirmation(false);
-  editMode.value = false;
-  if (!props.title) {
-    router.push({ name: "home" });
+  if (
+    newTitle.value != note.value.title ||
+    toastEditor.value.getMarkdown() != note.value.content
+  ) {
+    isCancellationModalVisible.value = true;
   } else {
-    editMode.value = false;
+    cancelConfirmedHandler();
   }
 }
 
@@ -229,6 +241,16 @@ function saveHandler() {
 }
 
 // Additional Logic
+function cancelConfirmedHandler() {
+  setBeforeUnloadConfirmation(false);
+  editMode.value = false;
+  if (!props.title) {
+    router.push({ name: "home" });
+  } else {
+    editMode.value = false;
+  }
+}
+
 function deleteConfirmedHandler() {
   deleteNote(note.value.title)
     .then(() => {
