@@ -19,7 +19,7 @@
         }}</span>
         <input
           v-show="editMode"
-          v-model="newTitle"
+          v-model.trim="newTitle"
           class="flex-1 bg-theme-background outline-none"
           placeholder="Title"
         />
@@ -148,11 +148,12 @@ function init() {
   } else {
     newTitle.value = "";
     note.value = new Note();
-    editMode.value = true;
+    editHandler();
     loadingIndicator.value.setLoaded();
   }
 }
 
+// Helpers
 function entityTooLargeToast(entityName) {
   toast.add(
     getToastOptions(
@@ -167,13 +168,25 @@ function badFilenameToast(entityName) {
   toast.add(
     getToastOptions(
       `Invalid ${entityName}`,
-      "Due to filename restrictions, the following characters are not allowed: <>:\"/\\|?*",
+      'Due to filename restrictions, the following characters are not allowed: <>:"/\\|?*',
       true,
     ),
   );
 }
 
+function setBeforeUnloadConfirmation(enable = true) {
+  if (enable) {
+    window.onbeforeunload = () => {
+      return true;
+    };
+  } else {
+    window.onbeforeunload = null;
+  }
+}
+
+// Button Handlers
 function editHandler() {
+  setBeforeUnloadConfirmation(true);
   newTitle.value = note.value.title;
   editMode.value = true;
 }
@@ -182,18 +195,8 @@ function deleteHandler() {
   isDeleteModalVisible.value = true;
 }
 
-function deleteConfirmedHandler() {
-  deleteNote(note.value.title)
-    .then(() => {
-      toast.add(getToastOptions("Success", "Note deleted."));
-      router.push({ name: "home" });
-    })
-    .catch((error) => {
-      apiErrorHandler(error, toast);
-    });
-}
-
 function cancelHandler() {
+  setBeforeUnloadConfirmation(false);
   editMode.value = false;
   if (!props.title) {
     router.push({ name: "home" });
@@ -203,16 +206,38 @@ function cancelHandler() {
 }
 
 function saveHandler() {
+  // Empty Title Validation
+  if (!newTitle.value) {
+    toast.add(
+      getToastOptions("Invalid", "Cannot save note without a title", true),
+    );
+    return;
+  }
+
+  // Invalid Character Validation
   if (reservedFilenameCharacters.test(newTitle.value)) {
     badFilenameToast("Title");
     return;
   }
+
   let newContent = toastEditor.value.getMarkdown();
   if (isNewNote.value) {
     saveNew(newTitle.value, newContent);
   } else {
     saveExisting(newTitle.value, newContent);
   }
+}
+
+// Additional Logic
+function deleteConfirmedHandler() {
+  deleteNote(note.value.title)
+    .then(() => {
+      toast.add(getToastOptions("Success", "Note deleted."));
+      router.push({ name: "home" });
+    })
+    .catch((error) => {
+      apiErrorHandler(error, toast);
+    });
 }
 
 function saveNew(newTitle, newContent) {
@@ -258,6 +283,7 @@ function noteSaveFailure(error) {
 }
 
 function noteSaveSuccess() {
+  setBeforeUnloadConfirmation(false);
   editMode.value = false;
   toast.add(getToastOptions("Success", "Note saved successfully."));
 }
