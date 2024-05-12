@@ -1,7 +1,8 @@
 <template>
   <Modal v-model="isVisible" class="border-none">
     <SearchInput
-      class="px-5 py-4"
+      large
+      placeholder="Search by title, content or #tags..."
       @search="toggleHandler"
       @keyup.esc="toggleHandler"
     />

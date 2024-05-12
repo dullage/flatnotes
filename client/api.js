@@ -118,3 +118,12 @@ export async function deleteNote(title) {
     return Promise.reject(response);
   }
 }
+
+export async function getTags() {
+  try {
+    const response = await api.get("/api/tags");
+    return response.data;
+  } catch (response) {
+    return Promise.reject(response);
+  }
+}
