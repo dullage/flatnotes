@@ -80,6 +80,10 @@ class FileSystemNotes(BaseNotes):
         filepath = self._path_from_title(title)
         if data.new_title is not None:
             new_filepath = self._path_from_title(data.new_title)
+            if filepath != new_filepath and os.path.isfile(new_filepath):
+                raise FileExistsError(
+                    f"Failed to rename. '{data.new_title}' already exists."
+                )
             os.rename(filepath, new_filepath)
             title = data.new_title
             filepath = new_filepath
