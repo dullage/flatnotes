@@ -13,8 +13,9 @@
         v-focus
         class="w-full bg-transparent focus:outline-none"
         :placeholder="placeholder"
-        @keyup="inputEventHandler"
-        @click="inputEventHandler"
+        @keydown="keydownHandler"
+        @keyup="stateChangeHandler"
+        @click="stateChangeHandler"
         @blur="tagMenuVisible = false"
         @keydown.down.prevent
         @keydown.up.prevent
@@ -70,7 +71,7 @@ const tagMenuItems = ref([]);
 const tagMenuIndex = ref(0);
 const tagMenuVisible = ref(false);
 
-function inputEventHandler(event) {
+function keydownHandler(event) {
   // Tag Menu Open
   if (tagMenuVisible.value) {
     if (event.key === "ArrowDown") {
@@ -90,17 +91,11 @@ function inputEventHandler(event) {
       tagChosen(tagMatches.value[tagMenuIndex.value]);
     } else if (event.key === "Escape") {
       tagMenuVisible.value = false;
-    } else {
-      stateChangeHandler();
     }
   }
   // Tag Menu Closed
-  else {
-    if (event.key === "Enter") {
-      search();
-    } else {
-      stateChangeHandler();
-    }
+  else if (event.key === "Enter") {
+    search();
   }
 }
 
@@ -125,6 +120,7 @@ function stateChangeHandler() {
   const wordOnCursor = getWordOnCursor();
   if (wordOnCursor.charAt(0) !== "#") {
     tagMenuVisible.value = false;
+    tagMatches.value = [];
   } else {
     filterTagMatches(wordOnCursor);
   }
@@ -140,11 +136,19 @@ async function filterTagMatches(input) {
     }
     tags = tags.map((tag) => `#${tag}`);
   }
+  const currentTagMatchCount = tagMatches.value.length;
   tagMatches.value = tags.filter(
     (tag) => tag.startsWith(input) && tag !== input,
   );
-  tagMenuIndex.value = 0;
-  tagMenuVisible.value = tagMatches.value.length > 0;
+  if (
+    currentTagMatchCount !== tagMatches.value.length &&
+    tagMatches.value.length > 0
+  ) {
+    tagMenuIndex.value = 0;
+    tagMenuVisible.value = true;
+  } else if (tagMatches.value.length === 0) {
+    tagMenuVisible.value = false;
+  }
 }
 
 // Helpers
