@@ -30,9 +30,8 @@
       <p
         v-for="(tag, index) in tagMatches"
         ref="tagMenuItems"
-        class="cursor-pointer rounded px-2 py-1"
+        class="cursor-pointer rounded px-2 py-1 hover:bg-theme-background-elevated"
         :class="{ 'bg-theme-background-elevated': index === tagMenuIndex }"
-        @mouseover="tagMenuIndex = index"
         @click="tagChosen(tag)"
         @mousedown.prevent
       >
