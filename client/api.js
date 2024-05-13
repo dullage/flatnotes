@@ -31,6 +31,7 @@ export function apiErrorHandler(error, toast) {
       query: { [constants.params.redirect]: redirectPath },
     });
   } else {
+    console.error(error);
     toast.add(
       getToastOptions(
         "Unknown Error",
