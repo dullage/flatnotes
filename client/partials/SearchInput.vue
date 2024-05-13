@@ -26,7 +26,7 @@
     <!-- Tag Menu -->
     <div
       v-if="tagMenuVisible"
-      class="absolute z-10 mt-1 max-h-64 w-full overflow-scroll rounded-md border border-theme-border bg-theme-background p-1 dark:bg-theme-background-elevated"
+      class="absolute z-10 mt-2 max-h-64 w-full overflow-scroll rounded-md border border-theme-border bg-theme-background p-1"
     >
       <p
         v-for="(tag, index) in tagMatches"
