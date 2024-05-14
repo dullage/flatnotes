@@ -21,12 +21,10 @@
 
   <LoadingIndicator ref="loadingIndicator" class="flex h-full flex-col">
     <!-- Header -->
-    <div class="flex flex-wrap-reverse items-start">
+    <div class="flex flex-col-reverse md:flex-row md:items-baseline">
       <!-- Title -->
-      <div class="flex flex-1 text-3xl leading-[1.6em]">
-        <span v-show="!editMode" class="flex-1 text-nowrap">{{
-          note.title
-        }}</span>
+      <div class="grow truncate text-3xl leading-[1.6em]">
+        <span v-show="!editMode" :title="note.title">{{ note.title }}</span>
         <input
           v-show="editMode"
           v-model.trim="newTitle"
@@ -36,33 +34,35 @@
       </div>
 
       <!-- Buttons -->
-      <div v-show="!editMode">
-        <CustomButton
-          v-if="canModify"
-          :iconPath="mdilDelete"
-          label="Delete"
-          @click="deleteHandler"
-        />
-        <CustomButton
-          v-if="canModify"
-          class="ml-1"
-          :iconPath="mdilPencil"
-          label="Edit"
-          @click="editHandler"
-        />
-      </div>
-      <div v-show="editMode">
-        <CustomButton
-          :iconPath="mdilArrowLeft"
-          label="Cancel"
-          @click="cancelHandler"
-        />
-        <CustomButton
-          class="ml-1"
-          :iconPath="mdilContentSave"
-          label="Save"
-          @click="saveHandler"
-        />
+      <div class="flex shrink-0 self-end md:self-baseline">
+        <div v-show="!editMode">
+          <CustomButton
+            v-if="canModify"
+            :iconPath="mdilDelete"
+            label="Delete"
+            @click="deleteHandler"
+          />
+          <CustomButton
+            v-if="canModify"
+            class="ml-1"
+            :iconPath="mdilPencil"
+            label="Edit"
+            @click="editHandler"
+          />
+        </div>
+        <div v-show="editMode">
+          <CustomButton
+            :iconPath="mdilArrowLeft"
+            label="Cancel"
+            @click="cancelHandler"
+          />
+          <CustomButton
+            class="ml-1"
+            :iconPath="mdilContentSave"
+            label="Save"
+            @click="saveHandler"
+          />
+        </div>
       </div>
     </div>
 
