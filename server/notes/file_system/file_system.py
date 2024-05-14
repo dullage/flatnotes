@@ -51,7 +51,7 @@ class FileSystemNotes(BaseNotes):
                 f"'{self.storage_path}' is not a valid directory."
             )
         self.index = self._load_index()
-        self._sync_index()
+        self._sync_index(optimize=True)
 
     def create(self, data: NoteCreate) -> Note:
         """Create a new note."""
@@ -145,8 +145,10 @@ class FileSystemNotes(BaseNotes):
             return tuple(self._search_result_from_hit(hit) for hit in results)
 
     def get_tags(self) -> list[str]:
-        """Return a list of all indexed tags."""
-        self._sync_index()
+        """Return a list of all indexed tags. The index is synchronized and
+        optimised before returning the tags to ensure the most up-to-date list
+        is returned."""
+        self._sync_index(optimize=True)
         with self.index.reader() as reader:
             tags = reader.field_terms("tags")
             return [tag for tag in tags]
@@ -223,7 +225,7 @@ class FileSystemNotes(BaseNotes):
             )
         ]
 
-    def _sync_index(self, clean: bool = False) -> None:
+    def _sync_index(self, optimize: bool = False, clean: bool = False) -> None:
         """Synchronize the index with the notes directory.
         Specify clean=True to completely rebuild the index"""
         indexed = set()
@@ -258,7 +260,7 @@ class FileSystemNotes(BaseNotes):
                     writer, self._get_by_filename(filename)
                 )
                 logger.info(f"'{filename}' added to index")
-        writer.commit()
+        writer.commit(optimize=optimize)
 
     @classmethod
     def _pre_process_search_term(cls, term):
