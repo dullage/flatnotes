@@ -34,9 +34,9 @@ export function apiErrorHandler(error, toast) {
     console.error(error);
     toast.add(
       getToastOptions(
-        "Unknown Error",
         "Unknown error communicating with the server. Please try again.",
-        true,
+        "Unknown Error",
+        "error",
       ),
     );
   }

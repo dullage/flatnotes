@@ -112,7 +112,9 @@ function search() {
     });
     emit("search");
   } else {
-    toast.add(getToastOptions("Error", "Please enter a search term.", true));
+    toast.add(
+      getToastOptions("Please enter a search term.", "Error", "error"),
+    );
   }
 }
 

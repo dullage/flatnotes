@@ -171,9 +171,9 @@ function init() {
 function entityTooLargeToast(entityName) {
   toast.add(
     getToastOptions(
-      "Failure",
       `This ${entityName} is too large. Please try again with a smaller ${entityName} or adjust your server configuration.`,
-      true,
+      "Failure",
+      "error",
     ),
   );
 }
@@ -181,9 +181,9 @@ function entityTooLargeToast(entityName) {
 function badFilenameToast(entityName) {
   toast.add(
     getToastOptions(
-      `Invalid ${entityName}`,
       'Due to filename restrictions, the following characters are not allowed: <>:"/\\|?*',
-      true,
+      `Invalid ${entityName}`,
+      "error",
     ),
   );
 }
@@ -240,7 +240,7 @@ function saveHandler() {
   // Empty Title Validation
   if (!newTitle.value) {
     toast.add(
-      getToastOptions("Invalid", "Cannot save note without a title", true),
+      getToastOptions("Cannot save note without a title.", "Invalid", "error"),
     );
     return;
   }
@@ -274,7 +274,7 @@ function cancelConfirmedHandler() {
 function deleteConfirmedHandler() {
   deleteNote(note.value.title)
     .then(() => {
-      toast.add(getToastOptions("Success", "Note deleted."));
+      toast.add(getToastOptions("Note deleted ✓", "Success", "success"));
       router.push({ name: "home" });
     })
     .catch((error) => {
@@ -312,9 +312,9 @@ function noteSaveFailure(error) {
   if (error.response?.status === 409) {
     toast.add(
       getToastOptions(
-        "Duplicate",
         "A note with this title already exists. Please try again with a new title.",
-        true,
+        "Duplicate",
+        "error",
       ),
     );
   } else if (error.response?.status === 413) {
@@ -327,7 +327,7 @@ function noteSaveFailure(error) {
 function noteSaveSuccess() {
   setBeforeUnloadConfirmation(false);
   editMode.value = false;
-  toast.add(getToastOptions("Success", "Note saved successfully."));
+  toast.add(getToastOptions("Note saved successfully ✓", "Success", "success"));
 }
 
 function addImageBlobHook(file, callback) {
@@ -353,14 +353,18 @@ function postAttachment(file) {
   }
 
   // Uploading Toast
-  toast.add(getToastOptions("Uploading", "Uploading attachment..."));
+  toast.add(getToastOptions("Uploading attachment..."));
 
   // Upload the attachment
   return createAttachment(file)
     .then((data) => {
       // Success Toast
       toast.add(
-        getToastOptions("Success", "Attachment uploaded successfully."),
+        getToastOptions(
+          "Attachment uploaded successfully ✓",
+          "Success",
+          "success",
+        ),
       );
       return data;
     })
@@ -370,9 +374,9 @@ function postAttachment(file) {
         // Error Toast
         toast.add(
           getToastOptions(
-            "Duplicate",
             "An attachment with this filename already exists.",
-            true,
+            "Duplicate",
+            "error",
           ),
         );
       } else if (error.response?.status == 413) {

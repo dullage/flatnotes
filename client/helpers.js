@@ -1,8 +1,8 @@
-export function getToastOptions(title, description, isFailure = false) {
+export function getToastOptions(description, title, severity) {
   return {
     summary: title,
     detail: description,
-    severity: isFailure ? "error" : "success",
+    severity: severity,
     closable: false,
     life: 5000,
   };

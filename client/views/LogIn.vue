@@ -83,9 +83,9 @@ function logIn() {
       if (error.response?.status === 401) {
         toast.add(
           getToastOptions(
-            "Login Failed",
             "Please check your credentials and try again.",
-            true,
+            "Login Failed",
+            "error",
           ),
         );
       } else {
