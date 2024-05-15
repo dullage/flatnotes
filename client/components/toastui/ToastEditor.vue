@@ -14,6 +14,7 @@ const props = defineProps({
     type: String,
     default: "markdown",
   },
+  addImageBlobHook: Function,
 });
 
 const editorElement = ref();
@@ -25,6 +26,9 @@ onMounted(() => {
     el: editorElement.value,
     initialValue: props.initialValue,
     initialEditType: props.initialEditType,
+    hooks: props.addImageBlobHook
+      ? { addImageBlobHook: props.addImageBlobHook }
+      : {},
   });
 });
 

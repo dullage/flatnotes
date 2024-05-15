@@ -76,6 +76,7 @@
         ref="toastEditor"
         :initialValue="note.content"
         :initialEditType="loadDefaultEditorMode()"
+        :addImageBlobHook="addImageBlobHook"
       />
     </div>
   </LoadingIndicator>
@@ -96,6 +97,7 @@ import { useRouter } from "vue-router";
 
 import {
   apiErrorHandler,
+  createAttachment,
   createNote,
   deleteNote,
   getNote,
@@ -326,6 +328,59 @@ function noteSaveSuccess() {
   setBeforeUnloadConfirmation(false);
   editMode.value = false;
   toast.add(getToastOptions("Success", "Note saved successfully."));
+}
+
+function addImageBlobHook(file, callback) {
+  const altTextInputValue = document.getElementById(
+    "toastuiAltTextInput",
+  )?.value;
+
+  // Upload the image then use the callback to insert the URL into the editor
+  postAttachment(file).then(function (data) {
+    if (data) {
+      // If the user has entered an alt text, use it. Otherwise, use the filename returned by the API.
+      const altText = altTextInputValue ? altTextInputValue : data.filename;
+      callback(data.url, altText);
+    }
+  });
+}
+
+function postAttachment(file) {
+  // Invalid Character Validation
+  if (reservedFilenameCharacters.test(file.name)) {
+    badFilenameToast("Title");
+    return;
+  }
+
+  // Uploading Toast
+  toast.add(getToastOptions("Uploading", "Uploading attachment..."));
+
+  // Upload the attachment
+  return createAttachment(file)
+    .then((data) => {
+      // Success Toast
+      toast.add(
+        getToastOptions("Success", "Attachment uploaded successfully."),
+      );
+      return data;
+    })
+    .catch((error) => {
+      if (error.response?.status === 409) {
+        // Note: The current implementation will append a datetime to the filename if it already exists.
+        // Error Toast
+        toast.add(
+          getToastOptions(
+            "Duplicate",
+            "An attachment with this filename already exists.",
+            true,
+          ),
+        );
+      } else if (error.response?.status == 413) {
+        entityTooLargeToast("attachment");
+      } else {
+        apiErrorHandler(error, toast);
+      }
+    });
 }
 
 watch(() => props.title, init);

@@ -128,3 +128,18 @@ export async function getTags() {
     return Promise.reject(response);
   }
 }
+
+export async function createAttachment(file) {
+  try {
+    const formData = new FormData();
+    formData.append("file", file);
+    const response = await api.post("/api/attachments", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data;
+  } catch (response) {
+    return Promise.reject(response);
+  }
+}

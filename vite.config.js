@@ -13,6 +13,10 @@ export default defineConfig({
         target: devApiUrl,
         changeOrigin: true,
       },
+      "/attachments/": {
+        target: devApiUrl,
+        changeOrigin: true,
+      },
       "/docs": {
         target: devApiUrl,
         changeOrigin: true,
