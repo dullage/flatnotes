@@ -75,6 +75,7 @@
         v-if="editMode"
         ref="toastEditor"
         :initialValue="note.content"
+        :initialEditType="loadDefaultEditorMode()"
       />
     </div>
   </LoadingIndicator>
@@ -195,6 +196,19 @@ function setBeforeUnloadConfirmation(enable = true) {
   }
 }
 
+function saveDefaultEditorMode() {
+  const isWysiwygMode = toastEditor.value.isWysiwygMode();
+  localStorage.setItem(
+    "defaultEditorMode",
+    isWysiwygMode ? "wysiwyg" : "markdown",
+  );
+}
+
+function loadDefaultEditorMode() {
+  const defaultWysiwygMode = localStorage.getItem("defaultEditorMode");
+  return defaultWysiwygMode || "markdown";
+}
+
 // Button Handlers
 function editHandler() {
   setBeforeUnloadConfirmation(true);
@@ -218,6 +232,9 @@ function cancelHandler() {
 }
 
 function saveHandler() {
+  // Save Default Editor Mode
+  saveDefaultEditorMode();
+
   // Empty Title Validation
   if (!newTitle.value) {
     toast.add(
@@ -232,6 +249,7 @@ function saveHandler() {
     return;
   }
 
+  // Save Note
   let newContent = toastEditor.value.getMarkdown();
   if (isNewNote.value) {
     saveNew(newTitle.value, newContent);

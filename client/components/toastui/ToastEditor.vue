@@ -10,6 +10,10 @@ import baseOptions from "./baseOptions.js";
 
 const props = defineProps({
   initialValue: String,
+  initialEditType: {
+    type: String,
+    default: "markdown",
+  },
 });
 
 const editorElement = ref();
@@ -20,6 +24,7 @@ onMounted(() => {
     ...baseOptions,
     el: editorElement.value,
     initialValue: props.initialValue,
+    initialEditType: props.initialEditType,
   });
 });
 
@@ -27,7 +32,11 @@ function getMarkdown() {
   return toastEditor.getMarkdown();
 }
 
-defineExpose({ getMarkdown });
+function isWysiwygMode() {
+  return toastEditor.isWysiwygMode();
+}
+
+defineExpose({ getMarkdown, isWysiwygMode });
 </script>
 
 <style>
