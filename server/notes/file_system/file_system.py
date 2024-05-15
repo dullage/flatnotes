@@ -145,7 +145,8 @@ class FileSystemNotes(BaseNotes):
             return tuple(self._search_result_from_hit(hit) for hit in results)
 
     def get_tags(self) -> list[str]:
-        """Return a list of all indexed tags."""
+        """Return a list of all indexed tags. Note: Tags no longer in use will
+        only be cleared when the index is next optimized."""
         self._sync_index()
         with self.index.reader() as reader:
             tags = reader.field_terms("tags")
