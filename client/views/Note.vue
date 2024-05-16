@@ -5,7 +5,7 @@
     title="Confirm Deletion"
     :message="`Are you sure you want to delete the note '${note.title}'?`"
     confirmButtonText="Delete"
-    isDanger
+    confirmButtonStyle="danger"
     @confirm="deleteConfirmedHandler"
   />
 
@@ -15,8 +15,24 @@
     title="Confirm Closure"
     :message="`Changes have been made. Are you sure you want to close the note '${note.title}'?`"
     confirmButtonText="Close"
-    isDanger
+    confirmButtonStyle="danger"
     @confirm="cancelConfirmedHandler"
+  />
+
+  <!-- Draft Modal -->
+  <ConfirmModal
+    v-model="isDraftModalVisible"
+    title="Draft Detected"
+    message="There is an unsaved draft of this note stored in this browser. Do you want to resume the draft version or delete it?"
+    confirmButtonText="Resume Draft"
+    confirmButtonStyle="cta"
+    cancelButtonText="Delete Draft"
+    cancelButtonStyle="danger"
+    @confirm="setEditMode()"
+    @cancel="
+      clearDraft();
+      setEditMode();
+    "
   />
 
   <LoadingIndicator ref="loadingIndicator" class="flex h-full flex-col">
@@ -74,9 +90,10 @@
       <ToastEditor
         v-if="editMode"
         ref="toastEditor"
-        :initialValue="note.content"
+        :initialValue="getInitialEditorValue()"
         :initialEditType="loadDefaultEditorMode()"
         :addImageBlobHook="addImageBlobHook"
+        @change="startDraftSaveTimeout"
       />
     </div>
   </LoadingIndicator>
@@ -118,10 +135,12 @@ const props = defineProps({
 });
 
 const canModify = computed(() => globalStore.authType != authTypes.readOnly);
+let draftSaveTimeout = null;
 const editMode = ref(false);
 const globalStore = useGlobalStore();
 const isCancellationModalVisible = ref(false);
 const isDeleteModalVisible = ref(false);
+const isDraftModalVisible = ref(false);
 const isNewNote = computed(() => !props.title);
 const loadingIndicator = ref();
 const note = ref({});
@@ -167,61 +186,44 @@ function init() {
   }
 }
 
-// Helpers
-function entityTooLargeToast(entityName) {
-  toast.add(
-    getToastOptions(
-      `This ${entityName} is too large. Please try again with a smaller ${entityName} or adjust your server configuration.`,
-      "Failure",
-      "error",
-    ),
-  );
-}
-
-function badFilenameToast(entityName) {
-  toast.add(
-    getToastOptions(
-      'Due to filename restrictions, the following characters are not allowed: <>:"/\\|?*',
-      `Invalid ${entityName}`,
-      "error",
-    ),
-  );
-}
-
-function setBeforeUnloadConfirmation(enable = true) {
-  if (enable) {
-    window.onbeforeunload = () => {
-      return true;
-    };
+// Note Editing
+function editHandler() {
+  const draftContent = loadDraft();
+  if (draftContent) {
+    isDraftModalVisible.value = true;
   } else {
-    window.onbeforeunload = null;
+    setEditMode();
   }
 }
 
-function saveDefaultEditorMode() {
-  const isWysiwygMode = toastEditor.value.isWysiwygMode();
-  localStorage.setItem(
-    "defaultEditorMode",
-    isWysiwygMode ? "wysiwyg" : "markdown",
-  );
-}
-
-function loadDefaultEditorMode() {
-  const defaultWysiwygMode = localStorage.getItem("defaultEditorMode");
-  return defaultWysiwygMode || "markdown";
-}
-
-// Button Handlers
-function editHandler() {
+function setEditMode() {
   setBeforeUnloadConfirmation(true);
   newTitle.value = note.value.title;
   editMode.value = true;
 }
 
+function getInitialEditorValue() {
+  const draftContent = loadDraft();
+  return draftContent ? draftContent : note.value.content;
+}
+
+// Note Deletion
 function deleteHandler() {
   isDeleteModalVisible.value = true;
 }
 
+function deleteConfirmedHandler() {
+  deleteNote(note.value.title)
+    .then(() => {
+      toast.add(getToastOptions("Note deleted ✓", "Success", "success"));
+      router.push({ name: "home" });
+    })
+    .catch((error) => {
+      apiErrorHandler(error, toast);
+    });
+}
+
+// Note Edit Cancellation
 function cancelHandler() {
   if (
     newTitle.value != note.value.title ||
@@ -233,6 +235,18 @@ function cancelHandler() {
   }
 }
 
+function cancelConfirmedHandler() {
+  clearDraft();
+  setBeforeUnloadConfirmation(false);
+  editMode.value = false;
+  if (!props.title) {
+    router.push({ name: "home" });
+  } else {
+    editMode.value = false;
+  }
+}
+
+// Note Saving
 function saveHandler() {
   // Save Default Editor Mode
   saveDefaultEditorMode();
@@ -260,31 +274,10 @@ function saveHandler() {
   }
 }
 
-// Additional Logic
-function cancelConfirmedHandler() {
-  setBeforeUnloadConfirmation(false);
-  editMode.value = false;
-  if (!props.title) {
-    router.push({ name: "home" });
-  } else {
-    editMode.value = false;
-  }
-}
-
-function deleteConfirmedHandler() {
-  deleteNote(note.value.title)
-    .then(() => {
-      toast.add(getToastOptions("Note deleted ✓", "Success", "success"));
-      router.push({ name: "home" });
-    })
-    .catch((error) => {
-      apiErrorHandler(error, toast);
-    });
-}
-
 function saveNew(newTitle, newContent) {
   createNote(newTitle, newContent)
     .then((data) => {
+      clearDraft();
       note.value = data;
       router.push({ name: "note", params: { title: note.value.title } });
       noteSaveSuccess();
@@ -301,6 +294,7 @@ function saveExisting(newTitle, newContent) {
 
   updateNote(note.value.title, newTitle, newContent)
     .then((data) => {
+      clearDraft();
       note.value = data;
       router.replace({ name: "note", params: { title: note.value.title } });
       noteSaveSuccess();
@@ -330,6 +324,7 @@ function noteSaveSuccess() {
   toast.add(getToastOptions("Note saved successfully ✓", "Success", "success"));
 }
 
+// Image Upload
 function addImageBlobHook(file, callback) {
   const altTextInputValue = document.getElementById(
     "toastuiAltTextInput",
@@ -385,6 +380,77 @@ function postAttachment(file) {
         apiErrorHandler(error, toast);
       }
     });
+}
+
+// Drafts
+function clearDraftSaveTimeout() {
+  if (draftSaveTimeout != null) {
+    clearTimeout(draftSaveTimeout);
+  }
+}
+
+function saveDraft() {
+  const content = toastEditor.value.getMarkdown();
+  if (content) {
+    localStorage.setItem(note.value.title, content);
+  }
+}
+
+function startDraftSaveTimeout() {
+  clearDraftSaveTimeout();
+  draftSaveTimeout = setTimeout(saveDraft, 1000);
+}
+
+function clearDraft() {
+  localStorage.removeItem(note.value.title);
+}
+
+function loadDraft() {
+  return localStorage.getItem(note.value.title);
+}
+
+// Helpers
+function entityTooLargeToast(entityName) {
+  toast.add(
+    getToastOptions(
+      `This ${entityName} is too large. Please try again with a smaller ${entityName} or adjust your server configuration.`,
+      "Failure",
+      "error",
+    ),
+  );
+}
+
+function badFilenameToast(entityName) {
+  toast.add(
+    getToastOptions(
+      'Due to filename restrictions, the following characters are not allowed: <>:"/\\|?*',
+      `Invalid ${entityName}`,
+      "error",
+    ),
+  );
+}
+
+function setBeforeUnloadConfirmation(enable = true) {
+  if (enable) {
+    window.onbeforeunload = () => {
+      return true;
+    };
+  } else {
+    window.onbeforeunload = null;
+  }
+}
+
+function saveDefaultEditorMode() {
+  const isWysiwygMode = toastEditor.value.isWysiwygMode();
+  localStorage.setItem(
+    "defaultEditorMode",
+    isWysiwygMode ? "wysiwyg" : "markdown",
+  );
+}
+
+function loadDefaultEditorMode() {
+  const defaultWysiwygMode = localStorage.getItem("defaultEditorMode");
+  return defaultWysiwygMode || "markdown";
 }
 
 watch(() => props.title, init);

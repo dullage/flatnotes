@@ -3,8 +3,11 @@
     class="rounded px-2 py-1"
     :class="{
       'bg-theme-background text-theme-text-muted hover:bg-theme-background-elevated':
-        !danger,
-      'bg-theme-danger hover:bg-theme-danger/80 text-slate-50': danger,
+        style === 'subtle',
+      'border bg-theme-background hover:bg-theme-background-elevated':
+        style === 'cta',
+      'bg-theme-danger text-slate-50 hover:bg-theme-danger/80':
+        style === 'danger',
     }"
   >
     <IconLabel :iconPath="iconPath" :iconSize="iconSize" :label="label" />
@@ -18,6 +21,12 @@ defineProps({
   iconPath: String,
   iconSize: String,
   label: String,
-  danger: Boolean,
+  style: {
+    type: String,
+    default: "subtle",
+    validator: (value) => {
+      return ["subtle", "cta", "danger"].includes(value);
+    },
+  },
 });
 </script>

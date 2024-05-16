@@ -12,12 +12,17 @@
     <div class="mb-6">{{ message }}</div>
     <!-- Buttons -->
     <div class="flex justify-end">
-      <CustomButton label="Cancel" @click="cancelHandler" class="mr-2" />
+      <CustomButton
+        :label="cancelButtonText"
+        :style="cancelButtonStyle"
+        @click="cancelHandler"
+        class="mr-2"
+      />
       <CustomButton
         v-focus
         :label="confirmButtonText"
+        :style="confirmButtonStyle"
         @click="confirmHandler"
-        danger
       />
     </div>
   </Modal>
@@ -30,7 +35,10 @@ import Modal from "./Modal.vue";
 const props = defineProps({
   title: { type: String, default: "Confirmation" },
   message: String,
+  confirmButtonStyle: { type: String, default: "cta" },
   confirmButtonText: { type: String, default: "Confirm" },
+  cancelButtonStyle: { type: String, default: "subtle" },
+  cancelButtonText: { type: String, default: "Cancel" },
   isDanger: Boolean,
 });
 const emit = defineEmits(["confirm", "cancel"]);

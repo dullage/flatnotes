@@ -17,6 +17,8 @@ const props = defineProps({
   addImageBlobHook: Function,
 });
 
+const emit = defineEmits(["change"]);
+
 const editorElement = ref();
 let toastEditor;
 
@@ -26,6 +28,11 @@ onMounted(() => {
     el: editorElement.value,
     initialValue: props.initialValue,
     initialEditType: props.initialEditType,
+    events: {
+      change: () => {
+        emit("change");
+      },
+    },
     hooks: props.addImageBlobHook
       ? { addImageBlobHook: props.addImageBlobHook }
       : {},
