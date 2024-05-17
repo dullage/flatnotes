@@ -158,7 +158,7 @@ Mousetrap.bind("e", () => {
 });
 
 function init() {
-  // Return if we already have the note
+  // Return if we already have the note e.g. When we rename a note, the route prop would change but we’d already have the note.
   if (props.title && props.title == note.value.title) {
     return;
   }
