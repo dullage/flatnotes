@@ -3,19 +3,19 @@
     <!-- Search Input -->
     <SearchInput :initialSearchTerm="props.searchTerm" class="mb-2" />
 
-    <!-- Sort By -->
-    <div class="flex justify-end">
-      <CustomButton
-        :label="`Sort By: ${sortByName}`"
-        :iconPath="mdiSort"
-        class="mb-1"
-        @click="toggleSortMenu"
-      />
-      <PrimeMenu ref="sortMenu" :model="menuItems" :popup="true" />
-    </div>
-
-    <!-- Search Results -->
     <LoadingIndicator ref="loadingIndicator" class="flex-1">
+      <!-- Sort By -->
+      <div class="flex justify-end">
+        <CustomButton
+          :label="`Sort By: ${sortByName}`"
+          :iconPath="mdiSort"
+          class="mb-1"
+          @click="toggleSortMenu"
+        />
+        <PrimeMenu ref="sortMenu" :model="menuItems" :popup="true" />
+      </div>
+
+      <!-- Search Results -->
       <div
         v-for="result in results"
         class="mb-4 cursor-pointer rounded px-2 py-1 hover:bg-theme-background-elevated"
