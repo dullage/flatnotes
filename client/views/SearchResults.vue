@@ -1,13 +1,21 @@
 <template>
-  <div class="flex h-full flex-col">
+  <div class="flex h-full max-w-[700px] flex-col">
     <!-- Search Input -->
-    <SearchInput
-      :initialSearchTerm="props.searchTerm"
-      class="mb-8 max-w-[700px]"
-    />
+    <SearchInput :initialSearchTerm="props.searchTerm" class="mb-2" />
+
+    <!-- Sort By -->
+    <div class="flex justify-end">
+      <CustomButton
+        :label="`Sort By: ${sortByName}`"
+        :iconPath="mdiSort"
+        class="mb-1"
+        @click="toggleSortMenu"
+      />
+      <PrimeMenu ref="sortMenu" :model="menuItems" :popup="true" />
+    </div>
 
     <!-- Search Results -->
-    <LoadingIndicator ref="loadingIndicator" class="max-w-[700px] flex-1">
+    <LoadingIndicator ref="loadingIndicator" class="flex-1">
       <div
         v-for="result in results"
         class="mb-4 cursor-pointer rounded px-2 py-1 hover:bg-theme-background-elevated"
@@ -37,25 +45,46 @@
 
 <script setup>
 import { useToast } from "primevue/usetoast";
-import { onMounted, ref, watch } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
+import { useRouter } from "vue-router";
 
-import { mdiMagnify } from "@mdi/js";
-import { getNotes, apiErrorHandler } from "../api.js";
+import { mdiMagnify, mdiSort } from "@mdi/js";
+import { apiErrorHandler, getNotes } from "../api.js";
+import CustomButton from "../components/CustomButton.vue";
 import LoadingIndicator from "../components/LoadingIndicator.vue";
+import PrimeMenu from "../components/PrimeMenu.vue";
 import Tag from "../components/Tag.vue";
+import { params, searchSortOptions } from "../constants.js";
 import SearchInput from "../partials/SearchInput.vue";
 
-const props = defineProps({ searchTerm: String });
+const props = defineProps({
+  searchTerm: String,
+  sortBy: {
+    type: Number,
+    default: searchSortOptions.score,
+  },
+});
 
 const loadingIndicator = ref();
 const results = ref([]);
+const router = useRouter();
+const sortMenu = ref();
 const toast = useToast();
+
+const sortByName = computed(() => {
+  const sortOptionNames = {
+    [searchSortOptions.title]: "Title",
+    [searchSortOptions.lastModified]: "Last Modified",
+    [searchSortOptions.score]: "Score",
+  };
+  return sortOptionNames[props.sortBy];
+});
 
 function init() {
   loadingIndicator.value.setLoading();
   getNotes(props.searchTerm)
     .then((data) => {
-      results.value = data;
+      results.value = sortResults(data);
       if (results.value.length > 0) {
         loadingIndicator.value.setLoaded();
       } else {
@@ -68,7 +97,58 @@ function init() {
     });
 }
 
+function sortResults(results) {
+  if (props.sortBy === searchSortOptions.title) {
+    return results.sort((a, b) => a.title.localeCompare(b.title));
+  } else if (props.sortBy === searchSortOptions.lastModified) {
+    return results.sort((a, b) => b.lastModified - a.lastModified);
+  } else {
+    return results.sort((a, b) => b.score - a.score);
+  }
+}
+
+function reSortResults() {
+  results.value = sortResults(results.value);
+}
+
+function updateSortByParam(sortBy) {
+  router.push({
+    name: "search",
+    query: {
+      [params.searchTerm]: props.searchTerm,
+      [params.sortBy]: sortBy,
+    },
+  });
+}
+
+const menuItems = [
+  {
+    label: "Sort By: Score",
+    command: () => {
+      updateSortByParam(searchSortOptions.score);
+    },
+  },
+
+  {
+    label: "Sort By: Title",
+    command: () => {
+      updateSortByParam(searchSortOptions.title);
+    },
+  },
+  {
+    label: "Sort By: Last Modified",
+    command: () => {
+      updateSortByParam(searchSortOptions.lastModified);
+    },
+  },
+];
+
+function toggleSortMenu(event) {
+  sortMenu.value.toggle(event);
+}
+
 watch(() => props.searchTerm, init);
+watch(() => props.sortBy, reSortResults);
 onMounted(init);
 </script>
 

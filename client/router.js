@@ -33,6 +33,7 @@ const router = createRouter({
       component: () => import("./views/SearchResults.vue"),
       props: (route) => ({
         searchTerm: route.query[constants.params.searchTerm],
+        sortBy: Number(route.query[constants.params.sortBy]) || undefined,
       }),
     },
   ],

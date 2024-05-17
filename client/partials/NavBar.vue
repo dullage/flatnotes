@@ -35,7 +35,7 @@ import { RouterLink, useRouter } from "vue-router";
 import CustomButton from "../components/CustomButton.vue";
 import Logo from "../components/Logo.vue";
 import PrimeMenu from "../components/PrimeMenu.vue";
-import { authTypes } from "../constants.js";
+import { authTypes, params, searchSortOptions } from "../constants.js";
 import { useGlobalStore } from "../globalStore.js";
 import { toggleTheme } from "../helpers.js";
 import { clearStoredToken } from "../tokenStorage.js";
@@ -60,7 +60,14 @@ const menuItems = [
   {
     label: "All Notes",
     icon: mdilNoteMultiple,
-    command: () => router.push({ name: "search", query: { term: "*" } }),
+    command: () =>
+      router.push({
+        name: "search",
+        query: {
+          [params.searchTerm]: "*",
+          [params.sortBy]: searchSortOptions.title,
+        },
+      }),
   },
   {
     label: "Toggle Theme",
