@@ -2,6 +2,7 @@ import glob
 import os
 import re
 import shutil
+import time
 from datetime import datetime
 from typing import List, Literal, Set, Tuple
 
@@ -10,7 +11,7 @@ from whoosh import writing
 from whoosh.analysis import CharsetFilter, StemmingAnalyzer
 from whoosh.fields import DATETIME, ID, KEYWORD, TEXT, SchemaClass
 from whoosh.highlight import ContextFragmenter, WholeFragmenter
-from whoosh.index import Index
+from whoosh.index import Index, LockError
 from whoosh.qparser import MultifieldParser
 from whoosh.qparser.dateparse import DateParserPlugin
 from whoosh.query import Every
@@ -51,7 +52,7 @@ class FileSystemNotes(BaseNotes):
                 f"'{self.storage_path}' is not a valid directory."
             )
         self.index = self._load_index()
-        self._sync_index(optimize=True)
+        self._sync_index_with_retry(optimize=True)
 
     def create(self, data: NoteCreate) -> Note:
         """Create a new note."""
@@ -108,7 +109,7 @@ class FileSystemNotes(BaseNotes):
         limit: int = None,
     ) -> Tuple[SearchResult, ...]:
         """Search the index for the given term."""
-        self._sync_index()
+        self._sync_index_with_retry()
         term = self._pre_process_search_term(term)
         with self.index.searcher() as searcher:
             # Parse Query
@@ -147,7 +148,7 @@ class FileSystemNotes(BaseNotes):
     def get_tags(self) -> list[str]:
         """Return a list of all indexed tags. Note: Tags no longer in use will
         only be cleared when the index is next optimized."""
-        self._sync_index()
+        self._sync_index_with_retry()
         with self.index.reader() as reader:
             tags = reader.field_terms("tags")
             return [tag for tag in tags]
@@ -260,6 +261,23 @@ class FileSystemNotes(BaseNotes):
                 )
                 logger.info(f"'{filename}' added to index")
         writer.commit(optimize=optimize)
+        logger.info("Index synchronized")
+
+    def _sync_index_with_retry(
+        self,
+        optimize: bool = False,
+        clean: bool = False,
+        max_retries: int = 8,
+        retry_delay: float = 0.25,
+    ) -> None:
+        for _ in range(max_retries):
+            try:
+                self._sync_index(optimize=optimize, clean=clean)
+                return
+            except LockError:
+                logger.warning(f"Index locked, retrying in {retry_delay}s")
+                time.sleep(retry_delay)
+        logger.error(f"Failed to sync index after {max_retries} retries")
 
     @classmethod
     def _pre_process_search_term(cls, term):
