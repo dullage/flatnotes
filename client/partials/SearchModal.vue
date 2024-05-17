@@ -4,7 +4,7 @@
       large
       placeholder="Search by title, content or #tags..."
       @search="toggleHandler"
-      @keyup.esc="toggleHandler"
+      @keydown.esc="toggleHandler"
     />
   </Modal>
 </template>

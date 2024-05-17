@@ -91,6 +91,7 @@ function keydownHandler(event) {
       tagChosen(tagMatches.value[tagMenuIndex.value]);
     } else if (event.key === "Escape") {
       tagMenuVisible.value = false;
+      event.stopPropagation();  // Prevent the modal from closing when the tag menu is open.
     }
   }
   // Tag Menu Closed
@@ -112,9 +113,7 @@ function search() {
     });
     emit("search");
   } else {
-    toast.add(
-      getToastOptions("Please enter a search term.", "Error", "error"),
-    );
+    toast.add(getToastOptions("Please enter a search term.", "Error", "error"));
   }
 }
 
