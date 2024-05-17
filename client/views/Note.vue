@@ -13,7 +13,7 @@
   <ConfirmModal
     v-model="isCancellationModalVisible"
     title="Confirm Closure"
-    :message="`Changes have been made. Are you sure you want to close the note '${note.title}'?`"
+    message="Changes have been made. Are you sure you want to close the note?"
     confirmButtonText="Close"
     confirmButtonStyle="danger"
     @confirm="cancelConfirmedHandler"
