@@ -46,7 +46,7 @@
 <script setup>
 import { mdilMagnify } from "@mdi/light-js";
 import { useToast } from "primevue/usetoast";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import * as constants from "../constants";
 
@@ -91,7 +91,7 @@ function keydownHandler(event) {
       tagChosen(tagMatches.value[tagMenuIndex.value]);
     } else if (event.key === "Escape") {
       tagMenuVisible.value = false;
-      event.stopPropagation();  // Prevent the modal from closing when the tag menu is open.
+      event.stopPropagation(); // Prevent the modal from closing when the tag menu is open.
     }
   }
   // Tag Menu Closed
@@ -192,4 +192,11 @@ function replaceWordOnCursor(replacement) {
     replacement +
     searchTerm.value.substring(end);
 }
+
+watch(
+  () => props.initialSearchTerm,
+  () => {
+    searchTerm.value = props.initialSearchTerm;
+  },
+);
 </script>
