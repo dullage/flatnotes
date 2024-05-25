@@ -1,11 +1,3 @@
-// Disable checkboxes in view mode. See https://github.com/nhn/tui.editor/issues/1087.
-.toastui-editor-contents li.task-list-item {
-  pointer-events: none;
-  a {
-    pointer-events: auto;
-  }
-}
-
 .ProseMirror,
 .toastui-editor-defaultUI .ProseMirror,
 .toastui-editor-md-container .toastui-editor-md-preview {

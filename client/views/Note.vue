@@ -86,7 +86,11 @@
 
     <!-- Content -->
     <div class="flex-1">
-      <ToastViewer v-if="!editMode" :initialValue="note.content" />
+      <ToastViewer
+        v-if="!editMode"
+        :initialValue="note.content"
+        class="toast-viewer"
+      />
       <ToastEditor
         v-if="editMode"
         ref="toastEditor"
@@ -98,6 +102,17 @@
     </div>
   </LoadingIndicator>
 </template>
+
+<style>
+/* Disable checkboxes in view mode. See https://github.com/nhn/tui.editor/issues/1087. */
+.toast-viewer li.task-list-item {
+  pointer-events: none;
+}
+.toast-viewer li.task-list-item a {
+  pointer-events: auto;
+}
+</style>
+
 
 <script setup>
 import { mdiNoteOffOutline } from "@mdi/js";
