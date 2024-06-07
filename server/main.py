@@ -170,7 +170,10 @@ def get_tags():
 @app.get("/api/config", response_model=GlobalConfigResponseModel)
 def get_config():
     """Retrieve server-side config required for the UI."""
-    return GlobalConfigResponseModel(auth_type=global_config.auth_type)
+    return GlobalConfigResponseModel(
+        auth_type=global_config.auth_type,
+        hide_recently_modified=global_config.hide_recently_modified,
+    )
 
 
 # endregion

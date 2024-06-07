@@ -24,7 +24,7 @@
 
 <script setup>
 import { useToast } from "primevue/usetoast";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { RouterLink } from "vue-router";
 
 import { mdiPencil } from "@mdi/js";
@@ -32,8 +32,10 @@ import { apiErrorHandler, getNotes } from "../api.js";
 import CustomButton from "../components/CustomButton.vue";
 import LoadingIndicator from "../components/LoadingIndicator.vue";
 import Logo from "../components/Logo.vue";
+import { useGlobalStore } from "../globalStore.js";
 import SearchInput from "../partials/SearchInput.vue";
 
+const globalStore = useGlobalStore();
 const loadingIndicator = ref();
 const noNotesMessage =
   "Click the 'New Note' button at the top of the page to get started.";
@@ -41,6 +43,9 @@ const notes = ref([]);
 const toast = useToast();
 
 function init() {
+  if (globalStore.hideRecentlyModified) {
+    return;
+  }
   getNotes("*", "lastModified", "desc", 5)
     .then((data) => {
       notes.value = data;
@@ -56,5 +61,7 @@ function init() {
     });
 }
 
+// Watch to allow for delayed config load.
+watch(() => globalStore.hideRecentlyModified, init);
 onMounted(init);
 </script>

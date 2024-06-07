@@ -48,10 +48,10 @@ import { mdilMagnify } from "@mdi/light-js";
 import { useToast } from "primevue/usetoast";
 import { ref, watch } from "vue";
 import { useRouter } from "vue-router";
-import * as constants from "../constants";
 
-import { getTags, apiErrorHandler } from "../api.js";
+import { apiErrorHandler, getTags } from "../api.js";
 import IconLabel from "../components/IconLabel.vue";
+import * as constants from "../constants.js";
 import { getToastOptions } from "../helpers.js";
 
 const props = defineProps({

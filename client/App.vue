@@ -43,6 +43,7 @@ Mousetrap.bind("/", () => {
 getConfig()
   .then((data) => {
     globalStore.authType = data.authType;
+    globalStore.hideRecentlyModified = data.hideRecentlyModified;
   })
   .catch((error) => {
     apiErrorHandler(error, toast);

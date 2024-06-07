@@ -30,7 +30,9 @@ def strip_whitespace(value):
     return value.strip()
 
 
-def get_env(key, mandatory=False, default=None, cast_int=False):
+def get_env(
+    key, mandatory=False, default=None, cast_int=False, cast_bool=False
+):
     """Get an environment variable. If `mandatory` is True and environment
     variable isn't set, exit the program"""
     value = os.environ.get(key)
@@ -43,6 +45,15 @@ def get_env(key, mandatory=False, default=None, cast_int=False):
         try:
             value = int(value)
         except (TypeError, ValueError):
+            logger.error(f"Invalid value '{value}' for {key}.")
+            sys.exit(1)
+    if cast_bool:
+        value = value.lower()
+        if value == "true":
+            value = True
+        elif value == "false":
+            value = False
+        else:
             logger.error(f"Invalid value '{value}' for {key}.")
             sys.exit(1)
     return value

@@ -9,6 +9,7 @@ class GlobalConfig:
     def __init__(self) -> None:
         logger.debug("Loading global config...")
         self.auth_type: AuthType = self._load_auth_type()
+        self.hide_recently_modified: bool = self._load_hide_recently_modified()
 
     def load_auth(self):
         if self.auth_type in (AuthType.NONE, AuthType.READ_ONLY):
@@ -45,6 +46,10 @@ class GlobalConfig:
             sys.exit(1)
         return auth_type
 
+    def _load_hide_recently_modified(self):
+        key = "FLATNOTES_HIDE_RECENTLY_MODIFIED"
+        return get_env(key, mandatory=False, default=False, cast_bool=True)
+
 
 class AuthType(str, Enum):
     NONE = "none"
@@ -55,3 +60,4 @@ class AuthType(str, Enum):
 
 class GlobalConfigResponseModel(CustomBaseModel):
     auth_type: AuthType
+    hide_recently_modified: bool
