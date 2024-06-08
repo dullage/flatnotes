@@ -1,7 +1,8 @@
 /** @type {import('tailwindcss').Config} */
-const colors = require("tailwindcss/colors");
 
-module.exports = {
+import colors from "tailwindcss/colors";
+
+export default {
   content: ["client/**/*.{html,js,vue}"],
   darkMode: "selector",
   theme: {
