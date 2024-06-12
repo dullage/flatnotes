@@ -20,7 +20,7 @@
         v-for="result in results"
         class="mb-4 cursor-pointer rounded px-2 py-1 hover:bg-theme-background-elevated"
       >
-        <RouterLink :to="result.href">
+        <RouterLink :to="{ name: 'note', params: { title: result.title } }">
           <!-- Title and Tags -->
           <div>
             <span v-html="result.titleHighlightsOrTitle" class="mr-2"></span>

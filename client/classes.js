@@ -7,10 +7,6 @@ class Note {
     this.content = note?.content;
   }
 
-  get href() {
-    return `${router.resolve({ name: "note", params: { title: this.title } }).href}`;
-  }
-
   get lastModifiedAsDate() {
     return new Date(this.lastModified * 1000);
   }
