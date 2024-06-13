@@ -16,7 +16,7 @@ COPY .htmlnanorc \
     vite.config.js \
     ./
 
-RUN npm ci
+RUN npm install && npm ci
 
 COPY client ./client
 RUN npm run build

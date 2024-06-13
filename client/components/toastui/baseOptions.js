@@ -1,4 +1,5 @@
 import codeSyntaxHighlight from "@toast-ui/editor-plugin-code-syntax-highlight/dist/toastui-editor-plugin-code-syntax-highlight-all.js";
+import uml from '@toast-ui/editor-plugin-uml';
 import router from "../../router.js";
 
 /*
@@ -121,7 +122,7 @@ const customHTMLRenderer = {
 
 const baseOptions = {
   height: "100%",
-  plugins: [codeSyntaxHighlight],
+  plugins: [codeSyntaxHighlight, uml],
   customHTMLRenderer: customHTMLRenderer,
   usageStatistics: false,
   extendedAutolinks,
