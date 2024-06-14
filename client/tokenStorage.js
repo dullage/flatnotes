@@ -1,7 +1,7 @@
 const tokenStorageKey = "token";
 
 function getCookieString(token) {
-  return `${tokenStorageKey}=${token}; path=/attachments; SameSite=Strict`;
+  return `${tokenStorageKey}=${token}; SameSite=Strict`;
 }
 
 export function storeToken(token, persist = false) {

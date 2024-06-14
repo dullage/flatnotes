@@ -1,6 +1,6 @@
 from typing import List, Literal
 
-from fastapi import Depends, FastAPI, HTTPException, UploadFile
+from fastapi import APIRouter, Depends, FastAPI, HTTPException, UploadFile
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
@@ -10,6 +10,7 @@ from attachments.models import AttachmentCreateResponse
 from auth.base import BaseAuth
 from auth.models import Login, Token
 from global_config import AuthType, GlobalConfig, GlobalConfigResponseModel
+from helpers import replace_base_href
 from notes.base import BaseNotes
 from notes.models import Note, NoteCreate, NoteUpdate, SearchResult
 
@@ -18,15 +19,20 @@ auth: BaseAuth = global_config.load_auth()
 note_storage: BaseNotes = global_config.load_note_storage()
 attachment_storage: BaseAttachments = global_config.load_attachment_storage()
 auth_deps = [Depends(auth.authenticate)] if auth else []
-app = FastAPI()
+router = APIRouter()
+app = FastAPI(
+    docs_url=global_config.path_prefix + "/docs",
+    openapi_url=global_config.path_prefix + "/openapi.json",
+)
+replace_base_href("client/dist/index.html", global_config.path_prefix)
 
 
 # region UI
-@app.get("/", include_in_schema=False)
-@app.get("/login", include_in_schema=False)
-@app.get("/search", include_in_schema=False)
-@app.get("/new", include_in_schema=False)
-@app.get("/note/{title}", include_in_schema=False)
+@router.get("/", include_in_schema=False)
+@router.get("/login", include_in_schema=False)
+@router.get("/search", include_in_schema=False)
+@router.get("/new", include_in_schema=False)
+@router.get("/note/{title}", include_in_schema=False)
 def root(title: str = ""):
     with open("client/dist/index.html", "r", encoding="utf-8") as f:
         html = f.read()
@@ -39,7 +45,7 @@ def root(title: str = ""):
 # region Login
 if global_config.auth_type not in [AuthType.NONE, AuthType.READ_ONLY]:
 
-    @app.post("/api/token", response_model=Token)
+    @router.post("/api/token", response_model=Token)
     def token(data: Login):
         try:
             return auth.login(data)
@@ -54,7 +60,7 @@ if global_config.auth_type not in [AuthType.NONE, AuthType.READ_ONLY]:
 
 # region Notes
 # Get Note
-@app.get(
+@router.get(
     "/api/notes/{title}",
     dependencies=auth_deps,
     response_model=Note,
@@ -74,7 +80,7 @@ def get_note(title: str):
 if global_config.auth_type != AuthType.READ_ONLY:
 
     # Create Note
-    @app.post(
+    @router.post(
         "/api/notes",
         dependencies=auth_deps,
         response_model=Note,
@@ -94,7 +100,7 @@ if global_config.auth_type != AuthType.READ_ONLY:
             )
 
     # Update Note
-    @app.patch(
+    @router.patch(
         "/api/notes/{title}",
         dependencies=auth_deps,
         response_model=Note,
@@ -115,7 +121,7 @@ if global_config.auth_type != AuthType.READ_ONLY:
             raise HTTPException(404, api_messages.note_not_found)
 
     # Delete Note
-    @app.delete(
+    @router.delete(
         "/api/notes/{title}",
         dependencies=auth_deps,
         response_model=None,
@@ -136,7 +142,7 @@ if global_config.auth_type != AuthType.READ_ONLY:
 
 
 # region Search
-@app.get(
+@router.get(
     "/api/search",
     dependencies=auth_deps,
     response_model=List[SearchResult],
@@ -153,7 +159,7 @@ def search(
     return note_storage.search(term, sort=sort, order=order, limit=limit)
 
 
-@app.get(
+@router.get(
     "/api/tags",
     dependencies=auth_deps,
     response_model=List[str],
@@ -167,7 +173,7 @@ def get_tags():
 
 
 # region Config
-@app.get("/api/config", response_model=GlobalConfigResponseModel)
+@router.get("/api/config", response_model=GlobalConfigResponseModel)
 def get_config():
     """Retrieve server-side config required for the UI."""
     return GlobalConfigResponseModel(
@@ -181,13 +187,13 @@ def get_config():
 
 # region Attachments
 # Get Attachment
-@app.get(
+@router.get(
     "/api/attachments/{filename}",
     dependencies=auth_deps,
 )
 # Include a secondary route used to create relative URLs that can be used
 # outside the context of flatnotes (e.g. "/attachments/image.jpg").
-@app.get(
+@router.get(
     "/attachments/{filename}",
     dependencies=auth_deps,
     include_in_schema=False,
@@ -210,7 +216,7 @@ def get_attachment(filename: str):
 if global_config.auth_type != AuthType.READ_ONLY:
 
     # Create Attachment
-    @app.post(
+    @router.post(
         "/api/attachments",
         dependencies=auth_deps,
         response_model=AttachmentCreateResponse,
@@ -232,7 +238,7 @@ if global_config.auth_type != AuthType.READ_ONLY:
 
 
 # region Healthcheck
-@app.get("/health")
+@router.get("/health")
 def healthcheck() -> str:
     """A lightweight endpoint that simply returns 'OK' to indicate the server
     is running."""
@@ -241,4 +247,9 @@ def healthcheck() -> str:
 
 # endregion
 
-app.mount("/", StaticFiles(directory="client/dist"), name="dist")
+app.include_router(router, prefix=global_config.path_prefix)
+app.mount(
+    global_config.path_prefix,
+    StaticFiles(directory="client/dist"),
+    name="dist",
+)

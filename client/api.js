@@ -12,7 +12,7 @@ const api = axios.create();
 api.interceptors.request.use(
   // If the request is not for the token endpoint, add the token to the headers.
   function (config) {
-    if (config.url !== "/api/token") {
+    if (config.url !== "api/token") {
       const token = getStoredToken();
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -44,7 +44,7 @@ export function apiErrorHandler(error, toast) {
 
 export async function getConfig() {
   try {
-    const response = await api.get("/api/config");
+    const response = await api.get("api/config");
     return response.data;
   } catch (error) {
     return Promise.reject(error);
@@ -53,7 +53,7 @@ export async function getConfig() {
 
 export async function getToken(username, password, totp) {
   try {
-    const response = await api.post("/api/token", {
+    const response = await api.post("api/token", {
       username: username,
       password: totp ? password + totp : password,
     });
@@ -65,7 +65,7 @@ export async function getToken(username, password, totp) {
 
 export async function getNotes(term, sort, order, limit) {
   try {
-    const response = await api.get("/api/search", {
+    const response = await api.get("api/search", {
       params: {
         term: term,
         sort: sort,
@@ -81,7 +81,7 @@ export async function getNotes(term, sort, order, limit) {
 
 export async function createNote(title, content) {
   try {
-    const response = await api.post("/api/notes", {
+    const response = await api.post("api/notes", {
       title: title,
       content: content,
     });
@@ -93,7 +93,7 @@ export async function createNote(title, content) {
 
 export async function getNote(title) {
   try {
-    const response = await api.get(`/api/notes/${title}`);
+    const response = await api.get(`api/notes/${title}`);
     return new Note(response.data);
   } catch (response) {
     return Promise.reject(response);
@@ -102,7 +102,7 @@ export async function getNote(title) {
 
 export async function updateNote(title, newTitle, newContent) {
   try {
-    const response = await api.patch(`/api/notes/${title}`, {
+    const response = await api.patch(`api/notes/${title}`, {
       newTitle: newTitle,
       newContent: newContent,
     });
@@ -114,7 +114,7 @@ export async function updateNote(title, newTitle, newContent) {
 
 export async function deleteNote(title) {
   try {
-    await api.delete(`/api/notes/${title}`);
+    await api.delete(`api/notes/${title}`);
   } catch (response) {
     return Promise.reject(response);
   }
@@ -122,7 +122,7 @@ export async function deleteNote(title) {
 
 export async function getTags() {
   try {
-    const response = await api.get("/api/tags");
+    const response = await api.get("api/tags");
     return response.data;
   } catch (response) {
     return Promise.reject(response);
@@ -133,7 +133,7 @@ export async function createAttachment(file) {
   try {
     const formData = new FormData();
     formData.append("file", file);
-    const response = await api.post("/api/attachments", formData, {
+    const response = await api.post("api/attachments", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },

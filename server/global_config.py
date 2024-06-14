@@ -10,6 +10,7 @@ class GlobalConfig:
         logger.debug("Loading global config...")
         self.auth_type: AuthType = self._load_auth_type()
         self.hide_recently_modified: bool = self._load_hide_recently_modified()
+        self.path_prefix: str = self._load_path_prefix()
 
     def load_auth(self):
         if self.auth_type in (AuthType.NONE, AuthType.READ_ONLY):
@@ -49,6 +50,14 @@ class GlobalConfig:
     def _load_hide_recently_modified(self):
         key = "FLATNOTES_HIDE_RECENTLY_MODIFIED"
         return get_env(key, mandatory=False, default=False, cast_bool=True)
+
+    def _load_path_prefix(self):
+        key = "FLATNOTES_PATH_PREFIX"
+        value = get_env(key, mandatory=False, default="")
+        value = value.rstrip("/")
+        if value and not value.startswith("/"):
+            value = "/" + value
+        return value
 
 
 class AuthType(str, Enum):

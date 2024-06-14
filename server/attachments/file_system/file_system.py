@@ -55,4 +55,4 @@ class FileSystemAttachments(BaseAttachments):
 
     def _url_for_filename(self, filename: str) -> str:
         """Return the URL for the given filename."""
-        return f"/attachments/{urllib.parse.quote(filename)}"
+        return f"attachments/{urllib.parse.quote(filename)}"
