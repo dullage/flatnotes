@@ -54,9 +54,12 @@ class GlobalConfig:
     def _load_path_prefix(self):
         key = "FLATNOTES_PATH_PREFIX"
         value = get_env(key, mandatory=False, default="")
-        value = value.rstrip("/")
-        if value and not value.startswith("/"):
-            value = "/" + value
+        if value and (not value.startswith("/") or value.endswith("/")):
+            logger.error(
+                f"Invalid value '{value}' for {key}. "
+                + "Must start with '/' and not end with '/'."
+            )
+            sys.exit(1)
         return value
 
 
