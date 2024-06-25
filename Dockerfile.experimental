@@ -22,7 +22,7 @@ COPY client ./client
 RUN npm run build
 
 # Pipenv Build Container
-FROM python:3.11-alpine3.19 as pipenv-build
+FROM python:3.11-alpine3.20 as pipenv-build
 
 ARG BUILD_DIR
 
@@ -40,7 +40,7 @@ RUN pipenv install --deploy --ignore-pipfile && \
     pipenv --clear
 
 # Runtime Container
-FROM python:3.11-alpine3.19
+FROM python:3.11-alpine3.20
 
 ARG BUILD_DIR
 
