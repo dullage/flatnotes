@@ -14,7 +14,9 @@ api.interceptors.request.use(
   function (config) {
     if (config.url !== "api/token") {
       const token = getStoredToken();
-      config.headers.Authorization = `Bearer ${token}`;
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
     }
     return config;
   },
