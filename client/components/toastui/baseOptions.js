@@ -99,23 +99,34 @@ function extendedAutolinks(source) {
 }
 
 const customHTMLRenderer = {
-  heading(node, { entering, getChildrenText }) {
-    const tagName = `h${node.level}`;
-
+  // Add id attribute to headings
+  heading(node, { entering, getChildrenText, origin }) {
+    const original = origin();
     if (entering) {
-      return {
-        type: "openTag",
-        tagName,
-        attributes: {
-          id: getChildrenText(node)
-            .toLowerCase()
-            .replace(/[^a-z0-9-\s]*/g, "")
-            .trim()
-            .replace(/\s/g, "-"),
-        },
+      original.attributes = {
+        id: getChildrenText(node)
+          .toLowerCase()
+          .replace(/[^a-z0-9-\s]*/g, "")
+          .trim()
+          .replace(/\s/g, "-"),
       };
     }
-    return { type: "closeTag", tagName };
+    return original;
+  },
+  // Convert relative hash links to absolute links
+  link(_, { entering, origin }) {
+    const original = origin();
+    if (entering) {
+      const href = original.attributes.href;
+      if (href.startsWith("#")) {
+        const targetRoute = {
+          ...router.currentRoute.value,
+          hash: href,
+        };
+        original.attributes.href = router.resolve(targetRoute).href;
+      }
+    }
+    return original;
   },
 };
 
