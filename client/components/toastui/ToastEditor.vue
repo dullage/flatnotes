@@ -55,4 +55,5 @@ defineExpose({ getMarkdown, isWysiwygMode });
 @import "prismjs/themes/prism.css";
 @import "@toast-ui/editor-plugin-code-syntax-highlight/dist/toastui-editor-plugin-code-syntax-highlight.css";
 @import "./toastui-editor-overrides.scss";
+@import "../../../node_modules/katex/dist/katex.min.css"
 </style>

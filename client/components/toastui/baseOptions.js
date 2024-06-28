@@ -1,5 +1,6 @@
 import codeSyntaxHighlight from "@toast-ui/editor-plugin-code-syntax-highlight/dist/toastui-editor-plugin-code-syntax-highlight-all.js";
 import router from "../../router.js";
+import katex from 'katex';
 
 /*
  * Sourced from toast-ui. Their autolink options are
@@ -130,9 +131,27 @@ const customHTMLRenderer = {
   },
 };
 
+function latexPlugin() {
+    const toHTMLRenderers = {
+        latex(node) {
+            const html = katex.renderToString(node.literal, {
+                throwOnError: false
+            });
+
+            return [
+                { type: 'openTag', tagName: 'div', outerNewLine: true },
+                { type: 'html', content: html },
+                { type: 'closeTag', tagName: 'div', outerNewLine: true }
+            ]
+        }
+    }
+
+    return { toHTMLRenderers }
+}
+
 const baseOptions = {
   height: "100%",
-  plugins: [codeSyntaxHighlight],
+  plugins: [codeSyntaxHighlight, latexPlugin],
   customHTMLRenderer: customHTMLRenderer,
   usageStatistics: false,
   extendedAutolinks,
