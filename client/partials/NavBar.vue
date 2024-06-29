@@ -27,6 +27,7 @@ import {
   mdilMenu,
   mdilMonitor,
   mdilNoteMultiple,
+  mdilPin,
   mdilPlusCircle,
 } from "@mdi/light-js";
 import { computed, ref } from "vue";
@@ -65,6 +66,18 @@ const menuItems = [
         name: "search",
         query: {
           [params.searchTerm]: "*",
+          [params.sortBy]: searchSortOptions.title,
+        },
+      }),
+  },
+  {
+    label: "Pinned Notes",
+    icon: mdilPin,
+    command: () =>
+      router.push({
+        name: "search",
+        query: {
+          [params.searchTerm]: "tags:pinned",
           [params.sortBy]: searchSortOptions.title,
         },
       }),
