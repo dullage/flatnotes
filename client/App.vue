@@ -44,6 +44,7 @@ getConfig()
   .then((data) => {
     globalStore.authType = data.authType;
     globalStore.hideRecentlyModified = data.hideRecentlyModified;
+    globalStore.hidePinnedNotes = data.hidePinnedNotes;
   })
   .catch((error) => {
     apiErrorHandler(error, toast);

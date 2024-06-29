@@ -6,6 +6,7 @@ import { ref } from "vue";
 export const useGlobalStore = defineStore("global", () => {
   const authType = ref(constants.authTypes.password);
   const hideRecentlyModified = ref(true);
+  const hidePinnedNotes = ref(true);
 
-  return { authType, hideRecentlyModified };
+  return { authType, hideRecentlyModified, hidePinnedNotes };
 });

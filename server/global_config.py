@@ -10,6 +10,7 @@ class GlobalConfig:
         logger.debug("Loading global config...")
         self.auth_type: AuthType = self._load_auth_type()
         self.hide_recently_modified: bool = self._load_hide_recently_modified()
+        self.hide_pinned_notes: bool = self._load_hide_pinned_notes()
         self.path_prefix: str = self._load_path_prefix()
 
     def load_auth(self):
@@ -50,6 +51,10 @@ class GlobalConfig:
     def _load_hide_recently_modified(self):
         key = "FLATNOTES_HIDE_RECENTLY_MODIFIED"
         return get_env(key, mandatory=False, default=False, cast_bool=True)
+    
+    def _load_hide_pinned_notes(self):
+        key = "FLATNOTES_HIDE_PINNED_NOTES"
+        return get_env(key, mandatory=False, default=True, cast_bool=True)
 
     def _load_path_prefix(self):
         key = "FLATNOTES_PATH_PREFIX"
@@ -73,3 +78,4 @@ class AuthType(str, Enum):
 class GlobalConfigResponseModel(CustomBaseModel):
     auth_type: AuthType
     hide_recently_modified: bool
+    hide_pinned_notes: bool
