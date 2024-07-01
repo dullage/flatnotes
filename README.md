@@ -104,6 +104,8 @@ See the [Environment Variables](https://github.com/dullage/flatnotes/wiki/Enviro
 
 I want to keep flatnotes as simple and distraction-free as possible which means limiting new features. This said, I welcome feedback and suggestions.
 
+If you're interested in contributing to flatnotes, then please see the [CONTRIBUTING.md](CONTRIBUTING.md) file.
+
 
 ## Sponsorship
 
