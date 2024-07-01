@@ -179,6 +179,7 @@ def get_config():
     return GlobalConfigResponseModel(
         auth_type=global_config.auth_type,
         hide_recently_modified=global_config.hide_recently_modified,
+        hide_pinned_notes=global_config.hide_pinned_notes,
     )
 
 
