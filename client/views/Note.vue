@@ -102,6 +102,7 @@
         :initialEditType="loadDefaultEditorMode()"
         :addImageBlobHook="addImageBlobHook"
         @change="startContentChangedTimeout"
+        @keydown="keydownHandler"
       />
     </div>
   </LoadingIndicator>
@@ -164,13 +165,6 @@ const newTitle = ref();
 const toast = useToast();
 const toastEditor = ref();
 const unsavedChanges = ref(false);
-
-// 'e' to edit
-Mousetrap.bind("e", () => {
-  if (editMode.value === false && canModify.value) {
-    editHandler();
-  }
-});
 
 function init() {
   // Return if we already have the note e.g. When we rename a note, the route prop would change but we’d already have the note.
@@ -449,6 +443,25 @@ function clearDraft() {
 
 function loadDraft() {
   return localStorage.getItem(note.value.title);
+}
+
+// Keyboard Shortcuts
+// 'e' to edit
+Mousetrap.bind("e", () => {
+  if (editMode.value === false && canModify.value) {
+    editHandler();
+  }
+});
+
+function keydownHandler(event) {
+  // Ctrl + Alt + S to save
+  if (event.ctrlKey && event.altKey && event.key == "s") {
+    saveHandler((close = false));
+  }
+  // Escape to exit edit mode
+  if (event.key == "Escape") {
+    closeHandler();
+  }
 }
 
 // Helpers
