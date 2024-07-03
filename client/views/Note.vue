@@ -65,7 +65,14 @@
           label="Save"
           :iconPath="mdilContentSave"
           @click="saveHandler((close = false))"
-        />
+          class="relative"
+        >
+          <!-- Unsaved Changes Indicator -->
+          <div
+            v-show="unsavedChanges"
+            class="absolute right-1 h-1 w-1 rounded-full bg-theme-brand"
+          ></div>
+        </CustomButton>
         <Toggle
           v-if="canModify"
           label="Edit"
@@ -91,7 +98,7 @@
         :initialValue="getInitialEditorValue()"
         :initialEditType="loadDefaultEditorMode()"
         :addImageBlobHook="addImageBlobHook"
-        @change="startDraftSaveTimeout"
+        @change="startContentChangedTimeout"
       />
     </div>
   </LoadingIndicator>
@@ -112,7 +119,7 @@ import { mdiNoteOffOutline } from "@mdi/js";
 import { mdilContentSave, mdilDelete } from "@mdi/light-js";
 import Mousetrap from "mousetrap";
 import { useToast } from "primevue/usetoast";
-import { computed, nextTick, onMounted, ref, watch } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 
 import {
@@ -139,7 +146,7 @@ const props = defineProps({
 });
 
 const canModify = computed(() => globalStore.authType != authTypes.readOnly);
-let draftSaveTimeout = null;
+let contentChangedTimeout = null;
 const editMode = ref(false);
 const globalStore = useGlobalStore();
 const isSaveChangesModalVisible = ref(false);
@@ -153,6 +160,7 @@ const router = useRouter();
 const newTitle = ref();
 const toast = useToast();
 const toastEditor = ref();
+const unsavedChanges = ref(false);
 
 // 'e' to edit
 Mousetrap.bind("e", () => {
@@ -211,6 +219,7 @@ function editHandler() {
 function setEditMode() {
   setBeforeUnloadConfirmation(true);
   newTitle.value = note.value.title;
+  unsavedChanges.value = false;
   editMode.value = true;
 }
 
@@ -316,6 +325,7 @@ function noteSaveFailure(error) {
 }
 
 function noteSaveSuccess(close = false) {
+  unsavedChanges.value = false;
   if (close) {
     closeNote();
   }
@@ -324,10 +334,7 @@ function noteSaveSuccess(close = false) {
 
 // Note Closure
 function closeHandler() {
-  if (
-    newTitle.value != note.value.title ||
-    toastEditor.value.getMarkdown() != note.value.content
-  ) {
+  if (isContentChanged()) {
     isSaveChangesModalVisible.value = true;
   } else {
     closeNote();
@@ -403,23 +410,34 @@ function postAttachment(file) {
     });
 }
 
-// Drafts
-function clearDraftSaveTimeout() {
-  if (draftSaveTimeout != null) {
-    clearTimeout(draftSaveTimeout);
+// Content Change Watcher
+function startContentChangedTimeout() {
+  clearContentChangedTimeout();
+  contentChangedTimeout = setTimeout(contentChangedHandler, 1000);
+}
+
+function clearContentChangedTimeout() {
+  if (contentChangedTimeout != null) {
+    clearTimeout(contentChangedTimeout);
   }
 }
 
+function contentChangedHandler() {
+  if (isContentChanged()) {
+    unsavedChanges.value = true;
+    saveDraft();
+  } else {
+    unsavedChanges.value = false;
+    clearDraft();
+  }
+}
+
+// Drafts
 function saveDraft() {
   const content = toastEditor.value.getMarkdown();
   if (content) {
     localStorage.setItem(note.value.title, content);
   }
-}
-
-function startDraftSaveTimeout() {
-  clearDraftSaveTimeout();
-  draftSaveTimeout = setTimeout(saveDraft, 1000);
 }
 
 function clearDraft() {
@@ -472,6 +490,13 @@ function saveDefaultEditorMode() {
 function loadDefaultEditorMode() {
   const defaultWysiwygMode = localStorage.getItem("defaultEditorMode");
   return defaultWysiwygMode || "markdown";
+}
+
+function isContentChanged() {
+  return (
+    newTitle.value != note.value.title ||
+    toastEditor.value.getMarkdown() != note.value.content
+  );
 }
 
 watch(() => props.title, init);

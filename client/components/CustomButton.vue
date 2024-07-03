@@ -12,6 +12,7 @@
         style === 'success',
     }"
   >
+    <slot></slot>
     <IconLabel :iconPath="iconPath" :iconSize="iconSize" :label="label" />
   </button>
 </template>
