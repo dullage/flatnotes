@@ -6,9 +6,9 @@
         style === 'subtle',
       'border bg-theme-background hover:bg-theme-background-elevated':
         style === 'cta',
-      'bg-theme-danger text-slate-50 hover:bg-theme-danger/80':
+      'border border-theme-danger text-theme-danger hover:bg-theme-danger/10':
         style === 'danger',
-      'bg-theme-success text-slate-50 hover:bg-theme-success/80':
+      'border border-theme-success text-theme-success hover:bg-theme-success/10':
         style === 'success',
     }"
   >

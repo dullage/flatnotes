@@ -28,7 +28,7 @@ export default {
         "theme-shadow": "rgb(var(--theme-shadow) / <alpha-value>)",
         "theme-border": "rgb(var(--theme-border) / <alpha-value>)",
         // Static
-        "theme-success": colors.emerald[500],
+        "theme-success": colors.emerald[600],
         "theme-danger": colors.rose[600],
       },
     },
