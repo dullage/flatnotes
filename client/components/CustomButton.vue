@@ -8,6 +8,8 @@
         style === 'cta',
       'bg-theme-danger text-slate-50 hover:bg-theme-danger/80':
         style === 'danger',
+      'bg-theme-success text-slate-50 hover:bg-theme-success/80':
+        style === 'success',
     }"
   >
     <IconLabel :iconPath="iconPath" :iconSize="iconSize" :label="label" />
@@ -25,7 +27,7 @@ defineProps({
     type: String,
     default: "subtle",
     validator: (value) => {
-      return ["subtle", "cta", "danger"].includes(value);
+      return ["subtle", "cta", "danger", "success"].includes(value);
     },
   },
 });

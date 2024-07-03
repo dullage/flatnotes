@@ -2,8 +2,7 @@
   <Modal
     v-model="isVisible"
     :title="title"
-    :class="{ 'border border-l-4 border-l-theme-danger': isDanger }"
-    :closeHandler="cancelHandler"
+    :closeHandler="emitClose"
     class="px-6 py-4"
   >
     <!-- Title -->
@@ -15,14 +14,21 @@
       <CustomButton
         :label="cancelButtonText"
         :style="cancelButtonStyle"
-        @click="cancelHandler"
+        @click="emitClose('cancel')"
+        class="mr-2"
+      />
+      <CustomButton
+        v-if="rejectButtonText"
+        :label="rejectButtonText"
+        :style="rejectButtonStyle"
+        @click="emitClose('reject')"
         class="mr-2"
       />
       <CustomButton
         v-focus
         :label="confirmButtonText"
         :style="confirmButtonStyle"
-        @click="confirmHandler"
+        @click="emitClose('confirm')"
       />
     </div>
   </Modal>
@@ -39,18 +45,14 @@ const props = defineProps({
   confirmButtonText: { type: String, default: "Confirm" },
   cancelButtonStyle: { type: String, default: "subtle" },
   cancelButtonText: { type: String, default: "Cancel" },
-  isDanger: Boolean,
+  rejectButtonStyle: { type: String, default: "danger" },
+  rejectButtonText: { type: String },
 });
-const emit = defineEmits(["confirm", "cancel"]);
+const emit = defineEmits(["confirm", "reject", "cancel"]);
 const isVisible = defineModel({ type: Boolean });
 
-function cancelHandler() {
+function emitClose(closeEvent = "cancel") {
   isVisible.value = false;
-  emit("cancel");
-}
-
-function confirmHandler() {
-  isVisible.value = false;
-  emit("confirm");
+  emit(closeEvent);
 }
 </script>
