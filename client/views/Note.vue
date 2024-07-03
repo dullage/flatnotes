@@ -54,12 +54,14 @@
 
       <!-- Buttons -->
       <div class="flex shrink-0 self-end md:self-baseline">
+        <!-- Delete Button -->
         <CustomButton
           v-show="canModify && !editMode"
           label="Delete"
           :iconPath="mdilDelete"
           @click="deleteHandler"
         />
+        <!-- Save Button -->
         <CustomButton
           v-show="editMode"
           label="Save"
@@ -69,10 +71,11 @@
         >
           <!-- Unsaved Changes Indicator -->
           <div
-            v-show="unsavedChanges"
-            class="absolute right-1 h-1 w-1 rounded-full bg-theme-brand"
+            v-show="editMode && unsavedChanges"
+            class="absolute -left-2.5 top-[0.75em] h-2 w-2 rounded-full bg-theme-brand"
           ></div>
         </CustomButton>
+        <!-- Edit Toggle -->
         <Toggle
           v-if="canModify"
           label="Edit"
