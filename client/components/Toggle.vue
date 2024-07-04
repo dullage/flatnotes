@@ -1,5 +1,5 @@
 <template>
-  <div
+  <button
     class="flex cursor-pointer items-center text-nowrap rounded bg-theme-background px-2 py-1 text-theme-text-muted"
   >
     <span v-if="label" class="mr-2">{{ label }}</span>
@@ -11,7 +11,7 @@
       height="1em"
       viewBox="2 7 20 10"
     ></SvgIcon>
-  </div>
+  </button>
 </template>
 
 <script setup>
