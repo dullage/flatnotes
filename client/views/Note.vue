@@ -70,7 +70,7 @@
         </CustomButton>
         <!-- Delete Button -->
         <CustomButton
-          v-show="canModify"
+          v-show="canModify && !isNewNote"
           label="Delete"
           :iconPath="mdilDelete"
           @click="deleteHandler"
