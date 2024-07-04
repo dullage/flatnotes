@@ -6,10 +6,13 @@
         style === 'subtle',
       'border bg-theme-background hover:bg-theme-background-elevated':
         style === 'cta',
-      'bg-theme-danger text-slate-50 hover:bg-theme-danger/80':
+      'border border-theme-danger text-theme-danger hover:bg-theme-danger/10':
         style === 'danger',
+      'border border-theme-success text-theme-success hover:bg-theme-success/10':
+        style === 'success',
     }"
   >
+    <slot></slot>
     <IconLabel :iconPath="iconPath" :iconSize="iconSize" :label="label" />
   </button>
 </template>
@@ -25,7 +28,7 @@ defineProps({
     type: String,
     default: "subtle",
     validator: (value) => {
-      return ["subtle", "cta", "danger"].includes(value);
+      return ["subtle", "cta", "danger", "success"].includes(value);
     },
   },
 });

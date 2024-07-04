@@ -9,14 +9,17 @@
     @confirm="deleteConfirmedHandler"
   />
 
-  <!-- Confirm Cancellation Modal -->
+  <!-- Save Changes Modal -->
   <ConfirmModal
-    v-model="isCancellationModalVisible"
-    title="Confirm Closure"
-    message="Changes have been made. Are you sure you want to close the note?"
-    confirmButtonText="Close"
-    confirmButtonStyle="danger"
-    @confirm="cancelConfirmedHandler"
+    v-model="isSaveChangesModalVisible"
+    title="Save Changes"
+    message="Do you want to save your changes?"
+    confirmButtonText="Save"
+    confirmButtonStyle="success"
+    rejectButtonText="Discard"
+    rejectButtonStyle="danger"
+    @confirm="saveHandler((close = true))"
+    @reject="closeNote"
   />
 
   <!-- Draft Modal -->
@@ -26,10 +29,10 @@
     message="There is an unsaved draft of this note stored in this browser. Do you want to resume the draft version or delete it?"
     confirmButtonText="Resume Draft"
     confirmButtonStyle="cta"
-    cancelButtonText="Delete Draft"
-    cancelButtonStyle="danger"
+    rejectButtonText="Delete Draft"
+    rejectButtonStyle="danger"
     @confirm="setEditMode()"
-    @cancel="
+    @reject="
       clearDraft();
       setEditMode();
     "
@@ -51,34 +54,35 @@
 
       <!-- Buttons -->
       <div class="flex shrink-0 self-end md:self-baseline">
-        <div v-show="!editMode">
-          <CustomButton
-            v-if="canModify"
-            :iconPath="mdilDelete"
-            label="Delete"
-            @click="deleteHandler"
-          />
-          <CustomButton
-            v-if="canModify"
-            class="ml-1"
-            :iconPath="mdilPencil"
-            label="Edit"
-            @click="editHandler"
-          />
-        </div>
-        <div v-show="editMode">
-          <CustomButton
-            :iconPath="mdilArrowLeft"
-            label="Cancel"
-            @click="cancelHandler"
-          />
-          <CustomButton
-            class="ml-1"
-            :iconPath="mdilContentSave"
-            label="Save"
-            @click="saveHandler"
-          />
-        </div>
+        <!-- Save Button -->
+        <CustomButton
+          v-show="editMode"
+          label="Save"
+          :iconPath="mdilContentSave"
+          @click="saveHandler((close = false))"
+          class="relative"
+        >
+          <!-- Unsaved Changes Indicator -->
+          <div
+            v-show="editMode && unsavedChanges"
+            class="absolute -left-2.5 top-[0.75em] h-2 w-2 rounded-full bg-theme-brand"
+          ></div>
+        </CustomButton>
+        <!-- Delete Button -->
+        <CustomButton
+          v-show="canModify && !isNewNote"
+          label="Delete"
+          :iconPath="mdilDelete"
+          @click="deleteHandler"
+        />
+        <!-- Edit Toggle -->
+        <Toggle
+          v-if="canModify"
+          label="Edit"
+          :isOn="editMode"
+          class="ml-1"
+          @click="toggleEditModeHandler"
+        />
       </div>
     </div>
 
@@ -97,7 +101,8 @@
         :initialValue="getInitialEditorValue()"
         :initialEditType="loadDefaultEditorMode()"
         :addImageBlobHook="addImageBlobHook"
-        @change="startDraftSaveTimeout"
+        @change="startContentChangedTimeout"
+        @keydown="keydownHandler"
       />
     </div>
   </LoadingIndicator>
@@ -113,15 +118,9 @@
 }
 </style>
 
-
 <script setup>
 import { mdiNoteOffOutline } from "@mdi/js";
-import {
-  mdilArrowLeft,
-  mdilContentSave,
-  mdilDelete,
-  mdilPencil,
-} from "@mdi/light-js";
+import { mdilContentSave, mdilDelete } from "@mdi/light-js";
 import Mousetrap from "mousetrap";
 import { useToast } from "primevue/usetoast";
 import { computed, onMounted, ref, watch } from "vue";
@@ -139,6 +138,7 @@ import { Note } from "../classes.js";
 import ConfirmModal from "../components/ConfirmModal.vue";
 import CustomButton from "../components/CustomButton.vue";
 import LoadingIndicator from "../components/LoadingIndicator.vue";
+import Toggle from "../components/Toggle.vue";
 import ToastEditor from "../components/toastui/ToastEditor.vue";
 import ToastViewer from "../components/toastui/ToastViewer.vue";
 import { authTypes } from "../constants.js";
@@ -150,10 +150,10 @@ const props = defineProps({
 });
 
 const canModify = computed(() => globalStore.authType != authTypes.readOnly);
-let draftSaveTimeout = null;
+let contentChangedTimeout = null;
 const editMode = ref(false);
 const globalStore = useGlobalStore();
-const isCancellationModalVisible = ref(false);
+const isSaveChangesModalVisible = ref(false);
 const isDeleteModalVisible = ref(false);
 const isDraftModalVisible = ref(false);
 const isNewNote = computed(() => !props.title);
@@ -164,13 +164,7 @@ const router = useRouter();
 const newTitle = ref();
 const toast = useToast();
 const toastEditor = ref();
-
-// 'e' to edit
-Mousetrap.bind("e", () => {
-  if (editMode.value === false && canModify.value) {
-    editHandler();
-  }
-});
+const unsavedChanges = ref(false);
 
 function init() {
   // Return if we already have the note e.g. When we rename a note, the route prop would change but we’d already have the note.
@@ -202,6 +196,14 @@ function init() {
 }
 
 // Note Editing
+function toggleEditModeHandler() {
+  if (editMode.value) {
+    closeHandler();
+  } else {
+    editHandler();
+  }
+}
+
 function editHandler() {
   const draftContent = loadDraft();
   if (draftContent) {
@@ -214,6 +216,7 @@ function editHandler() {
 function setEditMode() {
   setBeforeUnloadConfirmation(true);
   newTitle.value = note.value.title;
+  unsavedChanges.value = false;
   editMode.value = true;
 }
 
@@ -238,31 +241,8 @@ function deleteConfirmedHandler() {
     });
 }
 
-// Note Edit Cancellation
-function cancelHandler() {
-  if (
-    newTitle.value != note.value.title ||
-    toastEditor.value.getMarkdown() != note.value.content
-  ) {
-    isCancellationModalVisible.value = true;
-  } else {
-    cancelConfirmedHandler();
-  }
-}
-
-function cancelConfirmedHandler() {
-  clearDraft();
-  setBeforeUnloadConfirmation(false);
-  editMode.value = false;
-  if (!props.title) {
-    router.push({ name: "home" });
-  } else {
-    editMode.value = false;
-  }
-}
-
 // Note Saving
-function saveHandler() {
+function saveHandler(close = false) {
   // Save Default Editor Mode
   saveDefaultEditorMode();
 
@@ -283,27 +263,35 @@ function saveHandler() {
   // Save Note
   let newContent = toastEditor.value.getMarkdown();
   if (isNewNote.value) {
-    saveNew(newTitle.value, newContent);
+    saveNew(newTitle.value, newContent, close);
   } else {
-    saveExisting(newTitle.value, newContent);
+    saveExisting(newTitle.value, newContent, close);
   }
 }
 
-function saveNew(newTitle, newContent) {
+function saveNew(newTitle, newContent, close = false) {
   createNote(newTitle, newContent)
     .then((data) => {
       clearDraft();
       note.value = data;
-      router.push({ name: "note", params: { title: note.value.title } });
-      noteSaveSuccess();
+      router
+        .push({
+          name: "note",
+          params: { title: note.value.title },
+        })
+        .then(() => {
+          // Wait for the route to be updated before setting edit mode to false
+          // as the route is used to determine the action.
+          noteSaveSuccess(close);
+        });
     })
     .catch(noteSaveFailure);
 }
 
-function saveExisting(newTitle, newContent) {
+function saveExisting(newTitle, newContent, close = false) {
   // Return if no changes
   if (newTitle == note.value.title && newContent == note.value.content) {
-    noteSaveSuccess();
+    noteSaveSuccess(close);
     return;
   }
 
@@ -312,7 +300,7 @@ function saveExisting(newTitle, newContent) {
       clearDraft();
       note.value = data;
       router.replace({ name: "note", params: { title: note.value.title } });
-      noteSaveSuccess();
+      noteSaveSuccess(close);
     })
     .catch(noteSaveFailure);
 }
@@ -333,10 +321,32 @@ function noteSaveFailure(error) {
   }
 }
 
-function noteSaveSuccess() {
+function noteSaveSuccess(close = false) {
+  unsavedChanges.value = false;
+  if (close) {
+    closeNote();
+  }
+  toast.add(getToastOptions("Note saved successfully ✓", "Success", "success"));
+}
+
+// Note Closure
+function closeHandler() {
+  if (isContentChanged()) {
+    isSaveChangesModalVisible.value = true;
+  } else {
+    closeNote();
+  }
+}
+
+function closeNote() {
+  clearDraft();
   setBeforeUnloadConfirmation(false);
   editMode.value = false;
-  toast.add(getToastOptions("Note saved successfully ✓", "Success", "success"));
+  if (isNewNote.value) {
+    router.push({ name: "home" });
+  } else {
+    editMode.value = false;
+  }
 }
 
 // Image Upload
@@ -397,23 +407,34 @@ function postAttachment(file) {
     });
 }
 
-// Drafts
-function clearDraftSaveTimeout() {
-  if (draftSaveTimeout != null) {
-    clearTimeout(draftSaveTimeout);
+// Content Change Watcher
+function startContentChangedTimeout() {
+  clearContentChangedTimeout();
+  contentChangedTimeout = setTimeout(contentChangedHandler, 1000);
+}
+
+function clearContentChangedTimeout() {
+  if (contentChangedTimeout != null) {
+    clearTimeout(contentChangedTimeout);
   }
 }
 
+function contentChangedHandler() {
+  if (isContentChanged()) {
+    unsavedChanges.value = true;
+    saveDraft();
+  } else {
+    unsavedChanges.value = false;
+    clearDraft();
+  }
+}
+
+// Drafts
 function saveDraft() {
   const content = toastEditor.value.getMarkdown();
   if (content) {
     localStorage.setItem(note.value.title, content);
   }
-}
-
-function startDraftSaveTimeout() {
-  clearDraftSaveTimeout();
-  draftSaveTimeout = setTimeout(saveDraft, 1000);
 }
 
 function clearDraft() {
@@ -422,6 +443,25 @@ function clearDraft() {
 
 function loadDraft() {
   return localStorage.getItem(note.value.title);
+}
+
+// Keyboard Shortcuts
+// 'e' to edit
+Mousetrap.bind("e", () => {
+  if (editMode.value === false && canModify.value) {
+    editHandler();
+  }
+});
+
+function keydownHandler(event) {
+  // Ctrl + Enter to save
+  if (event.ctrlKey && event.key == "Enter") {
+    saveHandler((close = false));
+  }
+  // Escape to exit edit mode
+  if (event.key == "Escape") {
+    closeHandler();
+  }
 }
 
 // Helpers
@@ -466,6 +506,13 @@ function saveDefaultEditorMode() {
 function loadDefaultEditorMode() {
   const defaultWysiwygMode = localStorage.getItem("defaultEditorMode");
   return defaultWysiwygMode || "markdown";
+}
+
+function isContentChanged() {
+  return (
+    newTitle.value != note.value.title ||
+    toastEditor.value.getMarkdown() != note.value.content
+  );
 }
 
 watch(() => props.title, init);
