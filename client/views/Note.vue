@@ -54,6 +54,13 @@
 
       <!-- Buttons -->
       <div class="flex shrink-0 self-end md:self-baseline">
+        <!-- Delete Button -->
+        <CustomButton
+          v-show="canModify && !isNewNote"
+          label="Delete"
+          :iconPath="mdilDelete"
+          @click="deleteHandler"
+        />
         <!-- Save Button -->
         <CustomButton
           v-show="editMode"
@@ -68,13 +75,6 @@
             class="absolute right-1 h-1.5 w-1.5 rounded-full bg-theme-brand"
           ></div>
         </CustomButton>
-        <!-- Delete Button -->
-        <CustomButton
-          v-show="canModify && !isNewNote"
-          label="Delete"
-          :iconPath="mdilDelete"
-          @click="deleteHandler"
-        />
         <!-- Edit Toggle -->
         <Toggle
           v-if="canModify"
