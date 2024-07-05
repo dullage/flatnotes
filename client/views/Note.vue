@@ -67,7 +67,7 @@
           label="Save"
           :iconPath="mdilContentSave"
           @click="saveHandler((close = false))"
-          class="relative"
+          class="relative ml-1"
         >
           <!-- Unsaved Changes Indicator -->
           <div
