@@ -51,7 +51,7 @@ RUN pipenv install --deploy --ignore-pipfile --system && \
     pipenv --clear
 
 COPY server ./server
-COPY --from=build ${BUILD_DIR}/client/dist ./client/dist
+COPY --from=build --chmod=777 ${BUILD_DIR}/client/dist ./client/dist
 
 COPY entrypoint.sh healthcheck.sh /
 RUN chmod +x /entrypoint.sh /healthcheck.sh
