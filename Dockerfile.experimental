@@ -60,7 +60,7 @@ RUN apk add --no-cache su-exec libssl3 libgcc curl
 WORKDIR ${APP_PATH}
 
 COPY server ./server
-COPY --from=build ${BUILD_DIR}/client/dist ./client/dist
+COPY --from=build --chmod=777 ${BUILD_DIR}/client/dist ./client/dist
 COPY --from=pipenv-build ${APP_PATH}/.venv/lib/python3.11/site-packages/ /usr/local/lib/python3.11/site-packages/
 
 COPY entrypoint.sh healthcheck.sh /
