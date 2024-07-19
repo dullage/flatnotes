@@ -5,6 +5,7 @@
     <NavBar
       v-if="showNavBar"
       ref="navBar"
+      :class="{ 'print:hidden': route.name == 'note' }"
       :hide-logo="!showNavBarLogo"
       @toggleSearchModal="toggleSearchModal"
     />

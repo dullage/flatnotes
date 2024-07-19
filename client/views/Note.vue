@@ -53,7 +53,7 @@
       </div>
 
       <!-- Buttons -->
-      <div class="flex shrink-0 self-end md:self-baseline">
+      <div class="flex shrink-0 self-end md:self-baseline print:hidden">
         <!-- Delete Button -->
         <CustomButton
           v-show="canModify && !isNewNote"
