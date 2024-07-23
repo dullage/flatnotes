@@ -18,20 +18,20 @@
     "@mdi/light-js": "0.2.63",
     "@toast-ui/editor": "3.2.2",
     "@toast-ui/editor-plugin-code-syntax-highlight": "3.1.0",
-    "axios": "1.6.8",
+    "axios": "1.7.2",
     "mousetrap": "1.6.5",
     "pinia": "2.1.7",
-    "primevue": "3.52.0",
-    "vue": "3.4.27",
-    "vue-router": "4.3.2"
+    "primevue": "3.53.0",
+    "vue": "3.4.33",
+    "vue-router": "4.4.0"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "5.0.4",
+    "@vitejs/plugin-vue": "5.0.5",
     "autoprefixer": "10.4.19",
-    "postcss": "8.4.38",
-    "prettier": "3.2.5",
-    "prettier-plugin-tailwindcss": "0.5.14",
-    "tailwindcss": "3.4.3",
-    "vite": "5.2.11"
+    "postcss": "8.4.39",
+    "prettier": "3.3.3",
+    "prettier-plugin-tailwindcss": "0.6.5",
+    "tailwindcss": "3.4.6",
+    "vite": "5.3.4"
   }
 }
