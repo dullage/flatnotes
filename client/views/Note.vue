@@ -93,7 +93,7 @@
       <ToastViewer
         v-if="!editMode"
         :initialValue="note.content"
-        class="toast-viewer"
+        class="toast-viewer pb-4"
       />
       <ToastEditor
         v-if="editMode"
