@@ -4,6 +4,7 @@
     <form @submit.prevent="logIn" class="flex max-w-80 flex-col items-center">
       <TextInput
         v-model="username"
+        id="username"
         placeholder="Username"
         class="mb-1"
         autocomplete="username"
@@ -11,6 +12,7 @@
       />
       <TextInput
         v-model="password"
+        id="password"
         placeholder="Password"
         type="password"
         class="mb-1"
@@ -20,6 +22,7 @@
       <TextInput
         v-if="globalStore.authType == authTypes.totp"
         v-model="totp"
+        id="one-time-code"
         placeholder="2FA Code"
         class="mb-1"
         autocomplete="one-time-code"
