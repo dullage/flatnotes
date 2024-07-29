@@ -17,6 +17,7 @@ Log into the [demo site](https://demo.flatnotes.io) and take a look around. *Not
   * [Hosted](#hosted)
   * [Self Hosted](#self-hosted)
 * [Roadmap](#roadmap)
+* [Contributing](#contributing)
 * [Sponsorship](#sponsorship)
 * [Thanks](#thanks)
 
@@ -99,20 +100,19 @@ services:
 
 See the [Environment Variables](https://github.com/dullage/flatnotes/wiki/Environment-Variables) article in the wiki for a full list of configuration options.
 
-
 ## Roadmap
 
 I want to keep flatnotes as simple and distraction-free as possible which means limiting new features. This said, I welcome feedback and suggestions.
 
-If you're interested in contributing to flatnotes, then please see the [CONTRIBUTING.md](CONTRIBUTING.md) file.
+## Contributing
 
+If you're interested in contributing to flatnotes, then please read the [CONTRIBUTING.md](CONTRIBUTING.md) file.
 
 ## Sponsorship
 
 If you find this project useful, please consider buying me a beer. It would genuinely make my day.
 
 [![Sponsor](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86)](https://github.com/sponsors/Dullage)
-
 
 ## Thanks
 
