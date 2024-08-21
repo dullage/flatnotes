@@ -1,5 +1,7 @@
 <template>
-  <div class="container mx-auto flex h-screen flex-col px-2 py-4">
+  <div
+    class="container mx-auto flex h-screen flex-col px-2 py-4 print:max-w-full"
+  >
     <PrimeToast />
     <SearchModal v-model="isSearchModalVisible" />
     <NavBar
