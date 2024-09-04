@@ -2,10 +2,11 @@ import secrets
 from base64 import b32encode
 from datetime import datetime, timedelta
 
-import pyotp
 from fastapi import Depends, HTTPException, Request
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
+from pyotp import TOTP
+from pyotp.utils import build_uri
 from qrcode import QRCode
 
 from global_config import AuthType, GlobalConfig
@@ -35,7 +36,7 @@ class LocalAuth(BaseAuth):
             self.is_totp_enabled = True
             self.totp_key = get_env("FLATNOTES_TOTP_KEY", mandatory=True)
             self.totp_key = b32encode(self.totp_key.encode("utf-8"))
-            self.totp = pyotp.TOTP(self.totp_key)
+            self.totp = TOTP(self.totp_key)
             self.last_used_totp = None
             self._display_totp_enrolment()
 
@@ -110,9 +111,10 @@ class LocalAuth(BaseAuth):
         return encoded_jwt
 
     def _display_totp_enrolment(self):
-        uri = self.totp.provisioning_uri(
-            issuer_name="flatnotes", name=self.username
-        )
+        # Fix for #237. Remove padding as per spec:
+        # https://github.com/google/google-authenticator/wiki/Key-Uri-Format#secret
+        unpadded_secret = self.totp_key.rstrip(b"=")
+        uri = build_uri(unpadded_secret, self.username, issuer="flatnotes")
         qr = QRCode()
         qr.add_data(uri)
         print(
