@@ -1,5 +1,6 @@
 <template>
-  <div
+  <LoadingIndicator
+    ref="loadingIndicator"
     class="container mx-auto flex h-screen flex-col px-2 py-4 print:max-w-full"
   >
     <PrimeToast />
@@ -12,7 +13,7 @@
       @toggleSearchModal="toggleSearchModal"
     />
     <RouterView />
-  </div>
+  </LoadingIndicator>
 </template>
 
 <script setup>
@@ -28,9 +29,11 @@ import { loadTheme } from "./helpers.js";
 import NavBar from "./partials/NavBar.vue";
 import SearchModal from "./partials/SearchModal.vue";
 import { loadStoredToken } from "./tokenStorage.js";
+import LoadingIndicator from "./components/LoadingIndicator.vue";
 
 const globalStore = useGlobalStore();
 const isSearchModalVisible = ref(false);
+const loadingIndicator = ref();
 const navBar = ref();
 const route = useRoute();
 const toast = useToast();
@@ -47,9 +50,11 @@ getConfig()
   .then((data) => {
     globalStore.authType = data.authType;
     globalStore.hideRecentlyModified = data.hideRecentlyModified;
+    loadingIndicator.value.setLoaded();
   })
   .catch((error) => {
     apiErrorHandler(error, toast);
+    loadingIndicator.value.setFailed();
   });
 
 loadStoredToken();
