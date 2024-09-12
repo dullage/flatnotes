@@ -20,7 +20,7 @@
         required
       />
       <TextInput
-        v-if="globalStore.authType == authTypes.totp"
+        v-if="globalStore.config.authType == authTypes.totp"
         v-model="totp"
         id="one-time-code"
         placeholder="2FA Code"
@@ -98,14 +98,7 @@ function logIn() {
 }
 
 // Redirect to home if authentication is disabled.
-// Implemented as a watch to allow for delayed config load.
-watch(
-  () => globalStore.authType,
-  () => {
-    if (globalStore.authType === authTypes.none) {
-      router.push({ name: "home" });
-    }
-  },
-  { immediate: true },
-);
+if (globalStore.config.authType === authTypes.none) {
+  router.push({ name: "home" });
+}
 </script>

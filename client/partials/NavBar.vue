@@ -87,7 +87,7 @@ const menuItems = [
 ];
 
 const showNewButton = computed(() => {
-  return globalStore.authType !== authTypes.readOnly;
+  return globalStore.config.authType !== authTypes.readOnly;
 });
 
 function logOut() {
@@ -100,6 +100,6 @@ function toggleMenu(event) {
 }
 
 function showLogOutButton() {
-  return ![authTypes.none, authTypes.readOnly].includes(globalStore.authType);
+  return ![authTypes.none, authTypes.readOnly].includes(globalStore.config.authType);
 }
 </script>

@@ -48,8 +48,7 @@ Mousetrap.bind("/", () => {
 
 getConfig()
   .then((data) => {
-    globalStore.authType = data.authType;
-    globalStore.hideRecentlyModified = data.hideRecentlyModified;
+    globalStore.config = data;
     loadingIndicator.value.setLoaded();
   })
   .catch((error) => {

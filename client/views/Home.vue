@@ -47,7 +47,7 @@ const notes = ref([]);
 const toast = useToast();
 
 function init() {
-  if (globalStore.hideRecentlyModified) {
+  if (globalStore.config.hideRecentlyModified) {
     return;
   }
   getNotes("*", "lastModified", "desc", 5)
@@ -66,6 +66,6 @@ function init() {
 }
 
 // Watch to allow for delayed config load.
-watch(() => globalStore.hideRecentlyModified, init);
+watch(() => globalStore.config.hideRecentlyModified, init);
 onMounted(init);
 </script>

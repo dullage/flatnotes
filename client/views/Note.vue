@@ -149,7 +149,9 @@ const props = defineProps({
   title: String,
 });
 
-const canModify = computed(() => globalStore.authType != authTypes.readOnly);
+const canModify = computed(
+  () => globalStore.config.authType != authTypes.readOnly,
+);
 let contentChangedTimeout = null;
 const editMode = ref(false);
 const globalStore = useGlobalStore();
