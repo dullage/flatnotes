@@ -1,6 +1,6 @@
 <template>
-  <div class="flex h-full items-center justify-center">
-    <div class="flex max-w-[500px] flex-1 flex-col items-center">
+  <div class="flex h-full justify-center">
+    <div class="flex max-w-[500px] flex-1 flex-col items-center pt-[25vh]">
       <Logo class="mb-5" />
       <SearchInput class="mb-5 shadow-[0_0_20px] shadow-theme-shadow" />
       <LoadingIndicator
@@ -10,9 +10,9 @@
       >
         <p
           v-if="notes.length > 0"
-          class="mb-2 text-xs font-bold text-theme-text-very-muted"
+          class="mb-2 text-xs font-bold uppercase text-theme-text-very-muted"
         >
-          RECENTLY MODIFIED
+          {{ globalStore.config.quickAccessTitle }}
         </p>
         <RouterLink
           v-for="note in notes"
@@ -31,7 +31,6 @@ import { useToast } from "primevue/usetoast";
 import { onMounted, ref, watch } from "vue";
 import { RouterLink } from "vue-router";
 
-import { mdiPencil } from "@mdi/js";
 import { apiErrorHandler, getNotes } from "../api.js";
 import CustomButton from "../components/CustomButton.vue";
 import LoadingIndicator from "../components/LoadingIndicator.vue";
@@ -41,23 +40,22 @@ import SearchInput from "../partials/SearchInput.vue";
 
 const globalStore = useGlobalStore();
 const loadingIndicator = ref();
-const noNotesMessage =
-  "Click the 'New Note' button at the top of the page to get started.";
 const notes = ref([]);
 const toast = useToast();
 
 function init() {
-  if (globalStore.config.hideRecentlyModified) {
+  if (globalStore.config.quickAccessHide) {
     return;
   }
-  getNotes("*", "lastModified", "desc", 5)
+  getNotes(
+    globalStore.config.quickAccessTerm,
+    globalStore.config.quickAccessSort,
+    globalStore.config.quickAccessOrder,
+    globalStore.config.quickAccessLimit,
+  )
     .then((data) => {
       notes.value = data;
-      if (notes.value.length > 0) {
-        loadingIndicator.value.setLoaded();
-      } else {
-        loadingIndicator.value.setFailed(noNotesMessage, mdiPencil);
-      }
+      loadingIndicator.value.setLoaded();
     })
     .catch((error) => {
       loadingIndicator.value.setFailed();

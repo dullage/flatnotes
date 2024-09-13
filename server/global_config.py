@@ -9,7 +9,12 @@ class GlobalConfig:
     def __init__(self) -> None:
         logger.debug("Loading global config...")
         self.auth_type: AuthType = self._load_auth_type()
-        self.hide_recently_modified: bool = self._load_hide_recently_modified()
+        self.quick_access_hide: bool = self._quick_access_hide()
+        self.quick_access_title: str = self._quick_access_title()
+        self.quick_access_term: str = self._quick_access_term()
+        self.quick_access_sort: str = self._quick_access_sort()
+        self.quick_access_order: str = self._quick_access_order()
+        self.quick_access_limit: int = self._quick_access_limit()
         self.path_prefix: str = self._load_path_prefix()
 
     def load_auth(self):
@@ -47,9 +52,57 @@ class GlobalConfig:
             sys.exit(1)
         return auth_type
 
-    def _load_hide_recently_modified(self):
-        key = "FLATNOTES_HIDE_RECENTLY_MODIFIED"
-        return get_env(key, mandatory=False, default=False, cast_bool=True)
+    def _quick_access_hide(self):
+        key = "FLATNOTES_QUICK_ACCESS_HIDE"
+        value = get_env(key, mandatory=False, default=False, cast_bool=True)
+        if value is False:
+            depricated_key = "FLATNOTES_HIDE_RECENTLY_MODIFIED"
+            value = get_env(
+                depricated_key, mandatory=False, default=False, cast_bool=True
+            )
+            if value is True:
+                logger.warning(
+                    f"{depricated_key} is depricated. Please use {key} instead."
+                )
+        return value
+
+    def _quick_access_title(self):
+        key = "FLATNOTES_QUICK_ACCESS_TITLE"
+        return get_env(key, mandatory=False, default="RECENTLY MODIFIED")
+
+    def _quick_access_term(self):
+        key = "FLATNOTES_QUICK_ACCESS_TERM"
+        return get_env(key, mandatory=False, default="*")
+
+    def _quick_access_sort(self):
+        key = "FLATNOTES_QUICK_ACCESS_SORT"
+        value = get_env(key, mandatory=False, default="lastModified")
+        valid_values = ["score", "title", "lastModified"]
+        if value not in valid_values:
+            logger.error(
+                f"Invalid value '{value}' for {key}. "
+                + "Must be one of: "
+                + ", ".join(valid_values)
+            )
+            sys.exit(1)
+        return value
+
+    def _quick_access_order(self):
+        key = "FLATNOTES_QUICK_ACCESS_ORDER"
+        value = get_env(key, mandatory=False, default="desc")
+        valid_values = ["asc", "desc"]
+        if value not in valid_values:
+            logger.error(
+                f"Invalid value '{value}' for {key}. "
+                + "Must be one of: "
+                + ", ".join(valid_values)
+            )
+            sys.exit(1)
+        return value
+
+    def _quick_access_limit(self):
+        key = "FLATNOTES_QUICK_ACCESS_LIMIT"
+        return get_env(key, mandatory=False, default=5, cast_int=True)
 
     def _load_path_prefix(self):
         key = "FLATNOTES_PATH_PREFIX"
@@ -72,4 +125,9 @@ class AuthType(str, Enum):
 
 class GlobalConfigResponseModel(CustomBaseModel):
     auth_type: AuthType
-    hide_recently_modified: bool
+    quick_access_hide: bool
+    quick_access_title: str
+    quick_access_term: str
+    quick_access_sort: str
+    quick_access_order: str
+    quick_access_limit: int

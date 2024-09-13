@@ -178,7 +178,12 @@ def get_config():
     """Retrieve server-side config required for the UI."""
     return GlobalConfigResponseModel(
         auth_type=global_config.auth_type,
-        hide_recently_modified=global_config.hide_recently_modified,
+        quick_access_hide=global_config.quick_access_hide,
+        quick_access_title=global_config.quick_access_title,
+        quick_access_term=global_config.quick_access_term,
+        quick_access_sort=global_config.quick_access_sort,
+        quick_access_order=global_config.quick_access_order,
+        quick_access_limit=global_config.quick_access_limit,
     )
 
 
