@@ -15,18 +15,31 @@
           {{ globalStore.config.quickAccessTitle }}
         </p>
         <RouterLink
-          v-for="note in notes"
+          v-for="note in notes.slice(0, globalStore.config.quickAccessLimit)"
           :to="{ name: 'note', params: { title: note.title } }"
           class="mb-1"
         >
           <CustomButton :label="note.title" />
         </RouterLink>
+        <RouterLink
+          v-if="notes.length > globalStore.config.quickAccessLimit"
+          :to="{
+            name: 'search',
+            query: {
+              term: globalStore.config.quickAccessTerm,
+              sortBy: searchSortOptions[globalStore.config.quickAccessSort],
+            },
+          }"
+          title="Show more"
+          ><CustomButton :iconPath="mdiDotsHorizontal"
+        /></RouterLink>
       </LoadingIndicator>
     </div>
   </div>
 </template>
 
 <script setup>
+import { mdiDotsHorizontal } from "@mdi/js";
 import { useToast } from "primevue/usetoast";
 import { onMounted, ref, watch } from "vue";
 import { RouterLink } from "vue-router";
@@ -35,6 +48,7 @@ import { apiErrorHandler, getNotes } from "../api.js";
 import CustomButton from "../components/CustomButton.vue";
 import LoadingIndicator from "../components/LoadingIndicator.vue";
 import Logo from "../components/Logo.vue";
+import { searchSortOptions } from "../constants.js";
 import { useGlobalStore } from "../globalStore.js";
 import SearchInput from "../partials/SearchInput.vue";
 
@@ -51,7 +65,8 @@ function init() {
     globalStore.config.quickAccessTerm,
     globalStore.config.quickAccessSort,
     globalStore.config.quickAccessOrder,
-    globalStore.config.quickAccessLimit,
+    // Limit is increased by 1 to check if there are more notes than the limit.
+    globalStore.config.quickAccessLimit + 1,
   )
     .then((data) => {
       notes.value = data;
