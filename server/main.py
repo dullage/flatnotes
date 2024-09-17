@@ -182,7 +182,6 @@ def get_config():
         quick_access_title=global_config.quick_access_title,
         quick_access_term=global_config.quick_access_term,
         quick_access_sort=global_config.quick_access_sort,
-        quick_access_order=global_config.quick_access_order,
         quick_access_limit=global_config.quick_access_limit,
     )
 

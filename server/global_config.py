@@ -13,7 +13,6 @@ class GlobalConfig:
         self.quick_access_title: str = self._quick_access_title()
         self.quick_access_term: str = self._quick_access_term()
         self.quick_access_sort: str = self._quick_access_sort()
-        self.quick_access_order: str = self._quick_access_order()
         self.quick_access_limit: int = self._quick_access_limit()
         self.path_prefix: str = self._load_path_prefix()
 
@@ -87,19 +86,6 @@ class GlobalConfig:
             sys.exit(1)
         return value
 
-    def _quick_access_order(self):
-        key = "FLATNOTES_QUICK_ACCESS_ORDER"
-        value = get_env(key, mandatory=False, default="desc")
-        valid_values = ["asc", "desc"]
-        if value not in valid_values:
-            logger.error(
-                f"Invalid value '{value}' for {key}. "
-                + "Must be one of: "
-                + ", ".join(valid_values)
-            )
-            sys.exit(1)
-        return value
-
     def _quick_access_limit(self):
         key = "FLATNOTES_QUICK_ACCESS_LIMIT"
         return get_env(key, mandatory=False, default=5, cast_int=True)
@@ -129,5 +115,4 @@ class GlobalConfigResponseModel(CustomBaseModel):
     quick_access_title: str
     quick_access_term: str
     quick_access_sort: str
-    quick_access_order: str
     quick_access_limit: int
