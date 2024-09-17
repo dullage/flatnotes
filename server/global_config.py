@@ -88,7 +88,7 @@ class GlobalConfig:
 
     def _quick_access_limit(self):
         key = "FLATNOTES_QUICK_ACCESS_LIMIT"
-        return get_env(key, mandatory=False, default=5, cast_int=True)
+        return get_env(key, mandatory=False, default=4, cast_int=True)
 
     def _load_path_prefix(self):
         key = "FLATNOTES_PATH_PREFIX"
