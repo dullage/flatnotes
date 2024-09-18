@@ -39,6 +39,7 @@ Equally, the only thing flatnotes caches is the search index and that's incremen
 * Raw/WYSIWYG markdown editor modes.
 * Advanced search functionality.
 * Note "tagging" functionality.
+* Customisable home page.
 * Wikilink support to easily link to other notes (`[[My Other Note]]`).
 * Light/dark themes.
 * Multiple authentication options (none, read-only, username/password, 2FA).
