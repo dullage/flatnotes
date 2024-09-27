@@ -2,7 +2,7 @@
   <div :class="{ 'flex items-center justify-center': loadSuccessful !== true }">
     <!-- Loading -->
     <div
-      v-if="loadSuccessful === null && !props.hideLoader"
+      v-if="gracePeriodExpired && loadSuccessful === null && !props.hideLoader"
       class="loader"
     ></div>
 
@@ -17,7 +17,7 @@
         size="4em"
         class="mb-4 text-theme-brand"
       />
-      <span class="text-center text-lg text-theme-text-muted max-w-80">{{
+      <span class="max-w-80 text-center text-lg text-theme-text-muted">{{
         failedMessage
       }}</span>
     </div>
@@ -30,16 +30,30 @@
 <script setup>
 import SvgIcon from "@jamescoyle/vue-icon";
 import { mdiTrafficCone } from "@mdi/js";
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 
 const props = defineProps({ hideLoader: Boolean });
 
 const loadSuccessful = ref(null);
 const failedIconPath = ref("");
 const failedMessage = ref("");
+const gracePeriodExpired = ref(false);
+
+// Don't show loading animation within the first 400ms.
+onMounted(() => {
+  startGracePeriodTimer();
+});
+
+function startGracePeriodTimer() {
+  gracePeriodExpired.value = false;
+  setTimeout(() => {
+    gracePeriodExpired.value = true;
+  }, 400);
+}
 
 function setLoading() {
   loadSuccessful.value = null;
+  startGracePeriodTimer();
 }
 
 function setFailed(message, iconPath) {
