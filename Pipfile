@@ -11,13 +11,13 @@ isort = "*"
 
 [packages]
 whoosh = "==2.7.4"
-fastapi = "==0.111.1"
-uvicorn = {extras = ["standard"], version = "==0.30.3"}
+fastapi = "==0.115.4"
+uvicorn = {extras = ["standard"], version = "==0.32.0"}
 aiofiles = "==24.1.0"
 python-jose = {extras = ["cryptography"], version = "==3.3.0"}
 pyotp = "==2.9.0"
-qrcode = "==7.4.2"
-python-multipart = "==0.0.9"
+qrcode = "==8.0"
+python-multipart = "==0.0.17"
 
 [requires]
 python_version = "3.11"
