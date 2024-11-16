@@ -216,7 +216,6 @@ function editHandler() {
 }
 
 function setEditMode() {
-  setBeforeUnloadConfirmation(true);
   newTitle.value = note.value.title;
   unsavedChanges.value = false;
   editMode.value = true;
@@ -328,6 +327,7 @@ function noteSaveSuccess(close = false) {
   if (close) {
     closeNote();
   }
+  setBeforeUnloadConfirmation(false);
   toast.add(getToastOptions("Note saved successfully ✓", "Success", "success"));
 }
 
@@ -342,7 +342,6 @@ function closeHandler() {
 
 function closeNote() {
   clearDraft();
-  setBeforeUnloadConfirmation(false);
   editMode.value = false;
   if (isNewNote.value) {
     router.push({ name: "home" });
@@ -424,9 +423,11 @@ function clearContentChangedTimeout() {
 function contentChangedHandler() {
   if (isContentChanged()) {
     unsavedChanges.value = true;
+    setBeforeUnloadConfirmation(true);
     saveDraft();
   } else {
     unsavedChanges.value = false;
+    setBeforeUnloadConfirmation(false);
     clearDraft();
   }
 }
