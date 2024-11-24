@@ -23,7 +23,7 @@
         <RouterLink :to="{ name: 'note', params: { title: result.title } }">
           <!-- Title and Tags -->
           <div>
-            <span v-html="result.titleHighlightsOrTitle" class="mr-2"></span>
+            <span v-html="result.titleHighlightsOrTitle" class="mr-2" style="font-size: 1.25rem"></span>
             <Tag v-for="tag in result.tagMatches" :tag="tag" class="mr-1" />
           </div>
           <!-- Last Modified and Content Highlights -->
