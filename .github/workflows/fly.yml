@@ -9,8 +9,9 @@ on:
 
 jobs:
   deploy:
-    name: Deploy app
+    name: Deploy prod app
     runs-on: ubuntu-latest
+    environment: prod
     concurrency: deploy-group    
     steps:
       - uses: actions/checkout@v4
