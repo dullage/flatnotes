@@ -5,6 +5,8 @@
   <img alt="Docker Pulls" src="https://img.shields.io/docker/pulls/dullage/flatnotes?style=for-the-badge">
 </p>
 
+A fork of [flatnotes](https://github.com/dullage/flatnotes) modified to be used as wishlist for our family.
+
 A self-hosted, database-less note-taking web app that utilises a flat folder of markdown files for storage.
 
 Log into the [demo site](https://demo.flatnotes.io) and take a look around. *Note: This site resets every 15 minutes.*
@@ -121,3 +123,13 @@ A special thanks to 2 fantastic open-source projects that make flatnotes possibl
 
 * [Whoosh](https://whoosh.readthedocs.io/en/latest/intro.html) - A fast, pure Python search engine library.
 * [TOAST UI Editor](https://ui.toast.com/tui-editor) - A GFM Markdown and WYSIWYG editor for the browser.
+
+## Deploy
+
+According to [this doc](https://fly.io/docs/launch/continuous-deployment-with-github-actions/):
+
+- Before you deploy the app add some secrets:
+  - `fly secrets set FLATNOTES_PASSWORD=<password> --stage`
+  - `fly secrets set FLATNOTES_SECRET_KEY=<secret_key_here> --stage`
+- A custom domain was provisioned according to [this doc](https://fly.io/docs/networking/custom-domain/) (after first deployment)
+
