@@ -5,7 +5,7 @@
       <TextInput
         v-model="username"
         id="username"
-        placeholder="Username"
+        placeholder="Benutzername"
         class="mb-1"
         autocomplete="username"
         required
@@ -13,7 +13,7 @@
       <TextInput
         v-model="password"
         id="password"
-        placeholder="Password"
+        placeholder="Passwort"
         type="password"
         class="mb-1"
         autocomplete="current-password"
@@ -35,9 +35,9 @@
           v-model="rememberMe"
           class="mr-1"
         />
-        <label for="remember-me">Remember Me</label>
+        <label for="remember-me">Angemeldet bleiben</label>
       </div>
-      <CustomButton :iconPath="mdilLogin" label="Log In" />
+      <CustomButton :iconPath="mdilLogin" label="Anmelden" />
     </form>
   </div>
 </template>

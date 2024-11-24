@@ -6,7 +6,7 @@
     <div class="flex grow items-start justify-end">
       <!-- New Note -->
       <RouterLink v-if="showNewButton" :to="{ name: 'new' }">
-        <CustomButton :iconPath="mdilPlusCircle" label="New Note" />
+        <CustomButton :iconPath="mdilPlusCircle" label="Neue Person" />
       </RouterLink>
       <!-- Menu -->
       <CustomButton
@@ -52,13 +52,13 @@ const emit = defineEmits(["toggleSearchModal"]);
 
 const menuItems = [
   {
-    label: "Search",
+    label: "Suche",
     icon: mdilMagnify,
     command: () => emit("toggleSearchModal"),
     keyboardShortcut: "/",
   },
   {
-    label: "All Notes",
+    label: "Alle Personen",
     icon: mdilNoteMultiple,
     command: () =>
       router.push({
@@ -70,7 +70,7 @@ const menuItems = [
       }),
   },
   {
-    label: "Toggle Theme",
+    label: "Design umschalten",
     icon: mdilMonitor,
     command: toggleTheme,
   },
@@ -79,7 +79,7 @@ const menuItems = [
     visible: showLogOutButton,
   },
   {
-    label: "Log Out",
+    label: "Abmelden",
     icon: mdilLogout,
     command: logOut,
     visible: showLogOutButton,

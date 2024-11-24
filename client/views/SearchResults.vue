@@ -7,7 +7,7 @@
       <!-- Sort By -->
       <div class="flex justify-end">
         <CustomButton
-          :label="`Sort By: ${sortByName}`"
+          :label="`Sortieren nach: ${sortByName}`"
           :iconPath="mdiSort"
           class="mb-1"
           @click="toggleSortMenu"
@@ -28,9 +28,9 @@
           </div>
           <!-- Last Modified and Content Highlights -->
           <div>
-            <span class="text-theme-text-muted">{{
+            <small class="text-theme-text-muted">{{
               result.lastModifiedAsString
-            }}</span>
+            }}</small>
             <span v-if="result.contentHighlights"> - </span>
             <span
               v-html="result.contentHighlights"
@@ -73,8 +73,8 @@ const toast = useToast();
 
 const sortByName = computed(() => {
   const sortOptionNames = {
-    [searchSortOptions.title]: "Title",
-    [searchSortOptions.lastModified]: "Last Modified",
+    [searchSortOptions.title]: "Titel",
+    [searchSortOptions.lastModified]: "Kürzlich aktualisert",
     [searchSortOptions.score]: "Score",
   };
   return sortOptionNames[props.sortBy];

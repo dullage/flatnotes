@@ -57,7 +57,7 @@ import { getToastOptions } from "../helpers.js";
 const props = defineProps({
   initialSearchTerm: { type: String, default: "" },
   large: Boolean,
-  placeholder: { type: String, default: "Search..." },
+  placeholder: { type: String, default: "Suchen..." },
 });
 const emit = defineEmits(["search"]);
 
