@@ -1,6 +1,6 @@
 {
-  "name": "flatnotes",
-  "short_name": "flatnotes",
+  "name": "wunschliste",
+  "short_name": "wunschliste",
   "start_url": "/",
   "icons": [
     {
@@ -16,7 +16,7 @@
       "purpose": "any maskable"
     }
   ],
-  "theme_color": "#F8A66B",
+  "theme_color": "#3F6CA0",
   "background_color": "#ffffff",
   "display": "standalone"
 }
