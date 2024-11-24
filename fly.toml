@@ -34,9 +34,9 @@ primary_region = 'ams'
   [checks.ready]
     port = 8080
     type = 'http'
-    interval = '15s'
-    timeout = '5s'
-    grace_period = '10s'
+    interval = '5s'
+    timeout = '2s'
+    grace_period = '2s'
     method = 'GET'
     path = '/health'
 
