@@ -16,7 +16,7 @@ jobs:
     concurrency:
       group: pr-${{ github.event.number }}
     environment:
-      name: review
+      name: preview
       url: ${{ steps.deploy.outputs.url }}
     steps:
       - name: Get code
