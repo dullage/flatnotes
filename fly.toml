@@ -1,22 +1,21 @@
-# fly.toml app configuration file generated for flatnotes-technat on 2024-11-23T15:47:46+01:00
+# fly.toml app configuration file generated for wunschliste on 2024-11-25T20:32:49+01:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'flatnotes-technat'
+app = 'wunschliste'
 primary_region = 'ams'
 
 [build]
-  dockerfile = "Dockerfile"
+  dockerfile = 'Dockerfile'
 
 [deploy]
-  strategy = "rolling"
+  strategy = 'rolling'
 
 [env]
   FLATNOTES_AUTH_TYPE = 'password'
-  FLATNOTES_USERNAME = 'wunsch'
   FLATNOTES_SESSION_EXPIRY_DAYS = '1'
-
+  FLATNOTES_USERNAME = 'wunsch'
 
 [[mounts]]
   source = 'data'
