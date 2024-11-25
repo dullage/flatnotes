@@ -21,11 +21,10 @@ jobs:
     steps:
       - name: Get code
         uses: actions/checkout@v4
-
       - name: Deploy PR app to Fly.io
         id: deploy
-        uses: superfly/fly-pr-review-apps@1.2.0
+        uses: superfly/fly-pr-review-apps@1.3.0
         with:
           name: wunschliste-pr-${{ github.event.number }}
           config: fly.review.toml
-          secrets: FLATNOTES_PASSWORD={{ secrets.FLATNOTES_PASSWORD }} FLATNOTES_SECRET_KEY={{ secrets.FLATNOTES_SECRET_KEY }}
+          secrets: FLATNOTES_PASSWORD=${{ secrets.FLATNOTES_PASSWORD }} FLATNOTES_SECRET_KEY=${{ secrets.FLATNOTES_SECRET_KEY }}

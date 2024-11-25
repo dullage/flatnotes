@@ -1,27 +1,19 @@
-# fly.toml app configuration file generated for flatnotes-technat on 2024-11-23T15:47:46+01:00
-#
-# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
-#
-
-app = 'flatnotes-technat'
-primary_region = 'ams'
-
 [build]
   dockerfile = "Dockerfile"
 
 [deploy]
-  strategy = "rolling"
+  strategy = "immediate"
 
 [env]
   FLATNOTES_AUTH_TYPE = 'password'
-  FLATNOTES_USERNAME = 'wunsch'
+  FLATNOTES_USERNAME = 'review'
   FLATNOTES_SESSION_EXPIRY_DAYS = '1'
 
 
 [[mounts]]
   source = 'data'
   destination = '/data'
-  initial_size = '0.5gb'
+  initial_size = '1gb'
 
 [http_service]
   internal_port = 8080
