@@ -1,4 +1,7 @@
 # https://fly.io/docs/blueprints/review-apps-guide/
+
+primary_region = 'ams'
+
 [build]
   dockerfile = "Dockerfile"
 
