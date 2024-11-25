@@ -28,4 +28,4 @@ jobs:
         with:
           name: wunschliste-pr-${{ github.event.number }}
           config: fly.review.toml
-          secrets: FLATNOTES_PASSWORD={{ secrets.FLATNOTES_PASSWORD }} FLATNOTES_SECRET_KEY={{ secrets.FLATNOTES_SECRET_KEY }}
+          secrets: FLATNOTES_PASSWORD=${{ secrets.FLATNOTES_PASSWORD }} FLATNOTES_SECRET_KEY=${{ secrets.FLATNOTES_SECRET_KEY }}
