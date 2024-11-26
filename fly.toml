@@ -10,7 +10,6 @@ primary_region = 'ams'
 [env]
   FLATNOTES_AUTH_TYPE = 'password'
   FLATNOTES_SESSION_EXPIRY_DAYS = '1'
-  FLATNOTES_USERNAME = 'wunsch'
 
 [[mounts]]
   source = 'data'
