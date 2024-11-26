@@ -41,4 +41,3 @@ jobs:
         with:
           token: ${{ steps.get-token.outputs.token }}
           environment: pr-${{ github.event.number }}
-          ref: ${{ github.head_ref }} 
