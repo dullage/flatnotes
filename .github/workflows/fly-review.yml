@@ -1,4 +1,5 @@
 # https://fly.io/docs/blueprints/review-apps-guide/
+# https://optimum.ba/blog/how-to-automate-creating-and-destroying-pull-request-review-phoenix-applications-on-fly-io
 name: Deploy Review App
 on:
   pull_request:
@@ -27,3 +28,17 @@ jobs:
         with:
           name: wunschliste-pr-${{ github.event.number }}
           secrets: FLATNOTES_USERNAME=${{ secrets.REVIEW_USERNAME }} FLATNOTES_PASSWORD=${{ secrets.REVIEW_PASSWORD }} FLATNOTES_SECRET_KEY=${{ secrets.REVIEW_SECRET_KEY }}
+      - name: Get Github Token # https://github.com/marketplace/actions/delete-deployment-environment#how-to-obtain-the-proper-token
+        if: github.event.pull_request.closed == true 
+        uses: navikt/github-app-token-generator@v1.1.1
+        id: get-token
+        with:
+          app-id: ${{ secrets.GH_APP_ID }}
+          private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
+      - name: Delete GitHub Environment
+        if: github.event.pull_request.closed == true 
+        uses: strumwolf/delete-deployment-environment@v3.0.0
+        with:
+          token: ${{ steps.get-token.outputs.token }}
+          environment: pr-${{ github.event.number }}
+          ref: ${{ github.head_ref }} 
