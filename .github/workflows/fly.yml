@@ -1,4 +1,4 @@
-name: Fly Prod Deploy
+name: Deploy Prod App 
 on:
   push:
     branches:
@@ -6,13 +6,19 @@ on:
 
 jobs:
   deploy:
-    name: Deploy prod app
+    env:
+      FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
     runs-on: ubuntu-latest
+    concurrency: prod
     environment: prod
-    concurrency: deploy-group    
     steps:
-      - uses: actions/checkout@v4
-      - uses: superfly/flyctl-actions/setup-flyctl@master
-      - run: flyctl deploy --remote-only
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+      - name: Get code
+        uses: actions/checkout@v4
+      - name: Setup flyctl
+        uses: superfly/flyctl-actions/setup-flyctl@v1
+      - name: Set secrets for app
+        run: |
+          flyctl secrets set FLATNOTES_PASSWORD=${{ secrets.FLATNOTES_PASSWORD }} --stage
+          flyctl secrets set FLATNOTES_SECRET_KEY=${{ secrets.FLATNOTES_SECRET_KEY }} --stage
+      - name: Deploy Prod app
+        run: flyctl deploy --remote-only

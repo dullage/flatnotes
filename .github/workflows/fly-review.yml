@@ -21,7 +21,7 @@ jobs:
     steps:
       - name: Get code
         uses: actions/checkout@v4
-      - name: Deploy PR app to Fly.io
+      - name: Deploy PR app 
         id: deploy
         uses: superfly/fly-pr-review-apps@v1
         with:
