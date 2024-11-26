@@ -67,7 +67,7 @@ class GlobalConfig:
 
     def _quick_access_title(self):
         key = "FLATNOTES_QUICK_ACCESS_TITLE"
-        return get_env(key, mandatory=False, default="RECENTLY MODIFIED")
+        return get_env(key, mandatory=False, default="Kürzlich geändert")
 
     def _quick_access_term(self):
         key = "FLATNOTES_QUICK_ACCESS_TERM"
