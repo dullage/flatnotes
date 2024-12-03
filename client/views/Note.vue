@@ -123,7 +123,7 @@ import { mdiNoteOffOutline } from "@mdi/js";
 import { mdilContentSave, mdilDelete } from "@mdi/light-js";
 import Mousetrap from "mousetrap";
 import { useToast } from "primevue/usetoast";
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, onMounted, ref, watch, nextTick } from "vue";
 import { useRouter } from "vue-router";
 
 import {
@@ -192,8 +192,14 @@ function init() {
   } else {
     newTitle.value = "";
     note.value = new Note();
-    editHandler();
-    loadingIndicator.value.setLoaded();
+    // Set the editMode to false to close any existing editors.
+    // This ensures the editor is cleanly reinitialised in an empty state.
+    // Simple fix for #266 without requiring a full re-work of the logic.
+    editMode.value = false;
+    nextTick(() => {
+      editHandler();
+      loadingIndicator.value.setLoaded();
+    });
   }
 }
 
