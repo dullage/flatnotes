@@ -132,8 +132,8 @@
   background-color: rgb(var(--theme-background-elevated));
 }
 
-.dark-theme .toastui-editor-contents pre,
-.dark-theme .toastui-editor-md-code-block-line-background {
+.dark .toastui-editor-contents pre,
+.dark .toastui-editor-md-code-block-line-background {
   background-color: rgb(var(--theme-background-elevated));
 }
 
@@ -204,7 +204,7 @@
   background-color: rgb(var(--theme-text));
 }
 
-.dark-theme .toastui-editor-toolbar-icons {
+.dark .toastui-editor-toolbar-icons {
   // Standard dark theme buttons are dark grey, this position change makes them white
   background-position-y: -49px;
 }
@@ -223,8 +223,8 @@
   background-color: rgb(var(--theme-background-elevated));
 }
 
-.dark-theme .toastui-editor-md-code,
-.dark-theme .toastui-editor-contents code {
+.dark .toastui-editor-md-code,
+.dark .toastui-editor-contents code {
   background-color: rgb(var(--theme-background-elevated));
 }
 
