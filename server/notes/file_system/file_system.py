@@ -25,7 +25,7 @@ from ..base import BaseNotes
 from ..models import Note, NoteCreate, NoteUpdate, SearchResult
 
 MARKDOWN_EXT = ".md"
-INDEX_SCHEMA_VERSION = "4"
+INDEX_SCHEMA_VERSION = "5"
 
 StemmingFoldingAnalyzer = StemmingAnalyzer() | CharsetFilter(accent_map)
 
