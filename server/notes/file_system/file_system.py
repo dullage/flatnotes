@@ -25,7 +25,7 @@ from ..base import BaseNotes
 from ..models import Note, NoteCreate, NoteUpdate, SearchResult
 
 MARKDOWN_EXT = ".md"
-INDEX_SCHEMA_VERSION = "4"
+INDEX_SCHEMA_VERSION = "5"
 
 StemmingFoldingAnalyzer = StemmingAnalyzer() | CharsetFilter(accent_map)
 
@@ -41,9 +41,9 @@ class IndexSchema(SchemaClass):
 
 
 class FileSystemNotes(BaseNotes):
-    TAGS_RE = re.compile(r"(?:(?<=^#)|(?<=\s#))\w+(?=\s|$)")
+    TAGS_RE = re.compile(r"(?:(?<=^#)|(?<=\s#))[a-zA-Z0-9_-]+(?=\s|$)")
     CODEBLOCK_RE = re.compile(r"`{1,3}.*?`{1,3}", re.DOTALL)
-    TAGS_WITH_HASH_RE = re.compile(r"(?:(?<=^)|(?<=\s))#\w+(?=\s|$)")
+    TAGS_WITH_HASH_RE = re.compile(r"(?:(?<=^)|(?<=\s))#[a-zA-Z0-9_-]+(?=\s|$)")
 
     def __init__(self):
         self.storage_path = get_env("FLATNOTES_PATH", mandatory=True)
@@ -196,8 +196,11 @@ class FileSystemNotes(BaseNotes):
         - The content without the tags.
         - A set of tags converted to lowercase."""
         content_ex_codeblock = re.sub(cls.CODEBLOCK_RE, "", content)
+        logger.debug(f"Content without codeblocks: {content_ex_codeblock}")
         _, tags = cls._re_extract(cls.TAGS_RE, content_ex_codeblock)
+        logger.debug(f"Tags extracted: {tags}")
         content_ex_tags, _ = cls._re_extract(cls.TAGS_RE, content)
+        logger.debug(f"Content without tags: {content_ex_tags}")
         try:
             tags = [tag.lower() for tag in tags]
             return (content_ex_tags, set(tags))
@@ -235,6 +238,7 @@ class FileSystemNotes(BaseNotes):
         indexed = set()
         writer = self.index.writer()
         if clean:
+            logger.info(f"Cleaning index {clean}")
             writer.mergetype = writing.CLEAR  # Clear the index
         with self.index.searcher() as searcher:
             for idx_note in searcher.all_stored_fields():
@@ -264,6 +268,7 @@ class FileSystemNotes(BaseNotes):
                     writer, self._get_by_filename(filename)
                 )
                 logger.info(f"'{filename}' added to index")
+
         writer.commit(optimize=optimize)
         logger.info("Index synchronized")
 
