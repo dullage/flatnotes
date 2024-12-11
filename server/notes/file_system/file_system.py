@@ -52,8 +52,7 @@ class FileSystemNotes(BaseNotes):
                 f"'{self.storage_path}' is not a valid directory."
             )
         self.index = self._load_index()
-        clean = get_env("FLATNOTES_CLEAN_INDEX", default=False, cast_bool=True)
-        self._sync_index_with_retry(optimize=True, clean=clean)
+        self._sync_index_with_retry(optimize=True)
 
     def create(self, data: NoteCreate) -> Note:
         """Create a new note."""
