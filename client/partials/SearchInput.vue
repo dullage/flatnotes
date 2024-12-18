@@ -123,7 +123,8 @@ function stateChangeHandler() {
     tagMenuVisible.value = false;
     tagMatches.value = [];
   } else {
-    filterTagMatches(wordOnCursor);
+    // All tags are stored in lowercase, so we can do a case-insensitive search.
+    filterTagMatches(wordOnCursor.toLowerCase());
   }
 }
 
