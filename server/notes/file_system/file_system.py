@@ -25,7 +25,7 @@ from ..base import BaseNotes
 from ..models import Note, NoteCreate, NoteUpdate, SearchResult
 
 MARKDOWN_EXT = ".md"
-INDEX_SCHEMA_VERSION = "4"
+INDEX_SCHEMA_VERSION = "5"
 
 StemmingFoldingAnalyzer = StemmingAnalyzer() | CharsetFilter(accent_map)
 
@@ -41,9 +41,11 @@ class IndexSchema(SchemaClass):
 
 
 class FileSystemNotes(BaseNotes):
-    TAGS_RE = re.compile(r"(?:(?<=^#)|(?<=\s#))\w+(?=\s|$)")
+    TAGS_RE = re.compile(r"(?:(?<=^#)|(?<=\s#))[a-zA-Z0-9_-]+(?=\s|$)")
     CODEBLOCK_RE = re.compile(r"`{1,3}.*?`{1,3}", re.DOTALL)
-    TAGS_WITH_HASH_RE = re.compile(r"(?:(?<=^)|(?<=\s))#\w+(?=\s|$)")
+    TAGS_WITH_HASH_RE = re.compile(
+        r"(?:(?<=^)|(?<=\s))#[a-zA-Z0-9_-]+(?=\s|$)"
+    )
 
     def __init__(self):
         self.storage_path = get_env("FLATNOTES_PATH", mandatory=True)
