@@ -18,6 +18,7 @@
 
 <script setup>
 import Mousetrap from "mousetrap";
+import "Mousetrap/plugins/global-bind/mousetrap-global-bind";
 import { useToast } from "primevue/usetoast";
 import { computed, ref } from "vue";
 import { RouterView, useRoute } from "vue-router";
@@ -30,6 +31,7 @@ import NavBar from "./partials/NavBar.vue";
 import SearchModal from "./partials/SearchModal.vue";
 import { loadStoredToken } from "./tokenStorage.js";
 import LoadingIndicator from "./components/LoadingIndicator.vue";
+import router from "./router.js";
 
 const globalStore = useGlobalStore();
 const isSearchModalVisible = ref(false);
@@ -42,6 +44,22 @@ const toast = useToast();
 Mousetrap.bind("/", () => {
   if (route.name !== "login") {
     toggleSearchModal();
+    return false;
+  }
+});
+
+// 'CTRL/CMD + SHIFT + N' to create new note
+Mousetrap.bindGlobal("mod+shift+n", () => {
+  if (route.name !== "login") {
+    router.push({ name: "new" });
+    return false;
+  }
+});
+
+// 'CTRL/CMD + SHIFT + H' to go to home
+Mousetrap.bindGlobal("mod+shift+h", () => {
+  if (route.name !== "login") {
+    router.push({ name: "home" });
     return false;
   }
 });
