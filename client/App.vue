@@ -18,7 +18,7 @@
 
 <script setup>
 import Mousetrap from "mousetrap";
-import "Mousetrap/plugins/global-bind/mousetrap-global-bind";
+import "mousetrap/plugins/global-bind/mousetrap-global-bind";
 import { useToast } from "primevue/usetoast";
 import { computed, ref } from "vue";
 import { RouterView, useRoute } from "vue-router";
