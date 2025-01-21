@@ -48,16 +48,16 @@ Mousetrap.bind("/", () => {
   }
 });
 
-// 'CTRL/CMD + ALT + N' to create new note
-Mousetrap.bindGlobal("mod+alt+n", () => {
+// 'CTRL + ALT/OPT + N' to create new note
+Mousetrap.bindGlobal("ctrl+alt+n", () => {
   if (route.name !== "login") {
     router.push({ name: "new" });
     return false;
   }
 });
 
-// 'CTRL/CMD + ALT + H' to go to home
-Mousetrap.bindGlobal("mod+alt+h", () => {
+// 'CTRL + ALT/OPT + H' to go to home
+Mousetrap.bindGlobal("ctrl+alt+h", () => {
   if (route.name !== "login") {
     router.push({ name: "home" });
     return false;
