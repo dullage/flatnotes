@@ -75,7 +75,7 @@ export function parseUrlLink(source) {
 // end of raw toast-ui source
 
 function parseWikiLink(source) {
-  const matched = source.matchAll(/\[\[(.*)\]\]/g);
+  const matched = source.matchAll(/\[\[(.*?)\]\]/g);
   if (matched) {
     return Array.from(matched).map((match) => {
       const text = match[1];
