@@ -44,6 +44,7 @@ Equally, the only thing flatnotes caches is the search index and that's incremen
 * Light/dark themes.
 * Multiple authentication options (none, read-only, username/password, 2FA).
 * Restful API.
+* Hook on create/update/delete.
 
 See [the wiki](https://github.com/dullage/flatnotes/wiki) for more details.
 
@@ -121,3 +122,32 @@ A special thanks to 2 fantastic open-source projects that make flatnotes possibl
 
 * [Whoosh](https://whoosh.readthedocs.io/en/latest/intro.html) - A fast, pure Python search engine library.
 * [TOAST UI Editor](https://ui.toast.com/tui-editor) - A GFM Markdown and WYSIWYG editor for the browser.
+
+## Contributing
+
+Requirements:
+
+- python3, node, npm, pipenv
+
+### Local run
+
+
+1. Install deps:
+
+    pipenv install
+    npm install
+
+3. Build UI
+
+    npm run build
+
+4. Switch to virtual environment
+
+    pipenv shell
+    mkdir notes # for local test, it's git-ignored
+
+5. Run local server
+
+    FLATNOTES_PATH=notes FLATNOTES_AUTH_TYPE=none uvicorn --app-dir server main:app --port 8080 
+    
+Dev instance will be available on http://127.0.0.1:8080
