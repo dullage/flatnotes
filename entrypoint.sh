@@ -1,7 +1,12 @@
 #!/bin/sh
 
 [ "$EXEC_TOOL" ] || EXEC_TOOL=gosu
-[ "$FLATNOTES_PORT" ] || FLATNOTES_PORT=8080
+
+if [ "$KUBERNETES_PORT" -a "$FLATNOTES_PORT" ]; then
+    echo "Warning: ignoring FLATNOTES_PORT=${FLATNOTES_PORT} on kubernetes"
+elif [ ! "$FLATNOTES_PORT" ]; then
+    FLATNOTES_PORT=8080
+fi
 
 set -e
 
