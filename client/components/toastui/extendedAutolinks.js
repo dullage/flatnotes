@@ -89,11 +89,28 @@ function parseWikiLink(source) {
   return null;
 }
 
+function parseTagLink(source) {
+    const matched = source.matchAll(/(?:^|\s)(#[a-zA-Z0-9_-]+)(?=\s|$)/g);
+    if (matched) {
+      return Array.from(matched).map((match) => {
+        const text = match[1];
+        return {
+          text,
+          range: [match.index + match[0].indexOf(text), match.index + match[0].indexOf(text) + text.length - 1],
+          url: `${router.resolve({ name: "search", query: { term: text } }).href}`,
+        };
+      });
+    }
+  
+    return null;
+  }
+
 function extendedAutolinks(source) {
   return [
     ...parseUrlLink(source),
     ...parseEmailLink(source),
     ...parseWikiLink(source),
+    ...parseTagLink(source),
   ].sort((a, b) => a.range[0] - b.range[0]);
 }
 
