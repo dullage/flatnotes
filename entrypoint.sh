@@ -1,6 +1,7 @@
 #!/bin/sh
 
 [ "$EXEC_TOOL" ] || EXEC_TOOL=gosu
+[ "$FLATNOTES_HOST" ] || FLATNOTES_HOST=0.0.0.0
 [ "$FLATNOTES_PORT" ] || FLATNOTES_PORT=8080
 
 set -e
@@ -24,7 +25,7 @@ flatnotes_command="python -m \
                   uvicorn \
                   main:app \
                   --app-dir server \
-                  --host 0.0.0.0 \
+                  --host ${FLATNOTES_HOST} \
                   --port ${FLATNOTES_PORT} \
                   --proxy-headers \
                   --forwarded-allow-ips '*'"
