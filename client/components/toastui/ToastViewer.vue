@@ -7,6 +7,7 @@ import Viewer from "@toast-ui/editor/dist/toastui-editor-viewer";
 import { onMounted, ref } from "vue";
 
 import baseOptions from "./baseOptions.js";
+import extendedAutolinks from "./extendedAutolinks.js";
 
 const props = defineProps({
   initialValue: String,
@@ -17,6 +18,7 @@ const viewerElement = ref();
 onMounted(() => {
   new Viewer({
     ...baseOptions,
+    extendedAutolinks,
     el: viewerElement.value,
     initialValue: props.initialValue,
   });
