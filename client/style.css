@@ -11,6 +11,30 @@
         src: url("assets/fonts/Poppins/Poppins-Regular.ttf");
     }
 
+    @font-face {
+        font-family: "Poppins";
+        font-style: italic;
+        font-weight: 400;
+        font-display: swap;
+        src: url("assets/fonts/Poppins/Poppins-Italic.ttf");
+    }
+
+    @font-face {
+        font-family: "Poppins";
+        font-style: normal;
+        font-weight: 600;
+        font-display: swap;
+        src: url("assets/fonts/Poppins/Poppins-SemiBold.ttf");
+    }
+
+    @font-face {
+        font-family: "Poppins";
+        font-style: italic;
+        font-weight: 600;
+        font-display: swap;
+        src: url("assets/fonts/Poppins/Poppins-SemiBoldItalic.ttf");
+    }
+
     body {
         --theme-brand: 248 166 107;
         --theme-background: 255 255 255;
