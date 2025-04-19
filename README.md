@@ -68,7 +68,7 @@ docker run -d \
   -e "PGID=1000" \
   -e "FLATNOTES_AUTH_TYPE=password" \
   -e "FLATNOTES_USERNAME=user" \
-  -e "FLATNOTES_PASSWORD=changeMe!" \
+  -e 'FLATNOTES_PASSWORD=changeMe!' \
   -e "FLATNOTES_SECRET_KEY=aLongRandomSeriesOfCharacters" \
   -v "$(pwd)/data:/data" \
   -p "8080:8080" \
