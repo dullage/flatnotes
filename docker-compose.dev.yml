@@ -1,0 +1,30 @@
+services:
+  backend:
+    build: .
+    volumes:
+      - ./server:/app/server
+      - ./data:/data
+    environment:
+      - FLATNOTES_AUTH_TYPE=password
+      - FLATNOTES_USERNAME=user
+      - FLATNOTES_PASSWORD=changeMe!
+      - FLATNOTES_SECRET_KEY=aLongRandomSeriesOfCharacters
+      - FLATNOTES_PATH=/data
+    ports:
+      - "8081:8080"
+    command: sh -c "cd /app && python -m uvicorn server.main:app --host 0.0.0.0 --port 8080 --reload"
+
+  frontend:
+    image: node:20-alpine
+    volumes:
+      - ./client:/app
+    working_dir: /app
+    ports:
+      - "3000:3000"
+    command: >
+      sh -c "ls -la &&  if [ -f package.json ]; then 
+        npm install && npm run dev -- --host 0.0.0.0; 
+      else 
+        echo 'Error: package.json not found in /app'; 
+        find / -name package.json | grep -v node_modules; 
+      fi"

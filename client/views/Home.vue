@@ -8,31 +8,45 @@
         class="flex min-h-56 flex-col items-center"
         hideLoader
       >
-        <p
+        <div
           v-if="notes.length > 0"
-          class="mb-2 text-xs font-bold uppercase text-theme-text-very-muted"
+          class="mb-2 flex items-center"
         >
-          {{ globalStore.config.quickAccessTitle }}
-        </p>
-        <RouterLink
-          v-for="note in notes.slice(0, globalStore.config.quickAccessLimit)"
-          :to="{ name: 'note', params: { title: note.title } }"
-          class="mb-1"
-        >
-          <CustomButton :label="note.title" />
-        </RouterLink>
-        <RouterLink
-          v-if="notes.length > globalStore.config.quickAccessLimit"
-          :to="{
-            name: 'search',
-            query: {
-              term: globalStore.config.quickAccessTerm,
-              sortBy: searchSortOptions[globalStore.config.quickAccessSort],
-            },
-          }"
-          title="Show more"
-          ><CustomButton :iconPath="mdiDotsHorizontal"
-        /></RouterLink>
+          <p class="text-xs font-bold uppercase text-theme-text-very-muted">
+            {{ globalStore.config.quickAccessTitle }}
+          </p>
+          <Toggle
+            :isOn="showRecent"
+            class="ml-2"
+            @click="showRecent = !showRecent"
+          >
+          </Toggle>
+        </div>
+
+        <template v-if="showRecent">
+          <RouterLink
+            v-for="note in notes.slice(0, globalStore.config.quickAccessLimit)"
+            :key="note.id"
+            :to="{ name: 'note', params: { title: note.title } }"
+            class="mb-1"
+          >
+            <CustomButton :label="note.title" />
+          </RouterLink>
+
+          <RouterLink
+            v-if="notes.length > globalStore.config.quickAccessLimit"
+            :to="{
+              name: 'search',
+              query: {
+                term: globalStore.config.quickAccessTerm,
+                sortBy: searchSortOptions[globalStore.config.quickAccessSort],
+              },
+            }"
+            title="Show more"
+          >
+            <CustomButton :iconPath="mdiDotsHorizontal" />
+          </RouterLink>
+        </template>
       </LoadingIndicator>
     </div>
   </div>
@@ -51,11 +65,24 @@ import Logo from "../components/Logo.vue";
 import { searchSortOptions } from "../constants.js";
 import { useGlobalStore } from "../globalStore.js";
 import SearchInput from "../partials/SearchInput.vue";
+import Toggle from "../components/Toggle.vue";
 
 const globalStore = useGlobalStore();
 const loadingIndicator = ref();
 const notes = ref([]);
 const toast = useToast();
+const showRecent = ref(true)
+
+onMounted(() => {
+  const stored = localStorage.getItem('showRecent')
+  if (stored !== null) {
+    showRecent.value = JSON.parse(stored)
+  }
+})
+
+watch(showRecent, val => {
+  localStorage.setItem('showRecent', JSON.stringify(val))
+})
 
 function init() {
   if (globalStore.config.quickAccessHide) {
