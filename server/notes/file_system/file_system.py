@@ -9,7 +9,7 @@ from typing import List, Literal, Set, Tuple
 import whoosh
 from whoosh import writing
 from whoosh.analysis import CharsetFilter, StemmingAnalyzer
-from whoosh.fields import DATETIME, ID, KEYWORD, TEXT, SchemaClass
+from whoosh.fields import DATETIME, ID, KEYWORD, TEXT, SchemaClass, NGRAM
 from whoosh.highlight import ContextFragmenter, WholeFragmenter
 from whoosh.index import Index, LockError
 from whoosh.qparser import MultifieldParser
@@ -38,6 +38,7 @@ class IndexSchema(SchemaClass):
     )
     content = TEXT(analyzer=StemmingFoldingAnalyzer)
     tags = KEYWORD(lowercase=True, field_boost=2.0)
+    raw_content = NGRAM(minsize=2, maxsize=15, stored=False)
 
 
 class FileSystemNotes(BaseNotes):
@@ -118,30 +119,24 @@ class FileSystemNotes(BaseNotes):
         self._sync_index_with_retry()
         term = self._pre_process_search_term(term)
         with self.index.searcher() as searcher:
-            # Parse Query
             if term == "*":
                 query = Every()
             else:
-                parser = MultifieldParser(
-                    self._fieldnames_for_term(term), self.index.schema
-                )
-                parser.add_plugin(DateParserPlugin())
-                query = parser.parse(term)
-
-            # Determine Sort By
-            # Note: For the 'sort' option, "score" is converted to None as
-            # that is the default for searches anyway and it's quicker for
-            # Whoosh if you specify None.
+                if term.startswith('"') and term.endswith('"'):
+                    # Remove quotes for the raw search and lowercase for case-insensitive search
+                    raw_term = term[1:-1].lower()
+                    from whoosh.query import Term
+                    query = Term("raw_content", raw_term)
+                else:
+                    parser = MultifieldParser(
+                        self._fieldnames_for_term(term), self.index.schema
+                    )
+                    parser.add_plugin(DateParserPlugin())
+                    query = parser.parse(term)
             sort = sort if sort in ["title", "last_modified"] else None
-
-            # Determine Sort Direction
-            # Note: Confusingly, when sorting by 'score', reverse = True means
-            # asc so we have to flip the logic for that case!
             reverse = order == "desc"
             if sort is None:
                 reverse = not reverse
-
-            # Run Search
             results = searcher.search(
                 query,
                 sortedby=sort,
@@ -214,12 +209,14 @@ class FileSystemNotes(BaseNotes):
         instead."""
         content_ex_tags, tag_set = self._extract_tags(note.content)
         tag_string = " ".join(tag_set)
+        # Lowercase raw_content for case-insensitive search
         writer.update_document(
             filename=note.title + MARKDOWN_EXT,
             last_modified=datetime.fromtimestamp(note.last_modified),
             title=note.title,
             content=content_ex_tags,
             tags=tag_string,
+            raw_content=note.content.lower(),  # Lowercase for case-insensitive search
         )
 
     def _list_all_note_filenames(self) -> List[str]:
@@ -294,6 +291,11 @@ class FileSystemNotes(BaseNotes):
             lambda tag: "tags:" + tag.group(0)[1:],
             term,
         )
+        # If the term contains Whoosh special characters and is not already quoted, wrap it in double quotes
+        # Whoosh special characters: & | ! ( ) : ^ ~ * ? [ ] " { }
+        specials = r'&|!()\:\^~*?[]"{}'
+        if any(c in specials for c in term) and not (term.startswith('"') and term.endswith('"')):
+            term = f'"{term}"'
         return term
 
     @staticmethod
