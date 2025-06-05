@@ -114,9 +114,11 @@ class FileSystemNotes(BaseNotes):
         sort: Literal["score", "title", "last_modified"] = "score",
         order: Literal["asc", "desc"] = "desc",
         limit: int = None,
+        force_sync: bool = False,
     ) -> Tuple[SearchResult, ...]:
         """Search the index for the given term."""
-        self._sync_index_with_retry()
+        if force_sync:
+            self._sync_index_with_retry()
         term = self._pre_process_search_term(term)
         with self.index.searcher() as searcher:
             if term == "*":
