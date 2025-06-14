@@ -1,7 +1,13 @@
 const tokenStorageKey = "token";
 
+function getBasePath() {
+  // This relies on the fact that flanotes always has a correctly formatted relative path set in <base> tag
+  return document.querySelector('base').getAttribute('href')
+}
+
 function getCookieString(token) {
-  return `${tokenStorageKey}=${token}; SameSite=Strict`;
+  const basePath = getBasePath();
+  return `${tokenStorageKey}=${token}; Path=${basePath}; SameSite=Strict`;
 }
 
 export function storeToken(token, persist = false) {
