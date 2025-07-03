@@ -282,3 +282,82 @@
 .toastui-editor-contents th p {
   color: rgb(var(--theme-text));
 }
+
+/*
+* Mermaid Diagram Interactive Controls
+* - This section defines styles for the interactive Mermaid viewer component.
+* - It uses a button-driven UI for panning, zooming, and other actions.
+*/
+
+.mermaid-diagram-container {
+  @apply relative flex h-full min-h-[200px] w-full items-center justify-center overflow-hidden rounded-lg border border-theme-border bg-theme-background-elevated;
+
+  &.has-error {
+    @apply border-theme-danger/50 bg-theme-danger/10;
+  }
+
+  &.is-fullscreen {
+    @apply fixed inset-0 z-50 h-screen w-screen rounded-none border-none;
+  }
+
+  &.is-pannable {
+    cursor: grab;
+  }
+  &.is-pannable:active {
+    cursor: grabbing;
+  }
+}
+
+.mermaid-scroll-wrapper {
+  @apply h-full w-full overflow-hidden;
+}
+
+.mermaid-render-target {
+  @apply grid h-full w-full place-items-center transition-transform duration-200 ease-in-out;
+
+  /* Add browser optimization hint for smoother transforms */
+  will-change: transform;
+
+  /* When dragging with the mouse, disable the transition for instant, smooth feedback */
+  &.is-dragging {
+    transition: none;
+  }
+
+  .svg-wrapper {
+    @apply flex h-full w-full items-center justify-center;
+  }
+
+  svg {
+    max-width: initial;
+    max-height: initial;
+    user-select: text;
+  }
+}
+
+/* Bottom-Right Controls (Main Panel) */
+.mermaid-controls-br {
+  @apply absolute bottom-2 right-2 z-10;
+
+  .control-grid {
+    @apply grid grid-cols-3 gap-1 rounded-md bg-theme-background/60 p-1 shadow-md backdrop-blur-sm;
+  }
+
+  button {
+    @apply flex h-8 w-8 items-center justify-center rounded text-theme-text-muted transition-colors hover:bg-theme-border hover:text-theme-text;
+  }
+}
+
+/* Custom error message box styling */
+.mermaid-error-box {
+  @apply w-full self-start p-4 text-left;
+}
+
+.mermaid-error-title {
+  @apply mb-2 font-semibold text-theme-danger;
+}
+
+.mermaid-error-text {
+  font-family: Consolas, "Lucida Console", Monaco, "Andale Mono", monospace;
+  @apply max-h-64 select-text whitespace-pre-wrap rounded-md bg-theme-background p-2 text-xs text-theme-danger;
+  overflow-y: auto;
+}

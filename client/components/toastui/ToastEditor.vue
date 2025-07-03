@@ -4,9 +4,10 @@
 
 <script setup>
 import Editor from "@toast-ui/editor";
-import { onMounted, ref } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 
 import baseOptions from "./baseOptions.js";
+import { renderMermaidBlocks } from "./mermaidRenderer.js";
 
 const props = defineProps({
   initialValue: String,
@@ -31,15 +32,28 @@ onMounted(() => {
     events: {
       change: () => {
         emit("change");
+        renderMermaidBlocks(editorElement.value);
       },
       keydown: (_, event) => {
         emit("keydown", event);
+      },
+      afterPreviewRender: (html) => {
+        renderMermaidBlocks(editorElement.value);
+        return html;
       },
     },
     hooks: props.addImageBlobHook
       ? { addImageBlobHook: props.addImageBlobHook }
       : {},
   });
+
+  renderMermaidBlocks(editorElement.value);
+});
+
+onUnmounted(() => {
+  if (toastEditor) {
+    toastEditor.destroy();
+  }
 });
 
 function getMarkdown() {
