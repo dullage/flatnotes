@@ -1,86 +1,95 @@
 <template>
   <div
-    data-mermaid-wrapper
-    class="mermaid-diagram-container"
-    :class="{
-      'has-error': !!errorMessage,
-      'is-fullscreen': isFullscreen,
-      'is-pannable': isCtrlPressed,
-    }"
-    ref="container"
-    @mousedown="handleMouseDown"
+    class="mermaid-wrapper"
+    :class="{ 'is-fullscreen-active': isFullscreen }"
   >
-    <!-- Wrapper for overflow, panning, and zooming -->
-    <div class="mermaid-scroll-wrapper">
-      <div
-        class="mermaid-render-target"
-        :class="{ 'is-dragging': isPanning }"
-        :style="transformStyle"
-      >
-        <!-- Error Box -->
-        <div v-if="errorMessage" class="mermaid-error-box">
-          <h4 class="mermaid-error-title">Mermaid Render Error</h4>
-          <pre class="mermaid-error-text">{{ errorMessage }}</pre>
-        </div>
-        <!-- SVG Content -->
+    <!-- Backdrop, shown only in fullscreen -->
+    <div
+      v-if="isFullscreen"
+      class="mermaid-fullscreen-backdrop"
+      @click="toggleFullscreen"
+    ></div>
+
+    <!-- The actual interactive component -->
+    <div
+      ref="container"
+      data-mermaid-wrapper
+      class="mermaid-diagram-container"
+      :class="{
+        'has-error': !!errorMessage,
+        'is-fullscreen': isFullscreen,
+      }"
+    >
+      <!-- Error Box -->
+      <div v-if="errorMessage" class="mermaid-error-box">
+        <h4 class="mermaid-error-title">Mermaid Render Error</h4>
+        <pre class="mermaid-error-text">{{ errorMessage }}</pre>
+      </div>
+
+      <!-- Content Area -->
+      <div v-else class="mermaid-scroll-wrapper">
         <div
-          v-else-if="svgContent"
-          class="svg-wrapper"
-          ref="svgWrapper"
-          v-html="svgContent"
-        ></div>
+          class="mermaid-render-target"
+          :class="{ 'is-dragging': isPanning }"
+          :style="transformStyle"
+        >
+          <!-- Loading Indicator -->
+          <div v-if="isRendering" class="mermaid-fullscreen-loader">
+            <SvgIcon
+              type="mdi"
+              :path="mdiSync"
+              :size="48"
+              class="animate-spin"
+            />
+            <p>Rendering...</p>
+          </div>
+          <!-- Explicit Empty State -->
+          <div
+            v-else-if="!renderedSvg"
+            class="mermaid-empty-state text-theme-text-muted"
+          >
+            No diagram to display
+          </div>
+          <!-- Unified SVG Render Target -->
+          <div v-else :id="uniqueId" class="svg-wrapper" v-html="renderedSvg" />
+        </div>
       </div>
-    </div>
 
-    <!-- Bottom-Right Controls: 3x3 Grid Layout -->
-    <div v-if="!errorMessage" class="mermaid-controls-br">
-      <div class="control-grid">
-        <!-- Row 1 -->
-        <button title="Copy Source" @click="copySource">
-          <SvgIcon v-if="isCopied" type="mdi" :path="mdiCheck" :size="20" />
-          <SvgIcon v-else type="mdi" :path="mdiContentCopy" :size="20" />
-        </button>
-        <button title="Pan Up" @click="pan('up')">
-          <SvgIcon type="mdi" :path="mdiChevronUp" :size="20" />
-        </button>
-        <button title="Zoom In" @click="zoomIn">
-          <SvgIcon type="mdi" :path="mdiMagnifyPlus" :size="20" />
-        </button>
-
-        <!-- Row 2 -->
-        <button title="Pan Left" @click="pan('left')">
-          <SvgIcon type="mdi" :path="mdiChevronLeft" :size="20" />
-        </button>
-        <button title="Reset View" @click="resetView">
-          <SvgIcon type="mdi" :path="mdiRestore" :size="20" />
-        </button>
-        <button title="Pan Right" @click="pan('right')">
-          <SvgIcon type="mdi" :path="mdiChevronRight" :size="20" />
-        </button>
-
-        <!-- Row 3 -->
-        <button title="Toggle Fullscreen" @click="toggleFullscreen">
-          <SvgIcon
-            v-if="isFullscreen"
-            type="mdi"
-            :path="mdiFullscreenExit"
-            :size="20"
-          />
-          <SvgIcon v-else type="mdi" :path="mdiFullscreen" :size="20" />
-        </button>
-        <button title="Pan Down" @click="pan('down')">
-          <SvgIcon type="mdi" :path="mdiChevronDown" :size="20" />
-        </button>
-        <button title="Zoom Out" @click="zoomOut">
-          <SvgIcon type="mdi" :path="mdiMagnifyMinus" :size="20" />
-        </button>
+      <!-- Controls (Data-Driven) -->
+      <div v-if="!errorMessage && renderedSvg" class="mermaid-controls-br">
+        <div class="control-grid">
+          <button
+            v-for="control in controls"
+            :key="control.key"
+            :title="control.title"
+            @click="control.action"
+          >
+            <SvgIcon type="mdi" :path="control.icon" :size="20" />
+          </button>
+        </div>
       </div>
+      <button
+        v-if="isFullscreen"
+        class="mermaid-modal-close"
+        title="Close Fullscreen"
+        @click="toggleFullscreen"
+      >
+        <SvgIcon type="mdi" :path="mdiClose" :size="24" />
+      </button>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, watch, nextTick } from "vue";
+import {
+  ref,
+  reactive,
+  computed,
+  onMounted,
+  onUnmounted,
+  watch,
+  nextTick,
+} from "vue";
 import mermaid from "mermaid";
 import SvgIcon from "@jamescoyle/vue-icon";
 import {
@@ -95,184 +104,226 @@ import {
   mdiCheck,
   mdiFullscreen,
   mdiFullscreenExit,
+  mdiClose,
+  mdiSync,
 } from "@mdi/js";
 
-const props = defineProps({
-  diagramText: { type: String, required: true },
-});
+const props = defineProps({ diagramText: { type: String, required: true } });
 
-// --- State Refs ---
-const container = ref(null);
-const svgWrapper = ref(null);
-const scale = ref(1);
-const panX = ref(0);
-const panY = ref(0);
-const isCopied = ref(false);
-const isFullscreen = ref(false);
-const errorMessage = ref(null);
-const svgContent = ref("");
-let themeObserver = null;
-
-// --- State for Ctrl+Drag Panning ---
-const isCtrlPressed = ref(false);
-const isPanning = ref(false);
-let panStart = { x: 0, y: 0 };
-
-const ZOOM_BUTTON_FACTOR = 1.25;
+// --- Constants ---
+const ZOOM_FACTOR = 1.25;
 const PAN_STEP = 50;
-const MAX_SCALE = 8;
-const MIN_SCALE = 0.2;
+const MAX_SCALE = 10;
+const MIN_SCALE = 0.1;
+
+// --- Reactive State & Refs ---
+const container = ref(null);
+const triggerElement = ref(null);
+const errorMessage = ref(null);
+const renderedSvg = ref("");
+const isFullscreen = ref(false);
+const isRendering = ref(false);
+const isCopied = ref(false);
+const isPanning = ref(false);
+const transform = reactive({ scale: 1, x: 0, y: 0 });
 
 // --- Computed Properties ---
-const transformStyle = computed(() => {
-  return `transform: translate(${panX.value}px, ${panY.value}px) scale(${scale.value});`;
-});
+const transformStyle = computed(
+  () =>
+    `transform: translate(${transform.x}px, ${transform.y}px) scale(${transform.scale});`,
+);
+const uniqueId = `mermaid-${Math.random().toString(36).substring(2, 9)}`;
 
-// --- Core Rendering Logic ---
-const initializeAndRender = async (theme) => {
-  if (!props.diagramText.trim()) return;
+// Data-driven controls for the UI grid.
+const controls = computed(() => [
+  {
+    key: "copy",
+    title: "Copy Source",
+    icon: isCopied.value ? mdiCheck : mdiContentCopy,
+    action: copySource,
+  },
+  { key: "up", title: "Pan Up", icon: mdiChevronUp, action: () => pan("up") },
+  {
+    key: "zoom-in",
+    title: "Zoom In",
+    icon: mdiMagnifyPlus,
+    action: () => zoom(ZOOM_FACTOR),
+  },
+  {
+    key: "left",
+    title: "Pan Left",
+    icon: mdiChevronLeft,
+    action: () => pan("left"),
+  },
+  { key: "reset", title: "Reset View", icon: mdiRestore, action: resetView },
+  {
+    key: "right",
+    title: "Pan Right",
+    icon: mdiChevronRight,
+    action: () => pan("right"),
+  },
+  {
+    key: "fullscreen",
+    title: "Toggle Fullscreen",
+    icon: isFullscreen.value ? mdiFullscreenExit : mdiFullscreen,
+    action: toggleFullscreen,
+  },
+  {
+    key: "down",
+    title: "Pan Down",
+    icon: mdiChevronDown,
+    action: () => pan("down"),
+  },
+  {
+    key: "zoom-out",
+    title: "Zoom Out",
+    icon: mdiMagnifyMinus,
+    action: () => zoom(1 / ZOOM_FACTOR),
+  },
+]);
+
+// --- Core Logic ---
+const render = async () => {
+  if (!props.diagramText.trim()) {
+    renderedSvg.value = "";
+    return;
+  }
+  isRendering.value = true;
   errorMessage.value = null;
-  svgContent.value = "";
   resetView();
-  mermaid.initialize({
-    startOnLoad: false,
-    securityLevel: "strict",
-    theme: theme,
-    suppressErrorRendering: true,
-  });
-  const mermaidId = `mermaid-id-${Math.random().toString(36).substring(2, 9)}`;
+
   try {
+    mermaid.initialize({
+      startOnLoad: false,
+      securityLevel: "strict",
+      theme: document.body.classList.contains("dark") ? "dark" : "default",
+      suppressErrorRendering: true,
+    });
     const { svg, bindFunctions } = await mermaid.render(
-      mermaidId,
+      uniqueId,
       props.diagramText,
     );
-    svgContent.value = svg;
-    await nextTick();
-    if (bindFunctions && svgWrapper.value) {
-      bindFunctions(svgWrapper.value);
+    renderedSvg.value = svg;
+
+    if (isFullscreen.value && bindFunctions) {
+      await nextTick();
+      const svgEl = container.value?.querySelector(`#${uniqueId} svg`);
+      if (svgEl) bindFunctions(svgEl);
     }
   } catch (error) {
     console.error("Failed to render Mermaid diagram:", error);
     errorMessage.value = error.message;
+  } finally {
+    isRendering.value = false;
   }
 };
 
-// --- UI Control Actions ---
+// --- View Transformations ---
+const resetView = () => Object.assign(transform, { scale: 1, x: 0, y: 0 });
+const zoom = (factor) =>
+  (transform.scale = Math.max(
+    MIN_SCALE,
+    Math.min(MAX_SCALE, transform.scale * factor),
+  ));
 const pan = (direction) => {
-  switch (direction) {
-    case "up":
-      panY.value -= PAN_STEP;
-      break;
-    case "down":
-      panY.value += PAN_STEP;
-      break;
-    case "left":
-      panX.value -= PAN_STEP;
-      break;
-    case "right":
-      panX.value += PAN_STEP;
-      break;
-  }
+  const step = PAN_STEP / transform.scale;
+  if (direction === "up") transform.y -= step;
+  if (direction === "down") transform.y += step;
+  if (direction === "left") transform.x -= step;
+  if (direction === "right") transform.x += step;
 };
 
-const zoomIn = () => {
-  scale.value = Math.min(scale.value * ZOOM_BUTTON_FACTOR, MAX_SCALE);
+// --- Event Handlers ---
+const handleWheel = (e) => {
+  e.preventDefault();
+  zoom(e.deltaY < 0 ? ZOOM_FACTOR : 1 / ZOOM_FACTOR);
 };
-const zoomOut = () => {
-  scale.value = Math.max(scale.value / ZOOM_BUTTON_FACTOR, MIN_SCALE);
-};
-const resetView = () => {
-  scale.value = 1;
-  panX.value = 0;
-  panY.value = 0;
-};
-const toggleFullscreen = () => {
-  isFullscreen.value = !isFullscreen.value;
-};
+
+const handleMouseDown = (() => {
+  let panStart = { x: 0, y: 0 };
+  const handleMouseMove = (e) => (
+    (transform.x = e.clientX - panStart.x),
+    (transform.y = e.clientY - panStart.y)
+  );
+  const handleMouseUp = () => {
+    isPanning.value = false;
+    window.removeEventListener("mousemove", handleMouseMove);
+    window.removeEventListener("mouseup", handleMouseUp);
+  };
+  return (e) => {
+    if (e.target.closest("text, a, button")) return;
+    e.preventDefault();
+    window.getSelection().removeAllRanges();
+    isPanning.value = true;
+    panStart = { x: e.clientX - transform.x, y: e.clientY - transform.y };
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+  };
+})();
+
 const copySource = () => {
   if (isCopied.value) return;
-  navigator.clipboard
-    .writeText(props.diagramText)
-    .then(() => {
-      isCopied.value = true;
-      setTimeout(() => {
-        isCopied.value = false;
-      }, 1500);
-    })
-    .catch((err) => {
-      console.error("Failed to copy diagram source:", err);
-    });
+  navigator.clipboard.writeText(props.diagramText).then(() => {
+    isCopied.value = true;
+    setTimeout(() => {
+      isCopied.value = false;
+    }, 750);
+  });
 };
 
-// --- Handlers for Ctrl+Drag Panning ---
-const handleMouseDown = (e) => {
-  if (isCtrlPressed.value) {
-    e.preventDefault();
-    isPanning.value = true;
-    panStart.x = e.clientX - panX.value;
-    panStart.y = e.clientY - panY.value;
+const toggleFullscreen = (event) => {
+  if (!isFullscreen.value && event) {
+    triggerElement.value = event.currentTarget;
   }
-};
-const handleMouseMove = (e) => {
-  if (isPanning.value) {
-    panX.value = e.clientX - panStart.x;
-    panY.value = e.clientY - panStart.y;
-  }
-};
-const handleMouseUp = () => {
-  isPanning.value = false;
+  isFullscreen.value = !isFullscreen.value;
 };
 
-// --- Lifecycle Hooks for Global Event Listeners ---
+// --- Watchers and Lifecycle Hooks ---
+watch(isFullscreen, async (isFS) => {
+  render();
+
+  const el = container.value;
+  if (!el) return;
+
+  if (isFS) {
+    el.addEventListener("mousedown", handleMouseDown);
+    el.addEventListener("wheel", handleWheel);
+  } else {
+    el.removeEventListener("mousedown", handleMouseDown);
+    el.removeEventListener("wheel", handleWheel);
+
+    await nextTick();
+    if (triggerElement.value && document.contains(triggerElement.value)) {
+      triggerElement.value.focus({ preventScroll: true });
+    }
+  }
+});
+
+watch(() => props.diagramText, render);
+
 onMounted(() => {
-  const initialTheme = document.body.classList.contains("dark")
-    ? "dark"
-    : "default";
-  initializeAndRender(initialTheme);
-
+  render();
   const handleKeydown = (e) => {
-    if (e.key === "Control" || e.metaKey) isCtrlPressed.value = true;
-    if (e.key === "Escape" && isFullscreen.value) isFullscreen.value = false;
-  };
-  const handleKeyup = (e) => {
-    if (e.key === "Control" || e.metaKey) {
-      isCtrlPressed.value = false;
-      isPanning.value = false;
+    if (e.key === "Escape" && isFullscreen.value) {
+      toggleFullscreen();
     }
   };
   window.addEventListener("keydown", handleKeydown);
-  window.addEventListener("keyup", handleKeyup);
 
-  window.addEventListener("mousemove", handleMouseMove);
-  window.addEventListener("mouseup", handleMouseUp);
-
-  themeObserver = new MutationObserver(() => {
-    const newTheme = document.body.classList.contains("dark")
-      ? "dark"
-      : "default";
-    initializeAndRender(newTheme);
-  });
+  const themeObserver = new MutationObserver(render);
   themeObserver.observe(document.body, {
     attributes: true,
     attributeFilter: ["class"],
   });
 
   onUnmounted(() => {
-    if (themeObserver) themeObserver.disconnect();
     window.removeEventListener("keydown", handleKeydown);
-    window.removeEventListener("keyup", handleKeyup);
-    window.removeEventListener("mousemove", handleMouseMove);
-    window.removeEventListener("mouseup", handleMouseUp);
+    themeObserver.disconnect();
+    const el = container.value;
+    if (el) {
+      el.removeEventListener("mousedown", handleMouseDown);
+      el.removeEventListener("wheel", handleWheel);
+    }
   });
 });
-
-watch(
-  () => props.diagramText,
-  () => {
-    const currentTheme = document.body.classList.contains("dark")
-      ? "dark"
-      : "default";
-    initializeAndRender(currentTheme);
-  },
-);
 </script>

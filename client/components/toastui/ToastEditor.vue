@@ -4,7 +4,7 @@
 
 <script setup>
 import Editor from "@toast-ui/editor";
-import { onMounted, onUnmounted, ref } from "vue";
+import { onMounted, ref } from "vue";
 
 import baseOptions from "./baseOptions.js";
 import { renderMermaidBlocks } from "./mermaidRenderer.js";
@@ -32,14 +32,9 @@ onMounted(() => {
     events: {
       change: () => {
         emit("change");
-        renderMermaidBlocks(editorElement.value);
       },
       keydown: (_, event) => {
         emit("keydown", event);
-      },
-      afterPreviewRender: (html) => {
-        renderMermaidBlocks(editorElement.value);
-        return html;
       },
     },
     hooks: props.addImageBlobHook
@@ -47,12 +42,21 @@ onMounted(() => {
       : {},
   });
 
-  renderMermaidBlocks(editorElement.value);
-});
-
-onUnmounted(() => {
-  if (toastEditor) {
-    toastEditor.destroy();
+  const tabContainer = editorElement.value.querySelector(
+    ".toastui-editor-md-tab-container",
+  );
+  if (tabContainer) {
+    tabContainer.addEventListener("click", (event) => {
+      // Only rendered the diagrams if the click came from the preview tab.
+      if (event.target.closest('.tab-item[aria-label="Preview"]')) {
+        const previewEl = editorElement.value.querySelector(
+          ".toastui-editor-md-preview",
+        );
+        if (previewEl) {
+          renderMermaidBlocks(previewEl);
+        }
+      }
+    });
   }
 });
 
