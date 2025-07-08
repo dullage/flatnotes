@@ -126,6 +126,7 @@ const isRendering = ref(false);
 const isCopied = ref(false);
 const isPanning = ref(false);
 const transform = reactive({ scale: 1, x: 0, y: 0 });
+const scrollPosition = reactive({ top: 0, left: 0 });
 
 // --- Computed Properties ---
 const transformStyle = computed(
@@ -183,7 +184,10 @@ const controls = computed(() => [
 ]);
 
 // --- Core Logic ---
-const render = async () => {
+const render = async (forceRerender = false) => {
+  if (renderedSvg.value && !forceRerender) {
+    return;
+  }
   if (!props.diagramText.trim()) {
     renderedSvg.value = "";
     return;
@@ -191,7 +195,6 @@ const render = async () => {
   isRendering.value = true;
   errorMessage.value = null;
   resetView();
-
   try {
     mermaid.initialize({
       startOnLoad: false,
@@ -199,17 +202,8 @@ const render = async () => {
       theme: document.body.classList.contains("dark") ? "dark" : "default",
       suppressErrorRendering: true,
     });
-    const { svg, bindFunctions } = await mermaid.render(
-      uniqueId,
-      props.diagramText,
-    );
+    const { svg } = await mermaid.render(uniqueId, props.diagramText);
     renderedSvg.value = svg;
-
-    if (isFullscreen.value && bindFunctions) {
-      await nextTick();
-      const svgEl = container.value?.querySelector(`#${uniqueId} svg`);
-      if (svgEl) bindFunctions(svgEl);
-    }
   } catch (error) {
     console.error("Failed to render Mermaid diagram:", error);
     errorMessage.value = error.message;
@@ -251,7 +245,16 @@ const handleMouseDown = (() => {
     window.removeEventListener("mouseup", handleMouseUp);
   };
   return (e) => {
-    if (e.target.closest("text, a, button")) return;
+    const target = e.target;
+
+    const isInteractiveContent = target.closest(
+      "text, a, button, foreignObject, .mermaid-error-text",
+    );
+
+    if (isInteractiveContent) {
+      return;
+    }
+
     e.preventDefault();
     window.getSelection().removeAllRanges();
     isPanning.value = true;
@@ -272,37 +275,47 @@ const copySource = () => {
 };
 
 const toggleFullscreen = (event) => {
-  if (!isFullscreen.value && event) {
-    triggerElement.value = event.currentTarget;
+  if (!isFullscreen.value) {
+    if (event) {
+      triggerElement.value = event.currentTarget;
+    }
+    scrollPosition.top = window.scrollY;
+    scrollPosition.left = window.scrollX;
   }
   isFullscreen.value = !isFullscreen.value;
 };
 
 // --- Watchers and Lifecycle Hooks ---
 watch(isFullscreen, async (isFS) => {
-  render();
-
   const el = container.value;
   if (!el) return;
 
   if (isFS) {
-    el.addEventListener("mousedown", handleMouseDown);
+    // Only enable wheel zoom in fullscreen
     el.addEventListener("wheel", handleWheel);
+    resetView();
   } else {
-    el.removeEventListener("mousedown", handleMouseDown);
     el.removeEventListener("wheel", handleWheel);
+    resetView();
 
     await nextTick();
+    window.scrollTo(scrollPosition.left, scrollPosition.top);
+
     if (triggerElement.value && document.contains(triggerElement.value)) {
-      triggerElement.value.focus({ preventScroll: true });
+      setTimeout(() => {
+        triggerElement.value.focus({ preventScroll: true });
+      }, 0);
     }
   }
 });
 
-watch(() => props.diagramText, render);
+watch(
+  () => props.diagramText,
+  () => render(true),
+);
 
 onMounted(() => {
-  render();
+  render(true);
   const handleKeydown = (e) => {
     if (e.key === "Escape" && isFullscreen.value) {
       toggleFullscreen();
@@ -310,11 +323,17 @@ onMounted(() => {
   };
   window.addEventListener("keydown", handleKeydown);
 
-  const themeObserver = new MutationObserver(render);
+  const themeObserver = new MutationObserver(() => render(true));
   themeObserver.observe(document.body, {
     attributes: true,
     attributeFilter: ["class"],
   });
+
+  const el = container.value;
+  if (el) {
+    // Panning is always available, both inline and fullscreen
+    el.addEventListener("mousedown", handleMouseDown);
+  }
 
   onUnmounted(() => {
     window.removeEventListener("keydown", handleKeydown);
