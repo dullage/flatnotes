@@ -338,7 +338,6 @@
 
 .mermaid-render-target {
   @apply grid h-full w-full place-items-center;
-  @apply transition-transform duration-200 ease-in-out;
   transform-origin: center;
   will-change: transform;
 
@@ -370,8 +369,20 @@
   }
 
   button {
-    @apply flex h-8 w-8 items-center justify-center rounded text-theme-text-muted;
+    @apply relative flex h-8 w-8 items-center justify-center rounded text-theme-text-muted;
     @apply transition-colors hover:bg-theme-border hover:text-theme-text;
+
+    &::before {
+      @apply absolute bottom-full mb-2 block;
+      @apply rounded-md bg-theme-text px-2 py-1 text-xs font-semibold text-theme-background;
+      @apply pointer-events-none opacity-0 transition-opacity duration-200;
+      content: "Copied!";
+      white-space: nowrap;
+    }
+
+    &.show-copy-tooltip::before {
+      @apply opacity-100;
+    }
   }
 }
 

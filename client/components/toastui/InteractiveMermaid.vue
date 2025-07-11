@@ -63,6 +63,7 @@
             :key="control.key"
             :title="control.title"
             @click="control.action"
+            :class="{ 'show-copy-tooltip': control.key === 'copy' && isCopied }"
           >
             <SvgIcon type="mdi" :path="control.icon" :size="20" />
           </button>
@@ -110,9 +111,11 @@ import {
 
 const props = defineProps({ diagramText: { type: String, required: true } });
 
-// --- Constants ---
-const ZOOM_FACTOR = 1.25;
-const PAN_STEP = 50;
+// --- Interactivity Tuning ---
+const ZOOM_FACTOR = 1.25; // Zoom increment for buttons
+const WHEEL_SENSITIVITY = 0.01; // Mouse wheel zoom speed
+const LERP_FACTOR = 0.2; // Animation smoothness (0-1, smaller is smoother)
+const PAN_STEP = 50; // Pan distance in pixels for buttons
 const MAX_SCALE = 10;
 const MIN_SCALE = 0.1;
 
@@ -126,6 +129,8 @@ const isRendering = ref(false);
 const isCopied = ref(false);
 const isPanning = ref(false);
 const transform = reactive({ scale: 1, x: 0, y: 0 });
+let targetScale = 1;
+let animationFrameId = null;
 const scrollPosition = reactive({ top: 0, left: 0 });
 
 // --- Computed Properties ---
@@ -213,12 +218,37 @@ const render = async (forceRerender = false) => {
 };
 
 // --- View Transformations ---
-const resetView = () => Object.assign(transform, { scale: 1, x: 0, y: 0 });
-const zoom = (factor) =>
-  (transform.scale = Math.max(
-    MIN_SCALE,
-    Math.min(MAX_SCALE, transform.scale * factor),
-  ));
+const animateZoom = () => {
+  const scaleDiff = targetScale - transform.scale;
+
+  if (Math.abs(scaleDiff) < 0.001) {
+    transform.scale = targetScale; // Snap to final value
+    cancelAnimationFrame(animationFrameId);
+    animationFrameId = null;
+    return;
+  }
+
+  transform.scale += scaleDiff * LERP_FACTOR;
+
+  animationFrameId = requestAnimationFrame(animateZoom);
+};
+
+const setTargetScale = (newScale) => {
+  targetScale = Math.max(MIN_SCALE, Math.min(MAX_SCALE, newScale));
+  if (!animationFrameId) {
+    animationFrameId = requestAnimationFrame(animateZoom);
+  }
+};
+
+const resetView = () => {
+  Object.assign(transform, { x: 0, y: 0 });
+  setTargetScale(1);
+};
+
+const zoom = (factor) => {
+  setTargetScale(transform.scale * factor);
+};
+
 const pan = (direction) => {
   const step = PAN_STEP / transform.scale;
   if (direction === "up") transform.y -= step;
@@ -230,7 +260,8 @@ const pan = (direction) => {
 // --- Event Handlers ---
 const handleWheel = (e) => {
   e.preventDefault();
-  zoom(e.deltaY < 0 ? ZOOM_FACTOR : 1 / ZOOM_FACTOR);
+  const factor = Math.exp(-e.deltaY * WHEEL_SENSITIVITY);
+  setTargetScale(transform.scale * factor);
 };
 
 const handleMouseDown = (() => {
@@ -342,6 +373,9 @@ onMounted(() => {
     if (el) {
       el.removeEventListener("mousedown", handleMouseDown);
       el.removeEventListener("wheel", handleWheel);
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+      }
     }
   });
 });
