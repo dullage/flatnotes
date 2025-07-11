@@ -282,3 +282,138 @@
 .toastui-editor-contents th p {
   color: rgb(var(--theme-text));
 }
+
+/*
+================================================================================
+  Styles for the Interactive Mermaid Component
+================================================================================
+*/
+
+/*
+ * 1. Outermost Wrapper
+ * -----------------------------------------------------------------------------
+ */
+.mermaid-component-wrapper {
+  // The 'overflow-x: hidden' prevents the component from causing
+  // a horizontal scrollbar on the main page if its content slightly overflows.
+  overflow-x: hidden;
+}
+
+/*
+ * 2. Component's Root Element & Fullscreen Logic
+ * -----------------------------------------------------------------------------
+ */
+.mermaid-wrapper {
+  &.is-fullscreen-active {
+    .mermaid-fullscreen-backdrop {
+      @apply fixed inset-0 z-40 bg-black/60;
+    }
+    .mermaid-diagram-container.is-fullscreen {
+      @apply fixed left-1/2 top-1/2 z-50 h-[90vh] w-[90vw] -translate-x-1/2 -translate-y-1/2;
+      @apply rounded-lg border-2 border-theme-border shadow-2xl;
+    }
+  }
+}
+
+/*
+ * 3. Main Diagram Container
+ * -----------------------------------------------------------------------------
+ */
+.mermaid-diagram-container {
+  @apply relative flex h-full min-h-[200px] w-full items-center justify-center;
+  @apply overflow-hidden rounded-lg border border-theme-border bg-theme-background-elevated;
+
+  &.has-error {
+    @apply border-theme-danger/50 bg-theme-danger/10;
+  }
+}
+
+/*
+ * 4. Panning & Zooming Canvas
+ * -----------------------------------------------------------------------------
+ */
+.mermaid-scroll-wrapper {
+  @apply h-full w-full overflow-hidden;
+}
+
+.mermaid-render-target {
+  @apply grid h-full w-full place-items-center;
+  transform-origin: center;
+  will-change: transform;
+
+  &.is-dragging {
+    transition: none;
+  }
+
+  .svg-wrapper {
+    @apply flex h-full w-full items-center justify-center;
+  }
+
+  svg {
+    max-width: initial;
+    max-height: initial;
+    user-select: text; // Allow text selection
+  }
+}
+
+/*
+ * 5. UI Controls
+ * -----------------------------------------------------------------------------
+ */
+.mermaid-controls-br {
+  // Bottom-right control panel.
+  @apply absolute bottom-2 right-2 z-10;
+
+  .control-grid {
+    @apply grid grid-cols-3 gap-1 rounded-md bg-theme-background/60 p-1 shadow-md backdrop-blur-sm;
+  }
+
+  button {
+    @apply relative flex h-8 w-8 items-center justify-center rounded text-theme-text-muted;
+    @apply transition-colors hover:bg-theme-border hover:text-theme-text;
+
+    &::before {
+      @apply absolute bottom-full mb-2 block;
+      @apply rounded-md bg-theme-text px-2 py-1 text-xs font-semibold text-theme-background;
+      @apply pointer-events-none opacity-0 transition-opacity duration-200;
+      content: "Copied!";
+      white-space: nowrap;
+    }
+
+    &.show-copy-tooltip::before {
+      @apply opacity-100;
+    }
+  }
+}
+
+.mermaid-modal-close {
+  // Top-right 'X' button for fullscreen mode.
+  @apply absolute right-2 top-2 z-10 flex h-8 w-8 items-center justify-center rounded-full;
+  @apply bg-theme-background/50 text-theme-text-muted;
+  @apply transition-colors hover:bg-theme-border hover:text-theme-text;
+}
+
+/*
+ * 6. Component States (Error, Loading)
+ * -----------------------------------------------------------------------------
+ */
+.mermaid-error-box {
+  @apply w-full self-start p-4 text-left;
+}
+
+.mermaid-error-title {
+  @apply mb-2 font-semibold text-theme-danger;
+}
+
+.mermaid-error-text {
+  font-family: Consolas, "Lucida Console", Monaco, "Andale Mono", monospace;
+  @apply max-h-64 select-text whitespace-pre-wrap rounded-md bg-theme-background p-2 text-xs text-theme-danger;
+  overflow-y: auto;
+}
+
+.mermaid-fullscreen-loader {
+  @apply flex flex-col items-center justify-center text-theme-text-muted;
+  p {
+    @apply mt-2 text-sm;
+  }
+}
