@@ -161,7 +161,7 @@ const isDraftModalVisible = ref(false);
 const isNewNote = computed(() => !props.title);
 const loadingIndicator = ref();
 const note = ref({});
-const reservedFilenameCharacters = /[<>:"/\\|?*]/;
+const reservedFilenameCharacters = /[<>:"\\|?*]/;
 const router = useRouter();
 const newTitle = ref();
 const toast = useToast();
