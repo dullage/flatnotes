@@ -15,6 +15,8 @@ class GlobalConfig:
         self.quick_access_sort: str = self._quick_access_sort()
         self.quick_access_limit: int = self._quick_access_limit()
         self.path_prefix: str = self._load_path_prefix()
+        self.page_title: str = self._page_title()
+        self.page_icon: str = self._page_icon()
 
     def load_auth(self):
         if self.auth_type in (AuthType.NONE, AuthType.READ_ONLY):
@@ -101,6 +103,14 @@ class GlobalConfig:
             sys.exit(1)
         return value
 
+    def _page_title(self):
+        key = "FLATNOTES_PAGE_TITLE"
+        return get_env(key, mandatory=False, default="flatnotes")
+
+    def _page_icon(self):
+        key = "FLATNOTES_PAGE_ICON"
+        return get_env(key, mandatory=False, default=None)
+
 
 class AuthType(str, Enum):
     NONE = "none"
@@ -116,3 +126,5 @@ class GlobalConfigResponseModel(CustomBaseModel):
     quick_access_term: str
     quick_access_sort: str
     quick_access_limit: int
+    page_title: str
+    page_icon: str

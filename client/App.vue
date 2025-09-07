@@ -67,6 +67,7 @@ Mousetrap.bindGlobal("ctrl+alt+h", () => {
 getConfig()
   .then((data) => {
     globalStore.config = data;
+    document.title = globalStore.config.page_title;
     loadingIndicator.value.setLoaded();
   })
   .catch((error) => {

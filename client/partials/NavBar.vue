@@ -1,7 +1,11 @@
 <template>
   <nav class="mb-2 flex justify-between align-top md:mb-12">
     <RouterLink :to="{ name: 'home' }" v-if="!hideLogo">
-      <Logo responsive></Logo>
+      <Logo
+        responsive
+        :title="globalStore.config.page_title"
+        :icon="globalStore.config.page_icon"
+      ></Logo>
     </RouterLink>
     <div class="flex grow items-start justify-end">
       <!-- New Note -->
