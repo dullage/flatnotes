@@ -45,7 +45,7 @@
 <script setup>
 import { mdilLogin } from "@mdi/light-js";
 import { useToast } from "primevue/usetoast";
-import { ref, watch } from "vue";
+import { ref } from "vue";
 import { useRouter } from "vue-router";
 
 import { apiErrorHandler, getToken } from "../api.js";
