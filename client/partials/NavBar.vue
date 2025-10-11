@@ -92,6 +92,7 @@ const showNewButton = computed(() => {
 
 function logOut() {
   clearStoredToken();
+  localStorage.clear();
   router.push({ name: "login" });
 }
 
