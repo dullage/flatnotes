@@ -35,3 +35,12 @@ export function clearStoredToken() {
   document.cookie =
     getCookieString() + "; expires=Thu, 01 Jan 1970 00:00:00 GMT";
 }
+
+export function isCurrentTokenStored() {
+  const localToken = localStorage.getItem(tokenStorageKey);
+  if (localToken == null) {
+    return false;
+  }
+  const sessionToken = sessionStorage.getItem(tokenStorageKey);
+  return localToken === sessionToken;
+}

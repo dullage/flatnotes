@@ -144,6 +144,7 @@ import ToastViewer from "../components/toastui/ToastViewer.vue";
 import { authTypes } from "../constants.js";
 import { useGlobalStore } from "../globalStore.js";
 import { getToastOptions } from "../helpers.js";
+import { isCurrentTokenStored } from "../tokenStorage.js";
 
 const props = defineProps({
   title: String,
@@ -441,17 +442,25 @@ function contentChangedHandler() {
 // Drafts
 function saveDraft() {
   const content = toastEditor.value.getMarkdown();
+  const userHasPersistedToken = isCurrentTokenStored();
   if (content) {
-    localStorage.setItem(note.value.title, content);
+    if (userHasPersistedToken) {
+      localStorage.setItem(note.value.title, content);
+    } else {
+      sessionStorage.setItem(note.value.title, content);
+    }
   }
 }
 
 function clearDraft() {
   localStorage.removeItem(note.value.title);
+  sessionStorage.removeItem(note.value.title);
 }
 
 function loadDraft() {
-  return localStorage.getItem(note.value.title);
+  const localDraft = localStorage.getItem(note.value.title);
+  const sessionDraft = sessionStorage.getItem(note.value.title);
+  return localDraft || sessionDraft;
 }
 
 // Keyboard Shortcuts
