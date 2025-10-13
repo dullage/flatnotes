@@ -44,11 +44,11 @@ import { useToast } from "primevue/usetoast";
 import { onMounted, ref, watch } from "vue";
 import { RouterLink } from "vue-router";
 
-import { apiErrorHandler, getNotes } from "../api.js";
+import { apiErrorHandler, getNotes, getTags } from "../api.js";
 import CustomButton from "../components/CustomButton.vue";
 import LoadingIndicator from "../components/LoadingIndicator.vue";
 import Logo from "../components/Logo.vue";
-import { searchSortOptions } from "../constants.js";
+import { searchSortOptions, authTypes } from "../constants.js";
 import { useGlobalStore } from "../globalStore.js";
 import SearchInput from "../partials/SearchInput.vue";
 
@@ -58,6 +58,13 @@ const notes = ref([]);
 const toast = useToast();
 
 function init() {
+  // Should the user authenticate before accessing the home view?
+  // Try an authenticated request and prompt for a login if needed.
+  if (![authTypes.none, authTypes.readOnly].includes(globalStore.config.authType)) {
+    getTags().catch((error) => {
+      apiErrorHandler(error, toast);
+    });
+  }
   if (globalStore.config.quickAccessHide) {
     return;
   }
