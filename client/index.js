@@ -3,6 +3,7 @@ import PrimeVue from "primevue/config";
 import ToastService from "primevue/toastservice";
 import { createApp } from "vue";
 import { createPinia } from "pinia";
+import { loadStoredToken } from "./tokenStorage.js";
 import router from "/router.js";
 
 const app = createApp(App);
@@ -19,5 +20,7 @@ app.directive("focus", {
     el.focus();
   },
 });
+
+loadStoredToken();
 
 app.mount("#app");

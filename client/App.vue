@@ -29,7 +29,6 @@ import { useGlobalStore } from "./globalStore.js";
 import { loadTheme } from "./helpers.js";
 import NavBar from "./partials/NavBar.vue";
 import SearchModal from "./partials/SearchModal.vue";
-import { loadStoredToken } from "./tokenStorage.js";
 import LoadingIndicator from "./components/LoadingIndicator.vue";
 import router from "./router.js";
 
@@ -73,8 +72,6 @@ getConfig()
     apiErrorHandler(error, toast);
     loadingIndicator.value.setFailed();
   });
-
-loadStoredToken();
 
 const showNavBar = computed(() => {
   return route.name !== "login";
