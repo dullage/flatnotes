@@ -48,8 +48,8 @@ export async function getConfig() {
   try {
     const response = await api.get("api/config");
     return response.data;
-  } catch (error) {
-    return Promise.reject(error);
+  } catch (response) {
+    return Promise.reject(response);
   }
 }
 
@@ -60,6 +60,15 @@ export async function getToken(username, password, totp) {
       password: totp ? password + totp : password,
     });
     return response.data.access_token;
+  } catch (response) {
+    return Promise.reject(response);
+  }
+}
+
+export async function authCheck() {
+  try {
+    const response = await api.get("api/auth-check");
+    return response.data;
   } catch (response) {
     return Promise.reject(response);
   }
