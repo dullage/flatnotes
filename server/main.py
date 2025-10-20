@@ -32,7 +32,7 @@ replace_base_href("client/dist/index.html", global_config.path_prefix)
 @router.get("/login", include_in_schema=False)
 @router.get("/search", include_in_schema=False)
 @router.get("/new", include_in_schema=False)
-@router.get("/note/{title}", include_in_schema=False)
+@router.get("/note/{title:path}", include_in_schema=False)
 def root(title: str = ""):
     with open("client/dist/index.html", "r", encoding="utf-8") as f:
         html = f.read()
@@ -68,7 +68,7 @@ def auth_check() -> str:
 # region Notes
 # Get Note
 @router.get(
-    "/api/notes/{title}",
+    "/api/notes/{title:path}",
     dependencies=auth_deps,
     response_model=Note,
 )
