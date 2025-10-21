@@ -3,6 +3,7 @@ import os
 import re
 import shutil
 import time
+import subprocess
 from datetime import datetime
 from typing import List, Literal, Set, Tuple
 
@@ -60,6 +61,7 @@ class FileSystemNotes(BaseNotes):
         """Create a new note."""
         filepath = self._path_from_title(data.title)
         self._write_file(filepath, data.content)
+        self._exec_hook("create", filepath)
         return Note(
             title=data.title,
             content=data.content,
@@ -95,6 +97,8 @@ class FileSystemNotes(BaseNotes):
             content = data.new_content
         else:
             content = self._read_file(filepath)
+
+        self._exec_hook("update", filepath)
         return Note(
             title=title,
             content=content,
@@ -106,6 +110,7 @@ class FileSystemNotes(BaseNotes):
         is_valid_filename(title)
         filepath = self._path_from_title(title)
         os.remove(filepath)
+        self._exec_hook("delete", filepath)
 
     def search(
         self,
@@ -373,6 +378,22 @@ class FileSystemNotes(BaseNotes):
             # If the term does not include a phrase then also search tags
             fields.append("tags")
         return fields
+
+    def _exec_hook(self, hook_name: Literal["create", "update", "delete"], path: str):
+        """Execute shell script for provided hook.
+        The hook script will be from FLATNOTES_HOOK_<name>, where name is a hook_name in upper case.
+        If there is no such env, hook will be ignored. Workdir is the storage path.
+        Changed path will be substituted from %s.
+        """
+        hook_env_name = f"FLATNOTES_HOOK_{hook_name.strip().upper()}"
+        script = os.getenv(hook_env_name)
+        if not script:
+            return
+        subprocess.check_call(
+            script.replace("%s", path),
+            shell=True,
+            cwd=self.storage_path,
+        )
 
     @staticmethod
     def _get_matched_fields(matched_terms):
