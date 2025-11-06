@@ -37,7 +37,6 @@ class LocalAuth(BaseAuth):
             self.totp_key = get_env("FLATNOTES_TOTP_KEY", mandatory=True)
             self.totp_key = b32encode(self.totp_key.encode("utf-8"))
             self.totp = TOTP(self.totp_key)
-            self.last_used_totp = None
             self._display_totp_enrolment()
 
     def login(self, data: Login) -> Token:
@@ -49,8 +48,7 @@ class LocalAuth(BaseAuth):
         # Check Password & TOTP
         expected_password = self.password
         if self.is_totp_enabled:
-            current_totp = self.totp.now()
-            expected_password += current_totp
+            expected_password += self.totp.now()
         password_correct = secrets.compare_digest(
             expected_password, data.password
         )
@@ -59,15 +57,8 @@ class LocalAuth(BaseAuth):
         if not (
             username_correct
             and password_correct
-            # Prevent TOTP from being reused
-            and (
-                self.is_totp_enabled is False
-                or current_totp != self.last_used_totp
-            )
         ):
             raise ValueError("Incorrect login credentials.")
-        if self.is_totp_enabled:
-            self.last_used_totp = current_totp
 
         # Create Token
         access_token = self._create_access_token(data={"sub": self.username})
