@@ -1,6 +1,6 @@
 import secrets
 from base64 import b32encode
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from fastapi import Depends, HTTPException, Request
 from fastapi.security import OAuth2PasswordBearer
@@ -29,6 +29,8 @@ class LocalAuth(BaseAuth):
         self.session_expiry_days = get_env(
             "FLATNOTES_SESSION_EXPIRY_DAYS", default=30, cast_int=True
         )
+        if self.session_expiry_days < 0:
+            self.session_expiry_days = 0
 
         # TOTP
         self.is_totp_enabled = False
@@ -101,8 +103,9 @@ class LocalAuth(BaseAuth):
 
     def _create_access_token(self, data: dict):
         to_encode = data.copy()
-        expiry_datetime = datetime.utcnow() + timedelta(
-            days=self.session_expiry_days
+        expiry_datetime = datetime.now(timezone.utc) + timedelta(
+            days=self.session_expiry_days,
+            seconds=30
         )
         to_encode.update({"exp": expiry_datetime})
         encoded_jwt = jwt.encode(
