@@ -1,5 +1,5 @@
 <template>
-  <nav class="mb-2 flex justify-between align-top md:mb-12">
+  <nav data-inert-scope class="mb-2 flex justify-between align-top md:mb-12">
     <RouterLink :to="{ name: 'home' }" v-if="!hideLogo">
       <Logo responsive></Logo>
     </RouterLink>

@@ -38,7 +38,7 @@
     "
   />
 
-  <LoadingIndicator ref="loadingIndicator" class="flex h-full flex-col">
+  <LoadingIndicator data-inert-scope ref="loadingIndicator" class="flex h-full flex-col">
     <!-- Header -->
     <div class="flex flex-col-reverse md:flex-row md:items-baseline">
       <!-- Title -->

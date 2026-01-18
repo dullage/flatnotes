@@ -16,6 +16,7 @@
 </template>
 
 <script setup>
+import { onBeforeUnmount, watch } from "vue";
 import Mousetrap from "mousetrap";
 
 defineOptions({
@@ -25,6 +26,17 @@ const props = defineProps({
   closeHandlerOverride: Function,
 });
 const isVisible = defineModel({ type: Boolean });
+
+// Make backgound inert when a modal is open
+function setBackgroundInert(isInert) {
+  document.querySelectorAll("[data-inert-scope]").forEach((el) => {
+    if (isInert) {
+      el.setAttribute("inert", "");
+    } else {
+      el.removeAttribute("inert");
+    }
+  });
+}
 
 // 'escape' to close
 Mousetrap.bind("esc", () => {
@@ -40,4 +52,16 @@ function closeHandler() {
     isVisible.value = false;
   }
 }
+
+watch(isVisible, (visible) => {
+  if (visible) {
+    setBackgroundInert(true);
+  } else {
+    setBackgroundInert(false);
+  }
+});
+
+onBeforeUnmount(() => {
+  setBackgroundInert(false);
+});
 </script>
