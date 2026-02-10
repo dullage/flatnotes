@@ -1,6 +1,8 @@
 import sys
 from enum import Enum
 
+from typing import Optional
+
 from helpers import CustomBaseModel, get_env
 from logger import logger
 
@@ -23,6 +25,10 @@ class GlobalConfig:
             from auth.local import LocalAuth
 
             return LocalAuth()
+        elif self.auth_type == AuthType.OIDC:
+            from auth.oidc import OIDCAuth
+
+            return OIDCAuth()
 
     def load_note_storage(self):
         from notes.file_system import FileSystemNotes
@@ -107,6 +113,7 @@ class AuthType(str, Enum):
     READ_ONLY = "read_only"
     PASSWORD = "password"
     TOTP = "totp"
+    OIDC = "oidc"
 
 
 class GlobalConfigResponseModel(CustomBaseModel):
@@ -116,3 +123,5 @@ class GlobalConfigResponseModel(CustomBaseModel):
     quick_access_term: str
     quick_access_sort: str
     quick_access_limit: int
+    oidc_provider_name: Optional[str] = None
+    oidc_auto_redirect: Optional[bool] = None
