@@ -1,7 +1,21 @@
 <template>
   <div class="flex h-full flex-col items-center justify-center">
     <Logo class="mb-5" />
-    <form @submit.prevent="logIn" class="flex max-w-80 flex-col items-center">
+    <div
+      v-if="globalStore.config.authType === authTypes.oidc"
+      class="flex max-w-80 flex-col items-center"
+    >
+      <CustomButton
+        :iconPath="mdilLogin"
+        :label="'Log in with ' + globalStore.config.oidcProviderName"
+        @click="oidcLogin"
+      />
+    </div>
+    <form
+      v-else
+      @submit.prevent="logIn"
+      class="flex max-w-80 flex-col items-center"
+    >
       <TextInput
         v-model="username"
         id="username"
@@ -97,8 +111,20 @@ function logIn() {
     });
 }
 
+function oidcLogin() {
+  window.location.href = "api/auth/oidc/login";
+}
+
 // Redirect to home if authentication is disabled.
 if (globalStore.config.authType === authTypes.none) {
   router.push({ name: "home" });
+}
+
+// Auto-redirect to OIDC provider if configured.
+if (
+  globalStore.config.authType === authTypes.oidc &&
+  globalStore.config.oidcAutoRedirect
+) {
+  oidcLogin();
 }
 </script>
