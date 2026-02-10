@@ -17,4 +17,5 @@ export const authTypes = {
   readOnly: "read_only",
   password: "password",
   totp: "totp",
+  oidc: "oidc",
 };
