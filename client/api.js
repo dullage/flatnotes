@@ -1,4 +1,5 @@
 import * as constants from "./constants.js";
+import { authTypes } from "./constants.js";
 
 import { Note, SearchResult } from "./classes.js";
 
@@ -6,6 +7,7 @@ import axios from "axios";
 import { getStoredToken } from "./tokenStorage.js";
 import { getToastOptions } from "./helpers.js";
 import router from "./router.js";
+import { useGlobalStore } from "./globalStore.js";
 
 const api = axios.create();
 
@@ -27,11 +29,19 @@ api.interceptors.request.use(
 
 export function apiErrorHandler(error, toast) {
   if (error.response?.status === 401) {
-    const redirectPath = router.currentRoute.value.fullPath;
-    router.push({
-      name: "login",
-      query: { [constants.params.redirect]: redirectPath },
-    });
+    const globalStore = useGlobalStore();
+    if (
+      globalStore.config.authType === authTypes.oidc &&
+      globalStore.config.oidcAutoRedirect
+    ) {
+      window.location.href = "api/auth/oidc/login";
+    } else {
+      const redirectPath = router.currentRoute.value.fullPath;
+      router.push({
+        name: "login",
+        query: { [constants.params.redirect]: redirectPath },
+      });
+    }
   } else {
     console.error(error);
     toast.add(
