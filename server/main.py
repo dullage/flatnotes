@@ -1,8 +1,9 @@
 from typing import List, Literal
 
-from fastapi import APIRouter, Depends, FastAPI, HTTPException, UploadFile
-from fastapi.responses import HTMLResponse
+from fastapi import APIRouter, Depends, FastAPI, HTTPException, Request, UploadFile
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
+from starlette.middleware.sessions import SessionMiddleware
 
 import api_messages
 from attachments.base import BaseAttachments
@@ -24,6 +25,12 @@ app = FastAPI(
     docs_url=global_config.path_prefix + "/docs",
     openapi_url=global_config.path_prefix + "/openapi.json",
 )
+
+if global_config.auth_type == AuthType.OIDC:
+    from helpers import get_env
+    session_secret = get_env("FLATNOTES_SECRET_KEY", mandatory=True)
+    app.add_middleware(SessionMiddleware, secret_key=session_secret)
+
 replace_base_href("client/dist/index.html", global_config.path_prefix)
 
 
@@ -43,7 +50,7 @@ def root(title: str = ""):
 
 
 # region Auth
-if global_config.auth_type not in [AuthType.NONE, AuthType.READ_ONLY]:
+if global_config.auth_type not in [AuthType.NONE, AuthType.READ_ONLY, AuthType.OIDC]:
 
     @router.post("/api/token", response_model=Token)
     def token(data: Login):
@@ -53,6 +60,38 @@ if global_config.auth_type not in [AuthType.NONE, AuthType.READ_ONLY]:
             raise HTTPException(
                 status_code=401, detail=api_messages.login_failed
             )
+
+
+if global_config.auth_type == AuthType.OIDC:
+
+    @router.get("/api/auth/oidc/login")
+    async def oidc_login(request: Request):
+        redirect_uri = request.url_for("oidc_callback")
+        if global_config.path_prefix:
+            redirect_uri = redirect_uri.replace(
+                path=global_config.path_prefix + redirect_uri.path
+            )
+        if redirect_uri.scheme == "http":
+            redirect_uri = redirect_uri.replace(scheme="https")
+        return await auth.oauth.oidc.authorize_redirect(request, str(redirect_uri))
+
+    @router.get("/api/auth/oidc/callback", name="oidc_callback")
+    async def oidc_callback(request: Request):
+        try:
+            token = await auth.handle_callback(request)
+            response = RedirectResponse(url=global_config.path_prefix or "/")
+            response.set_cookie(
+                key="token",
+                value=token.access_token,
+                httponly=True,
+                samesite="lax",
+                max_age=auth.session_expiry_days * 24 * 60 * 60,
+            )
+            return response
+        except HTTPException:
+            raise
+        except Exception:
+            raise HTTPException(status_code=401, detail="Authentication failed")
 
 
 @router.get("/api/auth-check", dependencies=auth_deps)
@@ -183,6 +222,11 @@ def get_tags():
 @router.get("/api/config", response_model=GlobalConfigResponseModel)
 def get_config():
     """Retrieve server-side config required for the UI."""
+    oidc_provider_name = None
+    oidc_auto_redirect = None
+    if global_config.auth_type == AuthType.OIDC:
+        oidc_provider_name = auth.provider_name
+        oidc_auto_redirect = auth.auto_redirect
     return GlobalConfigResponseModel(
         auth_type=global_config.auth_type,
         quick_access_hide=global_config.quick_access_hide,
@@ -190,6 +234,8 @@ def get_config():
         quick_access_term=global_config.quick_access_term,
         quick_access_sort=global_config.quick_access_sort,
         quick_access_limit=global_config.quick_access_limit,
+        oidc_provider_name=oidc_provider_name,
+        oidc_auto_redirect=oidc_auto_redirect,
     )
 
 
